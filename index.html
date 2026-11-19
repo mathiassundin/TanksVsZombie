@@ -287,19 +287,19 @@
                         <span class="text-[10px] font-bold text-stone-600">Lås upp i matchen</span>
                     </div>
                     <div class="grid grid-cols-2 gap-2">
-                        <button id="btn-ability-airstrike" class="cartoon-btn bg-orange-500 hover:bg-orange-400 text-white font-extrabold text-xs px-2.5 py-1.5 rounded-xl flex items-center gap-2 cursor-pointer" title="Flyganfall - Bombar valt område">
-                            <span class="text-base shrink-0" id="icon-airstrike">✈️</span>
-                            <div class="text-left leading-tight overflow-hidden">
-                                <div class="truncate" id="title-airstrike">✈️ Flyganfall</div>
-                                <div class="text-[10px] text-orange-100 truncate" id="cd-airstrike">Lås upp: 🪙250</div>
-                            </div>
-                        </button>
-
                         <button id="btn-ability-mine" class="cartoon-btn bg-rose-600 hover:bg-rose-500 text-white font-extrabold text-xs px-2.5 py-1.5 rounded-xl flex items-center gap-2 cursor-pointer" title="Vägmina - Placera sprängmina">
                             <span class="text-base shrink-0" id="icon-mine">💣</span>
                             <div class="text-left leading-tight overflow-hidden">
                                 <div class="truncate" id="title-mine">💣 Vägmina</div>
-                                <div class="text-[10px] text-rose-100 truncate" id="cd-mine">Lås upp: 🪙140</div>
+                                <div class="text-[10px] text-rose-100 truncate" id="cd-mine">Forskning krävs</div>
+                            </div>
+                        </button>
+
+                        <button id="btn-ability-airstrike" class="cartoon-btn bg-orange-500 hover:bg-orange-400 text-white font-extrabold text-xs px-2.5 py-1.5 rounded-xl flex items-center gap-2 cursor-pointer" title="Flyganfall - Bombar valt område">
+                            <span class="text-base shrink-0" id="icon-airstrike">✈️</span>
+                            <div class="text-left leading-tight overflow-hidden">
+                                <div class="truncate" id="title-airstrike">✈️ Flyganfall</div>
+                                <div class="text-[10px] text-orange-100 truncate" id="cd-airstrike">Forskning krävs</div>
                             </div>
                         </button>
                     </div>
@@ -310,7 +310,7 @@
                         <span>🏭</span> Stridsvagns-fabrik
                     </h2>
                     <span id="unlocked-tanks-badge" class="text-[11px] font-extrabold bg-amber-200 border border-stone-700 px-2 py-0.5 rounded-full text-stone-800">
-                        Upplåsta: 1/8
+                        Upplåsta: 2/8
                     </span>
                 </div>
 
@@ -344,8 +344,9 @@
             <div class="hidden lg:block mt-3 bg-amber-200/70 border-2 border-stone-400 rounded-xl p-2.5 text-xs text-stone-800 space-y-1">
                 <div class="font-extrabold text-stone-950">💡 Snabbguide:</div>
                 <p>• Hovra eller klicka på ett torn för att se dess <b>räckviddscirkel</b>!</p>
-                <p>• Besegra <b>Bossar var 7:e våg</b> för att samla Tech-Stjärnor (⭐).</p>
+                <p>• Besegra <b>Bossar var 7:e våg</b> för att samla Tech-Stjärnor (⭐) till Forskningsträdet.</p>
                 <p>• Kortkommandon: <b>U</b> (Uppgradera), <b>S</b> (Sälj), <b>ESC</b> (Avbryt).</p>
+                <p class="text-[11px] text-stone-700 pt-1 border-t border-stone-400/60">💾 <b>Sparinfo:</b> Allt sparas i webbläsarens <i>localStorage</i> – tömmer du webbplatsdata rensas dina framsteg.</p>
             </div>
         </aside>
 
@@ -353,7 +354,7 @@
 
     <!-- START MENU & EXCLUSIVE PERMANENT TECH TREE MODAL -->
     <div id="start-menu-modal" class="fixed inset-0 bg-stone-950/85 backdrop-blur-xs flex items-center justify-center p-3 sm:p-5 z-50 overflow-y-auto">
-        <div class="bg-amber-100 border-4 border-stone-900 rounded-3xl max-w-4xl w-full p-4 sm:p-6 shadow-2xl my-auto">
+        <div class="bg-amber-100 border-4 border-stone-900 rounded-3xl max-w-5xl w-full p-4 sm:p-6 shadow-2xl my-auto">
             <div class="flex flex-wrap items-center justify-between gap-2 pb-3 border-b-3 border-stone-300">
                 <div class="flex items-center gap-3">
                     <div class="w-12 h-12 rounded-2xl bg-lime-500 border-3 border-stone-900 flex items-center justify-center text-2xl shadow">
@@ -414,14 +415,19 @@
                             </button>
                             <button type="button" data-diff="hard" class="diff-option tank-card bg-white rounded-2xl p-2.5 text-left cursor-pointer">
                                 <div class="font-extrabold text-xs sm:text-sm text-red-600">💀 Svår</div>
-                                <div class="text-[10px] text-stone-600 mt-0.5">15 ❤️ • 300 🪙<br>Tuffare zombies, +⭐</div>
+                                <div class="text-[10px] text-stone-600 mt-0.5">15 ❤️ • 300 🪙<br>Starkare zombies</div>
                             </button>
                         </div>
                     </div>
 
-                    <div class="bg-amber-200/80 border-2 border-stone-400 rounded-2xl p-3 text-xs text-stone-800">
-                        <div class="font-extrabold text-stone-950 mb-1">🎖️ Exklusiv Forskning:</div>
-                        Besegra de gigantiska bossarna var 7:e våg för att tjäna Tech-Stjärnor (⭐) till permanenta uppgraderingar!
+                    <div class="bg-amber-200/80 border-2 border-stone-400 rounded-2xl p-3 text-xs text-stone-800 space-y-1.5">
+                        <div>
+                            <span class="font-extrabold text-stone-950">🎖️ Exklusiv Forskning:</span>
+                            Besegra bossarna var 7:e våg för att tjäna Tech-Stjärnor (⭐) och låsa upp nya stridsvagnar, byggnader, förmågor och permanenta bonusar!
+                        </div>
+                        <div class="text-[11px] bg-white/75 border border-stone-400 rounded-xl px-2.5 py-1.5 text-stone-700">
+                            💾 <b>Viktigt om sparfiler:</b> Alla dina Tech-stjärnor och upplåsningar sparas lokalt i webbläsarens <b>localStorage</b>. Om du rensar cache/localStorage försvinner alla framsteg i spelet.
+                        </div>
                     </div>
 
                     <div id="menu-match-locked-notice" class="hidden bg-red-100 border-2 border-red-500 rounded-2xl p-3 text-xs font-extrabold text-red-900">
@@ -429,15 +435,15 @@
                     </div>
                 </div>
 
-                <div class="bg-amber-50 border-3 border-stone-800 rounded-2xl p-3 flex flex-col justify-between">
+                <div class="bg-amber-50 border-3 border-stone-800 rounded-2xl p-3 flex flex-col justify-between max-h-[520px] overflow-y-auto">
                     <div>
                         <div class="flex items-center justify-between mb-2">
                             <h3 class="cartoon-font font-bold text-lg text-stone-900">🔬 Exklusivt Forskningsträd</h3>
                             <span class="text-[11px] font-bold text-purple-800 bg-purple-100 px-2 py-0.5 rounded-full border border-purple-300">
-                                Sparas automatiskt
+                                Sparas i localStorage
                             </span>
                         </div>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2" id="tech-tree-grid">
+                        <div id="tech-tree-grid" class="space-y-3">
                             <!-- Populated via JS -->
                         </div>
                     </div>
@@ -559,7 +565,8 @@
         const PATH_WIDTH = 50;
         const TANK_RADIUS = 22;
         const MAX_UPGRADE_LEVEL = 5;
-        const STORAGE_KEY = 'tank_vs_zombie_save_v6';
+        const STORAGE_KEY = 'tank_vs_zombie_save_v7';
+        const AIRSTRIKE_RADIUS = 115;
 
         const PRIORITY_MODES = [
             { id: 'first', label: 'Först på vägen' },
@@ -669,35 +676,59 @@
         };
 
         const TECH_NODES = [
-            { id: 'startGold', name: 'Startkapital', icon: '💰', desc: '+60 startguld per nivå', maxLevel: 3, costs: [2, 4, 7] },
-            { id: 'towerDamage', name: 'Stridsträning', icon: '💥', desc: '+8% skada på alla torn/nivå', maxLevel: 3, costs: [3, 5, 8] },
-            { id: 'upgradeDiscount', name: 'Ingenjörskonst', icon: '🔧', desc: '-7% uppgraderingskostnad/nivå', maxLevel: 3, costs: [2, 5, 8] },
-            { id: 'mineIncome', name: 'Guldgruvsdrift', icon: '⛏️', desc: '+18% inkomst från Guldgruvor/nivå', maxLevel: 3, costs: [3, 6, 9] },
-            { id: 'abilityDiscount', name: 'Taktisk Förtrogenhet', icon: '⚡', desc: '-12% kostnad för aktiva förmågor/nivå', maxLevel: 3, costs: [2, 4, 7] },
-            { id: 'baseLives', name: 'Förstärkt Bas', icon: '❤️', desc: '+3 startliv per nivå', maxLevel: 3, costs: [2, 4, 6] }
+            // Upplåsningar av stridsvagnar (i rangordning)
+            { id: 'unlock_speed', category: 'tanks', name: 'Snabbskytt', icon: '🔫', desc: 'Låser upp stridsvagnen Snabbskytt i fabriken', maxLevel: 1, costs: [2] },
+            { id: 'unlock_spike', category: 'tanks', name: 'Spiktorn', icon: '🦔', desc: 'Låser upp Spiktorn som lägger spikmattor på vägen', maxLevel: 1, costs: [3] },
+            { id: 'unlock_sniper', category: 'tanks', name: 'Prickskytt', icon: '🎯', desc: 'Låser upp Prickskytt med lång räckvidd & pansarbryt', maxLevel: 1, costs: [4] },
+            { id: 'unlock_multi', category: 'tanks', name: 'Spridningsvagn', icon: '✳️', desc: 'Låser upp Spridningsvagn (8 skott samtidigt)', maxLevel: 1, costs: [5] },
+            { id: 'unlock_blast', category: 'tanks', name: 'Granatvagn', icon: '💣', desc: 'Låser upp Granatvagn med explosiv områdesskada', maxLevel: 1, costs: [6] },
+            { id: 'unlock_flame', category: 'tanks', name: 'Eldkastare', icon: '🔥', desc: 'Låser upp Eldkastare som bränner & lägger napalm', maxLevel: 1, costs: [7] },
+
+            // Upplåsningar av byggnader
+            { id: 'unlock_mine_bldg', category: 'buildings', name: 'Guldgruva', icon: '⛏️', desc: 'Låser upp Guldgruva för extra guld under vågor', maxLevel: 1, costs: [3] },
+            { id: 'unlock_radar', category: 'buildings', name: 'Radartorn', icon: '📡', desc: 'Låser upp Radartorn (+25% räckvidd & +14% skada)', maxLevel: 1, costs: [3] },
+            { id: 'unlock_depot', category: 'buildings', name: 'Ammodepå', icon: '📦', desc: 'Låser upp Ammodepå (+24% eldhastighet)', maxLevel: 1, costs: [3] },
+
+            // Taktiska förmågor & uppgraderingar
+            { id: 'unlock_roadmine', category: 'abilities', name: 'Vägmina', icon: '🧨', desc: 'Låser upp taktiska förmågan Vägmina', maxLevel: 1, costs: [2] },
+            { id: 'unlock_airstrike', category: 'abilities', name: 'Flyganfall', icon: '✈️', desc: 'Låser upp taktiska förmågan Flyganfall', maxLevel: 1, costs: [5] },
+            { id: 'airstrikeDamage', category: 'abilities', name: 'Tungt Flyganfall', icon: '🚀', desc: '+30% skada på Flyganfall per nivå', maxLevel: 3, costs: [3, 5, 8], requires: 'unlock_airstrike' },
+
+            // Permanenta bonusar (Buffs)
+            { id: 'startGold', category: 'buffs', name: 'Startkapital', icon: '💰', desc: '+60 startguld per nivå', maxLevel: 3, costs: [2, 4, 7] },
+            { id: 'towerDamage', category: 'buffs', name: 'Stridsträning', icon: '💥', desc: '+8% skada på alla torn/nivå', maxLevel: 3, costs: [3, 5, 8] },
+            { id: 'upgradeDiscount', category: 'buffs', name: 'Ingenjörskonst', icon: '🔧', desc: '-7% uppgraderingskostnad/nivå', maxLevel: 3, costs: [2, 5, 8] },
+            { id: 'mineIncome', category: 'buffs', name: 'Guldgruvsdrift', icon: '🪙', desc: '+18% inkomst från Guldgruvor/nivå', maxLevel: 3, costs: [3, 6, 9], requires: 'unlock_mine_bldg' },
+            { id: 'abilityDiscount', category: 'buffs', name: 'Taktisk Förtrogenhet', icon: '⚡', desc: '-12% användningskostnad för förmågor/nivå', maxLevel: 3, costs: [2, 4, 7] },
+            { id: 'baseLives', category: 'buffs', name: 'Förstärkt Bas', icon: '❤️', desc: '+3 startliv per nivå', maxLevel: 3, costs: [2, 4, 6] }
         ];
 
         const TANK_TYPES = {
-            normal: { id: 'normal', name: 'Vanlig', desc: 'Allround-stridsvagn med stabil eldkraft.', specialText: 'Pålitlig stridsvagn med balanserad skada och räckvidd.', buildCost: 75, unlockCost: 0, unlockedByDefault: true, baseDamage: 26, baseRange: 145, baseFireRate: 1.25, projectileSpeed: 520, bodyColor: '#4d7c0f', turretColor: '#65a30d', bulletColor: '#facc15', sound: 'shoot_normal' },
-            freeze: { id: 'freeze', name: 'Freeze', desc: 'Saktar ner zombier med frostpuls (0 skada).', specialText: 'Skjuter frostkulor som fryser ner zombier i ett område med 55%! Uppgraderingar ökar frystiden.', buildCost: 105, unlockCost: 110, unlockedByDefault: false, baseDamage: 0, baseFreezeDuration: 2.6, baseRange: 140, baseFireRate: 1.05, projectileSpeed: 470, splashRadius: 58, bodyColor: '#0369a1', turretColor: '#0ea5e9', bulletColor: '#7dd3fc', sound: 'shoot_freeze' },
-            blast: { id: 'blast', name: 'Blast', desc: 'Explosiva granater med områdesskada.', specialText: 'Skadar alla zombier inom explosionsradien & krossar järnsköldar!', buildCost: 145, unlockCost: 175, unlockedByDefault: false, baseDamage: 48, baseRange: 138, baseFireRate: 0.78, projectileSpeed: 410, splashRadius: 72, bodyColor: '#b91c1c', turretColor: '#ef4444', bulletColor: '#fb923c', sound: 'shoot_blast' },
-            speed: { id: 'speed', name: 'Speed', desc: 'Dubbelpipig gatling som pepprar fienden.', specialText: 'Extremt hög eldhastighet som smälter snabba zombier!', buildCost: 160, unlockCost: 210, unlockedByDefault: false, baseDamage: 17, baseRange: 138, baseFireRate: 3.5, projectileSpeed: 600, bodyColor: '#b45309', turretColor: '#f59e0b', bulletColor: '#fde047', sound: 'shoot_speed' },
-            multi: { id: 'multi', name: 'Multi', desc: 'Skjuter 8 projektiler åt alla håll samtidigt.', specialText: 'Avfyrar 8 skott samtidigt i en solfjäder runt vagnen!', buildCost: 215, unlockCost: 280, unlockedByDefault: false, baseDamage: 24, baseRange: 150, baseFireRate: 1.05, projectileSpeed: 490, bodyColor: '#6d28d9', turretColor: '#8b5cf6', bulletColor: '#e879f9', sound: 'shoot_normal' },
-            sniper: { id: 'sniper', name: 'Sniper', desc: 'Enorm räckvidd & tung pansarbrytande skada.', specialText: 'Når långt över hela kartan och genomborrar sköldar (långsam eldhastighet)!', buildCost: 205, unlockCost: 260, unlockedByDefault: false, baseDamage: 105, baseRange: 335, baseFireRate: 0.36, projectileSpeed: 820, bodyColor: '#0f766e', turretColor: '#14b8a6', bulletColor: '#2dd4bf', sound: 'shoot_blast' },
-            flame: { id: 'flame', name: 'Flame', desc: 'Eldkastare som lämnar eld på vägen.', specialText: 'Sprutar eld som bränner zombier och lägger brinnande napalm på vägen!', buildCost: 185, unlockCost: 240, unlockedByDefault: false, baseDamage: 16, baseRange: 118, baseFireRate: 4.2, projectileSpeed: 340, bodyColor: '#c2410c', turretColor: '#f97316', bulletColor: '#fb923c', sound: 'shoot_flame' },
-            spike: { id: 'spike', name: 'Spiktorn', desc: 'Lägger ut vassa spikmattor på vägen.', specialText: 'Droppar vassa spikmattor direkt på vägen inom räckvidden!', buildCost: 170, unlockCost: 220, unlockedByDefault: false, baseDamage: 46, baseRange: 140, baseFireRate: 0.68, projectileSpeed: 400, bodyColor: '#475569', turretColor: '#64748b', bulletColor: '#cbd5e1', sound: 'shoot_normal' }
+            normal: { id: 'normal', name: 'Standardvagn', desc: 'Allround-stridsvagn med stabil eldkraft.', specialText: 'Pålitlig stridsvagn med balanserad skada och räckvidd.', buildCost: 75, unlockCost: 0, unlockedByDefault: true, baseDamage: 26, baseRange: 145, baseFireRate: 1.25, projectileSpeed: 520, bodyColor: '#4d7c0f', turretColor: '#65a30d', bulletColor: '#facc15', sound: 'shoot_normal' },
+            freeze: { id: 'freeze', name: 'Frostvagn', desc: 'Saktar ner zombier med frostpuls (0 skada).', specialText: 'Skjuter frostkulor som fryser ner zombier i ett område med 55%! Uppgraderingar ökar frystiden.', buildCost: 105, unlockCost: 0, unlockedByDefault: true, baseDamage: 0, baseFreezeDuration: 2.6, baseRange: 140, baseFireRate: 1.05, projectileSpeed: 470, splashRadius: 58, bodyColor: '#0369a1', turretColor: '#0ea5e9', bulletColor: '#7dd3fc', sound: 'shoot_freeze' },
+            speed: { id: 'speed', name: 'Snabbskytt', desc: 'Dubbelpipig gatling som pepprar fienden.', specialText: 'Extremt hög eldhastighet som smälter snabba zombier!', buildCost: 160, unlockCost: 180, techId: 'unlock_speed', unlockedByDefault: false, baseDamage: 17, baseRange: 138, baseFireRate: 3.5, projectileSpeed: 600, bodyColor: '#b45309', turretColor: '#f59e0b', bulletColor: '#fde047', sound: 'shoot_speed' },
+            spike: { id: 'spike', name: 'Spiktorn', desc: 'Lägger ut vassa spikmattor på vägen.', specialText: 'Droppar vassa spikmattor direkt på vägen inom räckvidden!', buildCost: 170, unlockCost: 200, techId: 'unlock_spike', unlockedByDefault: false, baseDamage: 46, baseRange: 140, baseFireRate: 0.68, projectileSpeed: 400, bodyColor: '#475569', turretColor: '#64748b', bulletColor: '#cbd5e1', sound: 'shoot_normal' },
+            sniper: { id: 'sniper', name: 'Prickskytt', desc: 'Enorm räckvidd & tung pansarbrytande skada.', specialText: 'Når långt över hela kartan och genomborrar sköldar (långsam eldhastighet)!', buildCost: 205, unlockCost: 230, techId: 'unlock_sniper', unlockedByDefault: false, baseDamage: 105, baseRange: 335, baseFireRate: 0.36, projectileSpeed: 820, bodyColor: '#0f766e', turretColor: '#14b8a6', bulletColor: '#2dd4bf', sound: 'shoot_blast' },
+            multi: { id: 'multi', name: 'Spridningsvagn', desc: 'Skjuter 8 projektiler åt alla håll samtidigt.', specialText: 'Avfyrar 8 skott samtidigt i en solfjäder runt vagnen!', buildCost: 215, unlockCost: 250, techId: 'unlock_multi', unlockedByDefault: false, baseDamage: 24, baseRange: 150, baseFireRate: 1.05, projectileSpeed: 490, bodyColor: '#6d28d9', turretColor: '#8b5cf6', bulletColor: '#e879f9', sound: 'shoot_normal' },
+            blast: { id: 'blast', name: 'Granatvagn', desc: 'Explosiva granater med områdesskada.', specialText: 'Skadar alla zombier inom explosionsradien & krossar järnsköldar!', buildCost: 145, unlockCost: 220, techId: 'unlock_blast', unlockedByDefault: false, baseDamage: 48, baseRange: 138, baseFireRate: 0.78, projectileSpeed: 410, splashRadius: 72, bodyColor: '#b91c1c', turretColor: '#ef4444', bulletColor: '#fb923c', sound: 'shoot_blast' },
+            flame: { id: 'flame', name: 'Eldkastare', desc: 'Eldkastare som lämnar brinnande napalm på vägen.', specialText: 'Sprutar eld som bränner zombier och lägger brinnande napalm på vägen!', buildCost: 185, unlockCost: 260, techId: 'unlock_flame', unlockedByDefault: false, baseDamage: 16, baseRange: 118, baseFireRate: 4.2, projectileSpeed: 340, bodyColor: '#c2410c', turretColor: '#f97316', bulletColor: '#fb923c', sound: 'shoot_flame' }
         };
 
         const BUILDING_TYPES = {
-            mine: { id: 'mine', name: 'Guldgruva', desc: 'Genererar guld under aktiva vågor + hög vågbonus (Max 1st).', buildCost: 380, baseAuraRange: 65, baseTickGold: 12, baseWaveGold: 125, primaryColor: '#d97706' },
-            radar: { id: 'radar', name: 'Radartorn', desc: 'Boostar räckvidd (+25%) och skada för närliggande torn (Max 2st).', buildCost: 130, baseAuraRange: 135, rangeBoost: 0.25, damageBoost: 0.14, primaryColor: '#0284c7' },
-            depot: { id: 'depot', name: 'Ammodepå', desc: 'Ökar eldhastigheten (+24%) för närliggande torn (Max 2st).', buildCost: 140, baseAuraRange: 135, fireRateBoost: 0.24, primaryColor: '#059669' }
+            mine: { id: 'mine', name: 'Guldgruva', desc: 'Genererar guld under aktiva vågor + hög vågbonus (Max 1st).', buildCost: 380, unlockCost: 160, techId: 'unlock_mine_bldg', baseAuraRange: 65, baseTickGold: 12, baseWaveGold: 125, primaryColor: '#d97706' },
+            radar: { id: 'radar', name: 'Radartorn', desc: 'Boostar räckvidd (+25%) och skada för närliggande torn (Max 2st).', buildCost: 130, unlockCost: 120, techId: 'unlock_radar', baseAuraRange: 135, rangeBoost: 0.25, damageBoost: 0.14, primaryColor: '#0284c7' },
+            depot: { id: 'depot', name: 'Ammodepå', desc: 'Ökar eldhastigheten (+24%) för närliggande torn (Max 2st).', buildCost: 140, unlockCost: 120, techId: 'unlock_depot', baseAuraRange: 135, fireRateBoost: 0.24, primaryColor: '#059669' }
         };
 
         // --- META PROGRESSION ---
         const meta = {
             stars: 0,
-            tech: { startGold: 0, towerDamage: 0, upgradeDiscount: 0, mineIncome: 0, abilityDiscount: 0, baseLives: 0 },
+            tech: {
+                unlock_speed: 0, unlock_spike: 0, unlock_sniper: 0, unlock_multi: 0, unlock_blast: 0, unlock_flame: 0,
+                unlock_mine_bldg: 0, unlock_radar: 0, unlock_depot: 0,
+                unlock_roadmine: 0, unlock_airstrike: 0, airstrikeDamage: 0,
+                startGold: 0, towerDamage: 0, upgradeDiscount: 0, mineIncome: 0, abilityDiscount: 0, baseLives: 0
+            },
             load() {
                 try {
                     const raw = localStorage.getItem(STORAGE_KEY);
@@ -733,10 +764,11 @@
             waveActive: false,
             spawnQueue: [],
             spawnTimer: 0,
-            unlockedTanks: { normal: true, freeze: false, blast: false, speed: false, multi: false, sniper: false, flame: false, spike: false },
+            unlockedTanks: { normal: true, freeze: true, speed: false, spike: false, sniper: false, multi: false, blast: false, flame: false },
+            unlockedBuildings: { mine: false, radar: false, depot: false },
             abilities: {
-                airstrike: { unlocked: false, unlockCost: 250, goldCost: 65, cd: 0, maxCd: 25 },
-                mine: { unlocked: false, unlockCost: 140, goldCost: 35, cd: 0, maxCd: 14 }
+                mine: { unlocked: false, techId: 'unlock_roadmine', unlockCost: 140, goldCost: 35, cd: 0, maxCd: 14 },
+                airstrike: { unlocked: false, techId: 'unlock_airstrike', unlockCost: 340, goldCost: 75, cd: 0, maxCd: 25 }
             },
             actionMode: null,
             selectedEntity: null,
@@ -1511,6 +1543,10 @@
 
         function triggerAirstrikeAt(x, y) {
             const ab = state.abilities.airstrike;
+            if ((meta.tech[ab.techId] || 0) <= 0) {
+                showToast('🔬 Lås upp Flyganfall i Forskningsträdet först!');
+                return;
+            }
             const discount = 1 - meta.tech.abilityDiscount * 0.12;
             const cost = Math.round(ab.goldCost * discount);
 
@@ -1534,20 +1570,28 @@
             sfx.play('shoot_blast');
             updateHUD();
 
-            state.shockwaves.push({ x, y, r: 15, maxR: 115, life: 0.4, color: '#f97316' });
+            state.shockwaves.push({ x, y, r: 15, maxR: AIRSTRIKE_RADIUS, life: 0.4, color: '#f97316', isBlast: true });
             spawnParticles(x, y, '#fb923c', 32);
 
+            const dmgMult = 1 + (meta.tech.airstrikeDamage || 0) * 0.30;
+            const baseStrikeDmg = 95 + state.wave * 18;
+            const totalStrikeDmg = Math.round(baseStrikeDmg * dmgMult);
+
             for (const z of state.zombies) {
-                if (Math.hypot(z.x - x, z.y - y) <= 115) {
-                    z.hp -= (160 + state.wave * 32);
+                if (Math.hypot(z.x - x, z.y - y) <= AIRSTRIKE_RADIUS) {
+                    z.hp -= totalStrikeDmg;
                 }
             }
-            addFloatingText(x, y - 20, '✈️ BOMBANFALL!', '#fb923c');
+            addFloatingText(x, y - 20, `✈️ BOMBANFALL! (-${totalStrikeDmg})`, '#fb923c');
             updateAbilityButtonsUI();
         }
 
         function placeRoadMineAt(x, y) {
             const ab = state.abilities.mine;
+            if ((meta.tech[ab.techId] || 0) <= 0) {
+                showToast('🔬 Lås upp Vägmina i Forskningsträdet först!');
+                return false;
+            }
             const discount = 1 - meta.tech.abilityDiscount * 0.12;
             const cost = Math.round(ab.goldCost * discount);
 
@@ -2293,7 +2337,7 @@
                     ctx.fill();
                 }
                 ctx.strokeStyle = sw.color;
-                ctx.lineWidth = sw.isBlast ? 5 : 4;
+                ctx.lineWidth = 3;
                 ctx.globalAlpha = Math.max(0, sw.life * 2.2);
                 ctx.beginPath();
                 ctx.arc(sw.x, sw.y, sw.r, 0, Math.PI * 2);
@@ -2301,31 +2345,39 @@
                 ctx.restore();
             }
 
-            for (const pt of state.particles) {
-                ctx.fillStyle = pt.color;
-                ctx.beginPath();
-                ctx.arc(pt.x, pt.y, pt.size, 0, Math.PI * 2);
-                ctx.fill();
-            }
-
-            for (const ft of state.floatingTexts) {
+            if (state.actionMode && state.actionMode.mode === 'airstrike') {
+                drawRangeCircle(
+                    ctx,
+                    state.mouseX,
+                    state.mouseY,
+                    AIRSTRIKE_RADIUS,
+                    'rgba(249, 115, 22, 0.24)',
+                    'rgba(234, 88, 12, 0.95)',
+                    true
+                );
                 ctx.save();
-                ctx.globalAlpha = Math.max(0, ft.life / ft.maxLife);
-                ctx.font = 'bold 14px Fredoka, sans-serif';
-                ctx.fillStyle = ft.color;
-                ctx.strokeStyle = '#1c1917';
-                ctx.lineWidth = 3;
-                ctx.textAlign = 'center';
-                ctx.strokeText(ft.text, ft.x, ft.y);
-                ctx.fillText(ft.text, ft.x, ft.y);
+                ctx.strokeStyle = 'rgba(254, 240, 138, 0.9)';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(state.mouseX - 14, state.mouseY);
+                ctx.lineTo(state.mouseX + 14, state.mouseY);
+                ctx.moveTo(state.mouseX, state.mouseY - 14);
+                ctx.lineTo(state.mouseX, state.mouseY + 14);
+                ctx.stroke();
                 ctx.restore();
             }
 
-            for (const ap of state.atmosphereParticles) {
-                ctx.fillStyle = `rgba(255, 255, 255, ${ap.alpha})`;
-                ctx.beginPath();
-                ctx.arc(ap.x, ap.y, ap.size, 0, Math.PI * 2);
-                ctx.fill();
+            if (state.actionMode && state.actionMode.mode === 'mine') {
+                const validMine = isPointOnPath(state.mouseX, state.mouseY, 12);
+                drawRangeCircle(
+                    ctx,
+                    state.mouseX,
+                    state.mouseY,
+                    65,
+                    validMine ? 'rgba(244, 63, 94, 0.22)' : 'rgba(120, 113, 108, 0.22)',
+                    validMine ? 'rgba(225, 29, 72, 0.95)' : 'rgba(120, 113, 108, 0.9)',
+                    true
+                );
             }
 
             if (state.actionMode && state.actionMode.mode === 'place') {
@@ -2372,24 +2424,45 @@
             }
 
             for (const [id, def] of Object.entries(TANK_TYPES)) {
+                const techResearched = def.unlockedByDefault || (meta.tech[def.techId] || 0) > 0;
                 const unlocked = state.unlockedTanks[id];
                 const card = document.createElement('div');
-                card.className = `tank-card bg-white rounded-xl p-2 flex flex-col justify-between cursor-pointer ${unlocked ? '' : 'locked bg-amber-50/90 border-dashed'}`;
+                card.className = `tank-card rounded-xl p-2 flex flex-col justify-between cursor-pointer ${
+                    !techResearched
+                        ? 'locked bg-stone-200/80 border-dashed opacity-75'
+                        : unlocked
+                            ? 'bg-white'
+                            : 'locked bg-amber-50/90 border-dashed'
+                }`;
+
+                let priceHtml = '';
+                if (!techResearched) {
+                    priceHtml = `<div class="text-right leading-tight shrink-0">
+                        <div class="text-[10px] font-extrabold text-purple-800">🔬 Tech-träd</div>
+                        <div class="text-[9px] font-bold text-stone-500">Lås upp i meny</div>
+                    </div>`;
+                } else if (!unlocked) {
+                    priceHtml = `<div class="text-right leading-tight shrink-0">
+                        <div class="text-[10px] font-extrabold text-amber-700">Lås upp: 🪙${def.unlockCost}</div>
+                        <div class="text-[9px] font-bold text-stone-500">Byggpris: 🪙${def.buildCost}</div>
+                    </div>`;
+                } else {
+                    priceHtml = `<span class="text-[10px] font-extrabold shrink-0 text-emerald-700">🪙${def.buildCost}</span>`;
+                }
+
                 card.innerHTML = `
                     <div class="flex items-start justify-between gap-1">
-                        <span class="font-extrabold text-xs text-stone-900 truncate">${unlocked ? '' : '🔒 '}${def.name}</span>
-                        ${unlocked
-                            ? `<span class="text-[10px] font-extrabold shrink-0 text-emerald-700">🪙${def.buildCost}</span>`
-                            : `<div class="text-right leading-tight shrink-0">
-                                <div class="text-[10px] font-extrabold text-amber-700">Lås upp: 🪙${def.unlockCost}</div>
-                                <div class="text-[9px] font-bold text-stone-500">Byggpris: 🪙${def.buildCost}</div>
-                               </div>`
-                        }
+                        <span class="font-extrabold text-xs text-stone-900 truncate">${unlocked ? '' : (techResearched ? '🔒 ' : '🔬 ')}${def.name}</span>
+                        ${priceHtml}
                     </div>
                     <div class="text-[10px] text-stone-600 mt-1 leading-tight">${def.desc}</div>
                 `;
                 card.onclick = () => {
                     sfx.init();
+                    if (!techResearched) {
+                        showToast(`🔬 Lås upp ${def.name} i Forskningsträdet först!`);
+                        return;
+                    }
                     if (!unlocked) {
                         if (state.money >= def.unlockCost) {
                             state.money -= def.unlockCost;
@@ -2415,20 +2488,64 @@
             const list = document.getElementById('building-shop-list');
             list.innerHTML = '';
             for (const [id, def] of Object.entries(BUILDING_TYPES)) {
+                const techResearched = (meta.tech[def.techId] || 0) > 0;
+                const unlocked = state.unlockedBuildings[id];
                 const count = state.buildings.filter(b => b.type === id).length;
                 const maxCount = id === 'mine' ? 1 : 2;
                 const isMaxed = count >= maxCount;
+
                 const card = document.createElement('div');
-                card.className = `tank-card bg-white rounded-xl p-2 flex flex-col justify-between cursor-pointer ${isMaxed ? 'opacity-65' : ''}`;
+                card.className = `tank-card rounded-xl p-2 flex flex-col justify-between cursor-pointer ${
+                    !techResearched
+                        ? 'locked bg-stone-200/80 border-dashed opacity-75'
+                        : !unlocked
+                            ? 'locked bg-amber-50/90 border-dashed'
+                            : isMaxed
+                                ? 'bg-white opacity-65'
+                                : 'bg-white'
+                }`;
+
+                let priceHtml = '';
+                if (!techResearched) {
+                    priceHtml = `<div class="text-right leading-tight shrink-0">
+                        <div class="text-[10px] font-extrabold text-purple-800">🔬 Tech-träd</div>
+                        <div class="text-[9px] font-bold text-stone-500">Lås upp i meny</div>
+                    </div>`;
+                } else if (!unlocked) {
+                    priceHtml = `<div class="text-right leading-tight shrink-0">
+                        <div class="text-[10px] font-extrabold text-amber-700">Lås upp: 🪙${def.unlockCost}</div>
+                        <div class="text-[9px] font-bold text-stone-500">Byggpris: 🪙${def.buildCost}</div>
+                    </div>`;
+                } else {
+                    priceHtml = `<span class="text-[10px] font-bold text-amber-800 shrink-0">🪙${def.buildCost}</span>`;
+                }
+
                 card.innerHTML = `
-                    <div class="flex items-center justify-between gap-1">
-                        <span class="font-extrabold text-xs text-stone-900">${def.name} <span class="text-[10px] text-stone-500">(${count}/${maxCount})</span></span>
-                        <span class="text-[10px] font-bold text-amber-800">🪙${def.buildCost}</span>
+                    <div class="flex items-start justify-between gap-1">
+                        <span class="font-extrabold text-xs text-stone-900">${unlocked ? '' : (techResearched ? '🔒 ' : '🔬 ')}${def.name} <span class="text-[10px] text-stone-500">(${count}/${maxCount})</span></span>
+                        ${priceHtml}
                     </div>
                     <div class="text-[10px] text-stone-600 mt-1 leading-tight">${def.desc}</div>
                 `;
                 card.onclick = () => {
                     sfx.init();
+                    if (!techResearched) {
+                        showToast(`🔬 Lås upp ${def.name} i Forskningsträdet först!`);
+                        return;
+                    }
+                    if (!unlocked) {
+                        if (state.money >= def.unlockCost) {
+                            state.money -= def.unlockCost;
+                            state.unlockedBuildings[id] = true;
+                            sfx.play('unlock');
+                            showToast(`🔓 Låste upp ${def.name} för 🪙${def.unlockCost}!`);
+                            updateHUD();
+                            renderBuildingShop();
+                        } else {
+                            showToast(`⚠️ Behöver 🪙${def.unlockCost} för att låsa upp ${def.name}!`);
+                        }
+                        return;
+                    }
                     const curCount = state.buildings.filter(b => b.type === id).length;
                     if (curCount >= maxCount) {
                         showToast(`⚠️ Max ${maxCount} ${def.name} tillåtna!`);
@@ -2458,38 +2575,74 @@
                 btn.classList.toggle('cursor-pointer', !isMatchLocked);
             });
 
-            for (const node of TECH_NODES) {
-                const lvl = meta.tech[node.id] || 0;
-                const nextCost = lvl < node.maxLevel ? node.costs[lvl] : null;
-                const isDisabled = lvl >= node.maxLevel || isMatchLocked;
-                const card = document.createElement('div');
-                card.className = 'bg-white border-2 border-stone-800 rounded-xl p-2 flex flex-col justify-between';
-                card.innerHTML = `
-                    <div>
-                        <div class="flex items-center justify-between">
-                            <span class="font-extrabold text-xs text-stone-900">${node.icon} ${node.name}</span>
-                            <span class="text-[10px] font-extrabold text-purple-800 bg-purple-100 px-1.5 py-0.5 rounded">Nivå ${lvl}/${node.maxLevel}</span>
-                        </div>
-                        <div class="text-[10px] text-stone-600 mt-1">${node.desc}</div>
-                    </div>
-                    <button class="cartoon-btn mt-2 w-full bg-purple-500 hover:bg-purple-400 text-white font-extrabold text-[11px] py-1 rounded-lg ${isDisabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}" ${isDisabled ? 'disabled' : ''}>
-                        ${lvl >= node.maxLevel ? 'MAXIMERAD' : isMatchLocked ? '🔒 Låst under match' : `Uppgradera (⭐${nextCost})`}
-                    </button>
-                `;
-                card.querySelector('button').onclick = () => {
-                    if (state.matchStarted && !state.gameOver && !state.victory) return;
-                    sfx.init();
-                    if (lvl < node.maxLevel && meta.stars >= nextCost) {
-                        meta.stars -= nextCost;
-                        meta.tech[node.id]++;
-                        meta.save();
-                        sfx.play('unlock');
-                        renderTechTreeGrid();
+            const categories = [
+                { id: 'tanks', title: '🛡️ Stridsvagnar (Lås upp)' },
+                { id: 'buildings', title: '🏗️ Byggnader (Lås upp)' },
+                { id: 'abilities', title: '⚡ Taktiska Förmågor' },
+                { id: 'buffs', title: '⭐ Permanenta Bonusar' }
+            ];
+
+            for (const cat of categories) {
+                const section = document.createElement('div');
+                section.innerHTML = `<div class="text-xs font-extrabold text-stone-800 mb-1.5 border-b border-stone-300 pb-0.5">${cat.title}</div>`;
+                const subGrid = document.createElement('div');
+                subGrid.className = 'grid grid-cols-1 sm:grid-cols-2 gap-2';
+
+                for (const node of TECH_NODES.filter(n => n.category === cat.id)) {
+                    const lvl = meta.tech[node.id] || 0;
+                    const nextCost = lvl < node.maxLevel ? node.costs[lvl] : null;
+                    const reqMet = !node.requires || (meta.tech[node.requires] || 0) > 0;
+                    const isDisabled = lvl >= node.maxLevel || isMatchLocked || !reqMet;
+
+                    let btnLabel = '';
+                    if (lvl >= node.maxLevel) {
+                        btnLabel = node.maxLevel === 1 ? '✅ UPPLÅST' : 'MAXIMERAD';
+                    } else if (!reqMet) {
+                        btnLabel = '🔒 Lås upp förmågan först';
+                    } else if (isMatchLocked) {
+                        btnLabel = '🔒 Låst under match';
                     } else {
-                        showToast('⚠️ Inte tillräckligt med tech-stjärnor!');
+                        btnLabel = node.maxLevel === 1 ? `Lås upp (⭐${nextCost})` : `Uppgradera (⭐${nextCost})`;
                     }
-                };
-                grid.appendChild(card);
+
+                    const card = document.createElement('div');
+                    card.className = `bg-white border-2 border-stone-800 rounded-xl p-2 flex flex-col justify-between ${!reqMet ? 'opacity-65' : ''}`;
+                    card.innerHTML = `
+                        <div>
+                            <div class="flex items-center justify-between gap-1">
+                                <span class="font-extrabold text-xs text-stone-900">${node.icon} ${node.name}</span>
+                                <span class="text-[10px] font-extrabold text-purple-800 bg-purple-100 px-1.5 py-0.5 rounded shrink-0">
+                                    ${node.maxLevel === 1 ? (lvl >= 1 ? 'Upplåst' : 'Låst') : `Nivå ${lvl}/${node.maxLevel}`}
+                                </span>
+                            </div>
+                            <div class="text-[10px] text-stone-600 mt-1 leading-tight">${node.desc}</div>
+                        </div>
+                        <button class="cartoon-btn mt-2 w-full ${lvl >= node.maxLevel ? 'bg-emerald-600' : 'bg-purple-500 hover:bg-purple-400'} text-white font-extrabold text-[11px] py-1 rounded-lg ${isDisabled ? 'opacity-65 cursor-not-allowed' : 'cursor-pointer'}" ${isDisabled ? 'disabled' : ''}>
+                            ${btnLabel}
+                        </button>
+                    `;
+                    card.querySelector('button').onclick = () => {
+                        if (state.matchStarted && !state.gameOver && !state.victory) return;
+                        if (!reqMet) return;
+                        sfx.init();
+                        if (lvl < node.maxLevel && meta.stars >= nextCost) {
+                            meta.stars -= nextCost;
+                            meta.tech[node.id]++;
+                            meta.save();
+                            sfx.play('unlock');
+                            renderTechTreeGrid();
+                            renderTankShop();
+                            renderBuildingShop();
+                            updateAbilityButtonsUI();
+                        } else {
+                            showToast('⚠️ Inte tillräckligt med tech-stjärnor!');
+                        }
+                    };
+                    subGrid.appendChild(card);
+                }
+
+                section.appendChild(subGrid);
+                grid.appendChild(section);
             }
         }
 
@@ -2527,21 +2680,27 @@
         }
 
         function updateAbilityButtonsUI() {
-            const air = state.abilities.airstrike;
-            const airCost = Math.round(air.goldCost * (1 - meta.tech.abilityDiscount * 0.12));
-            document.getElementById('icon-airstrike').textContent = air.unlocked ? '✈️' : '🔒';
-            document.getElementById('title-airstrike').textContent = '✈️ Flyganfall';
-            document.getElementById('cd-airstrike').textContent = !air.unlocked
-                ? `Lås upp: 🪙${air.unlockCost}`
-                : (air.cd > 0 ? `Laddar: ${air.cd.toFixed(1)}s` : `Använd: 🪙${airCost}`);
-
             const mine = state.abilities.mine;
+            const mineResearched = (meta.tech[mine.techId] || 0) > 0;
             const mineCost = Math.round(mine.goldCost * (1 - meta.tech.abilityDiscount * 0.12));
-            document.getElementById('icon-mine').textContent = mine.unlocked ? '💣' : '🔒';
+            document.getElementById('icon-mine').textContent = !mineResearched ? '🔬' : (mine.unlocked ? '💣' : '🔒');
             document.getElementById('title-mine').textContent = '💣 Vägmina';
-            document.getElementById('cd-mine').textContent = !mine.unlocked
-                ? `Lås upp: 🪙${mine.unlockCost}`
-                : (mine.cd > 0 ? `Laddar: ${mine.cd.toFixed(1)}s` : `Använd: 🪙${mineCost}`);
+            document.getElementById('cd-mine').textContent = !mineResearched
+                ? 'Lås upp i Tech-träd'
+                : !mine.unlocked
+                    ? `Lås upp: 🪙${mine.unlockCost}`
+                    : (mine.cd > 0 ? `Laddar: ${mine.cd.toFixed(1)}s` : `Använd: 🪙${mineCost}`);
+
+            const air = state.abilities.airstrike;
+            const airResearched = (meta.tech[air.techId] || 0) > 0;
+            const airCost = Math.round(air.goldCost * (1 - meta.tech.abilityDiscount * 0.12));
+            document.getElementById('icon-airstrike').textContent = !airResearched ? '🔬' : (air.unlocked ? '✈️' : '🔒');
+            document.getElementById('title-airstrike').textContent = '✈️ Flyganfall';
+            document.getElementById('cd-airstrike').textContent = !airResearched
+                ? 'Lås upp i Tech-träd'
+                : !air.unlocked
+                    ? `Lås upp: 🪙${air.unlockCost}`
+                    : (air.cd > 0 ? `Laddar: ${air.cd.toFixed(1)}s` : `Använd: 🪙${airCost}`);
         }
 
         function openUpgradePanel(entity) {
@@ -2686,8 +2845,8 @@
             state.spawnQueue = [];
             state.actionMode = null;
             state.selectedEntity = null;
-
-            state.unlockedTanks = { normal: true, freeze: false, blast: false, speed: false, multi: false, sniper: false, flame: false, spike: false };
+            state.unlockedTanks = { normal: true, freeze: true, speed: false, spike: false, sniper: false, multi: false, blast: false, flame: false };
+            state.unlockedBuildings = { mine: false, radar: false, depot: false };
             state.abilities.airstrike.unlocked = false;
             state.abilities.airstrike.cd = 0;
             state.abilities.mine.unlocked = false;
@@ -2916,6 +3075,10 @@
         document.getElementById('btn-ability-airstrike').onclick = () => {
             sfx.init();
             const ab = state.abilities.airstrike;
+            if ((meta.tech[ab.techId] || 0) <= 0) {
+                showToast('🔬 Lås upp Flyganfall i Forskningsträdet först!');
+                return;
+            }
             if (!ab.unlocked) {
                 triggerAirstrikeAt(0, 0);
                 return;
@@ -2934,6 +3097,10 @@
         document.getElementById('btn-ability-mine').onclick = () => {
             sfx.init();
             const ab = state.abilities.mine;
+            if ((meta.tech[ab.techId] || 0) <= 0) {
+                showToast('🔬 Lås upp Vägmina i Forskningsträdet först!');
+                return;
+            }
             if (!ab.unlocked) {
                 placeRoadMineAt(0, 0);
                 return;
