@@ -450,13 +450,27 @@
                 </div>
             </div>
 
-            <div class="mt-5 flex flex-wrap items-center justify-end gap-3 pt-3 border-t-3 border-stone-300">
-                <button id="btn-resume-game" class="hidden cartoon-btn bg-stone-200 hover:bg-stone-100 text-stone-900 font-extrabold text-sm px-5 py-3 rounded-2xl cursor-pointer">
-                    ↩️ Återgå till pågående match
-                </button>
-                <button id="btn-start-match" class="cartoon-btn bg-lime-500 hover:bg-lime-400 text-stone-950 font-extrabold text-base sm:text-lg px-7 py-3 rounded-2xl cursor-pointer flex items-center gap-2">
-                    <span>🚀</span> <span>STARTA NY MATCH!</span>
-                </button>
+            <div class="mt-5 flex flex-wrap items-center justify-between gap-3 pt-3 border-t-3 border-stone-300">
+                <div class="flex items-center gap-2" id="lang-selector-grid">
+                    <button type="button" data-lang="sv" id="btn-lang-sv" class="cartoon-btn bg-white hover:bg-amber-50 text-stone-900 font-extrabold text-xs sm:text-sm px-3 py-2 rounded-xl cursor-pointer flex items-center gap-1.5" title="Svenska">
+                        <span>🇸🇪</span> <span>SV</span>
+                    </button>
+                    <button type="button" data-lang="en" id="btn-lang-en" class="cartoon-btn bg-white hover:bg-amber-50 text-stone-900 font-extrabold text-xs sm:text-sm px-3 py-2 rounded-xl cursor-pointer flex items-center gap-1.5" title="English">
+                        <span>🇬🇧</span> <span>EN</span>
+                    </button>
+                </div>
+
+                <div class="flex flex-wrap items-center justify-end gap-3">
+                    <button id="btn-abort-match" class="hidden cartoon-btn bg-rose-500 hover:bg-rose-400 text-white font-extrabold text-sm px-4 py-3 rounded-2xl cursor-pointer">
+                        🛑 Avsluta match
+                    </button>
+                    <button id="btn-resume-game" class="hidden cartoon-btn bg-stone-200 hover:bg-stone-100 text-stone-900 font-extrabold text-sm px-5 py-3 rounded-2xl cursor-pointer">
+                        ↩️ Återgå till pågående match
+                    </button>
+                    <button id="btn-start-match" class="cartoon-btn bg-lime-500 hover:bg-lime-400 text-stone-950 font-extrabold text-base sm:text-lg px-7 py-3 rounded-2xl cursor-pointer flex items-center gap-2">
+                        <span>🚀</span> <span id="btn-start-match-label">STARTA NY MATCH!</span>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -464,6 +478,561 @@
     <script>
     (() => {
         'use strict';
+
+        // --- LANGUAGE ENGINE ---
+        const userLang = navigator.language || navigator.userLanguage || 'en';
+        let currentLang = String(userLang).toLowerCase().startsWith('sv') ? 'sv' : 'en';
+
+        const I18N = {
+            sv: {
+                menuAndTech: 'Meny & Tech',
+                mapLabel: (mapName, maxWaves, diffName) => `${mapName} (${maxWaves} vågor) • ${diffName}`,
+                titleLives: 'Basens Liv',
+                titleMoney: 'Guld',
+                titleStars: 'Tech-Stjärnor (tjänas från bossar)',
+                wavePrefix: 'Våg',
+                waveMiddle: 'av',
+                titleSpeed: 'Spelhastighet (1x / 2x / 3x)',
+                titleSound: 'Ljud på/av',
+                titleAutoWave: 'Starta nästa våg automatiskt',
+                autoLabel: 'Auto',
+                startWaveN: n => `Starta Våg ${n}`,
+                startWaveCountdown: (n, s) => `Starta Våg ${n} (${s}s)`,
+                waveInProgress: 'Våg pågår...',
+                mapCleared: 'Karta klarad!',
+                allWavesCleared: 'Alla vågor avklarade!',
+                bossHudTitle: '👑 MEGA ZOMBIE-BOSS',
+                nextWaveLabel: 'Nästa våg:',
+                bossWarningSub: 'Endast den gigantiska Zombie-Bossen anfaller!',
+                cancelModeBtn: '✖ Avbryt läge (ESC)',
+                levelText: (lvl, maxLvl) => `Nivå ${lvl} / ${maxLvl}`,
+                statDmg: 'Skada',
+                statFreeze: 'Frystid',
+                statGoldTick: 'Guld/Tick',
+                statAuraBoost: 'Aura-boost',
+                statRange: 'Räckvidd',
+                statWaveBonus: 'Vågbonus',
+                statAuraRange: 'Auradie',
+                statFireRate: 'Eldhastighet',
+                statInterval: 'Intervall',
+                statType: 'Typ',
+                statSupport: 'Stöd',
+                statActive: 'Aktiv',
+                statFast: 'Fast',
+                statMax: 'MAX',
+                upgradeBtn: '⬆️ Uppgradera',
+                sellBtn: '💰 Sälj (70%)',
+                goTitle: 'SPELET SLUT!',
+                goSub: 'Zombierna bröt igenom ditt försvar!',
+                goWaves: 'Klarade vågor:',
+                goKills: 'Besegrade zombies:',
+                goStars: 'Intjänade Tech-Stjärnor:',
+                goMenu: '🏠 Meny & Tech',
+                goRestart: '🔄 Spela Igen',
+                vicTitle: 'SEGER!',
+                vicSub: 'Du klarade alla vågor på kartan!',
+                abilitiesTitle: 'Taktiska Förmågor',
+                abilitiesSub: 'Lås upp i matchen',
+                mineTitle: '💣 Vägmina',
+                mineTooltip: 'Vägmina - Placera sprängmina',
+                airstrikeTitle: '✈️ Flyganfall',
+                airstrikeTooltip: 'Flyganfall - Bombar valt område',
+                researchRequired: 'Forskning krävs',
+                unlockInTech: 'Lås upp i Tech-träd',
+                unlockGold: cost => `Lås upp: 🪙${cost}`,
+                recharging: sec => `Laddar: ${sec.toFixed(1)}s`,
+                useGold: cost => `Använd: 🪙${cost}`,
+                factoryTitle: 'Stridsvagns-fabrik',
+                unlockedBadge: (u, t) => `Upplåsta: ${u}/${t}`,
+                buildingsTitle: 'Byggnader & Ekonomi',
+                mineBadge: (c, m) => `Gruva: ${c}/${m}`,
+                radarBadge: (c, m) => `Radar: ${c}/${m}`,
+                depotBadge: (c, m) => `Depå: ${c}/${m}`,
+                guideTitle: '💡 Snabbguide:',
+                guide1: '• Hovra eller klicka på ett torn för att se dess <b>räckviddscirkel</b>!',
+                guide2: '• Besegra <b>Bossar var 7:e våg</b> för att samla Tech-Stjärnor (⭐) till Forskningsträdet.',
+                guide3: '• Kortkommandon: <b>U</b> (Uppgradera), <b>S</b> (Sälj), <b>ESC</b> (Avbryt).',
+                guideSave: '💾 <b>Sparinfo:</b> Allt sparas i webbläsarens <i>localStorage</i> – tömmer du webbplatsdata rensas dina framsteg.',
+                menuSub: 'Välj karta, svårighetsgrad & exklusiv permanent forskning',
+                menuStarsLabel: 'Tech-Stjärnor',
+                step1Map: '🗺️ 1. Välj Karta',
+                step2Diff: '⚔️ 2. Välj Svårighetsgrad',
+                menuResearchInfoTitle: '🎖️ Exklusiv Forskning:',
+                menuResearchInfoBody: 'Besegra bossarna var 7:e våg för att tjäna Tech-Stjärnor (⭐) och låsa upp nya stridsvagnar, byggnader, förmågor och permanenta bonusar!',
+                menuSaveInfo: '💾 <b>Viktigt om sparfiler:</b> Alla dina Tech-stjärnor och upplåsningar sparas lokalt i webbläsarens <b>localStorage</b>. Om du rensar cache/localStorage försvinner alla framsteg i spelet.',
+                matchLockedNotice: '⏸️ Match pausad: Karta, svårighetsgrad och forskningsträdet är låsta medan en match pågår. Avsluta eller förlora matchen för att ändra!',
+                techTreeTitle: '🔬 Exklusivt Forskningsträd',
+                savedLocalStorageBadge: 'Sparas i localStorage',
+                abortMatchBtn: '🛑 Avsluta match',
+                resumeMatchBtn: '↩️ Återgå till pågående match',
+                startNewMatchBtn: 'STARTA NY MATCH!',
+                mapMeadowName: 'Gröna Ängen',
+                mapMeadowWaves: '42 Vågor (6 Bossar)',
+                mapMeadowDesc: 'Slingrande väg, träbro över bäck & damm.',
+                mapDesertName: 'Ökenfortet',
+                mapDesertWaves: '70 Vågor (10 Bossar)',
+                mapDesertDesc: 'Kaktusar, oas & många kurvor för korseld.',
+                mapWinterName: 'Vinterpasset',
+                mapWinterWaves: '100 Vågor (14 Bossar)',
+                mapWinterDesc: 'Snöigt pass, isbro & frusen alpsjö.',
+                diffEasyName: '😊 Lätt',
+                diffEasyDesc: '25 ❤️ • 450 🪙<br>Svagare zombies',
+                diffNormalName: '😎 Normal',
+                diffNormalDesc: '20 ❤️ • 350 🪙<br>Balanserad utmaning',
+                diffHardName: '💀 Svår',
+                diffHardDesc: '15 ❤️ • 300 🪙<br>Starkare zombies',
+                priorities: { first: 'Först på vägen', strongest: 'Starkast (mest HP)', closest: 'Närmast vagnen', last: 'Sist på vägen' },
+                wavePreviews: {
+                    boss: (bn, stars) => `👑 BOSS #${bn} (+${stars} ⭐)`,
+                    w1: 'Vanliga Zombier',
+                    w2: 'Vanliga + Snabba Löpare',
+                    w3: 'Löpare + Tunga Jättar',
+                    w4: 'Jättar + Sköld-Zombier',
+                    wDefault: 'Blandad Hord + Nekromantiker'
+                },
+                tanks: {
+                    normal: { name: 'Standardvagn', desc: 'Allround-stridsvagn med stabil eldkraft.', special: 'Pålitlig stridsvagn med balanserad skada och räckvidd.' },
+                    freeze: { name: 'Frostvagn', desc: 'Saktar ner zombier med frostpuls (0 skada).', special: 'Skjuter frostkulor som fryser ner zombier i ett område med 55%! Uppgraderingar ökar frystiden.' },
+                    speed: { name: 'Snabbskytt', desc: 'Dubbelpipig gatling som pepprar fienden.', special: 'Extremt hög eldhastighet som smälter snabba zombier!' },
+                    spike: { name: 'Spiktorn', desc: 'Lägger ut vassa spikmattor på vägen.', special: 'Droppar vassa spikmattor direkt på vägen inom räckvidden!' },
+                    sniper: { name: 'Prickskytt', desc: 'Enorm räckvidd & tung pansarbrytande skada.', special: 'Når långt över hela kartan och genomborrar sköldar (långsam eldhastighet)!' },
+                    multi: { name: 'Spridningsvagn', desc: 'Skjuter 8 projektiler åt alla håll samtidigt.', special: 'Avfyrar 8 skott samtidigt i en solfjäder runt vagnen!' },
+                    blast: { name: 'Granatvagn', desc: 'Explosiva granater med områdesskada.', special: 'Skadar alla zombier inom explosionsradien & krossar järnsköldar!' },
+                    flame: { name: 'Eldkastare', desc: 'Eldkastare som lämnar brinnande napalm på vägen.', special: 'Sprutar eld som bränner zombier och lägger brinnande napalm på vägen!' }
+                },
+                buildings: {
+                    mine: { name: 'Guldgruva', desc: 'Genererar guld under aktiva vågor + hög vågbonus (Max 1st).', special: 'Genererar guld under aktiva vågor + hög vågbonus (Max 1st).' },
+                    radar: { name: 'Radartorn', desc: 'Boostar räckvidd (+25%) och skada för närliggande torn (Max 2st).', special: 'Boostar räckvidd (+25%) och skada för närliggande torn (Max 2st).' },
+                    depot: { name: 'Ammodepå', desc: 'Ökar eldhastigheten (+24%) för närliggande torn (Max 2st).', special: 'Ökar eldhastigheten (+24%) för närliggande torn (Max 2st).' }
+                },
+                techCats: {
+                    tanks: '🛡️ Stridsvagnar (Lås upp)',
+                    buildings: '🏗️ Byggnader (Lås upp)',
+                    abilities: '⚡ Taktiska Förmågor',
+                    buffs: '⭐ Permanenta Bonusar'
+                },
+                techNodes: {
+                    unlock_speed: { name: 'Snabbskytt', desc: 'Låser upp stridsvagnen Snabbskytt i fabriken' },
+                    unlock_spike: { name: 'Spiktorn', desc: 'Låser upp Spiktorn som lägger spikmattor på vägen' },
+                    unlock_sniper: { name: 'Prickskytt', desc: 'Låser upp Prickskytt med lång räckvidd & pansarbryt' },
+                    unlock_multi: { name: 'Spridningsvagn', desc: 'Låser upp Spridningsvagn (8 skott samtidigt)' },
+                    unlock_blast: { name: 'Granatvagn', desc: 'Låser upp Granatvagn med explosiv områdesskada' },
+                    unlock_flame: { name: 'Eldkastare', desc: 'Låser upp Eldkastare som bränner & lägger napalm' },
+                    unlock_mine_bldg: { name: 'Guldgruva', desc: 'Låser upp Guldgruva för extra guld under vågor' },
+                    unlock_radar: { name: 'Radartorn', desc: 'Låser upp Radartorn (+25% räckvidd & +14% skada)' },
+                    unlock_depot: { name: 'Ammodepå', desc: 'Låser upp Ammodepå (+24% eldhastighet)' },
+                    unlock_roadmine: { name: 'Vägmina', desc: 'Låser upp taktiska förmågan Vägmina' },
+                    unlock_airstrike: { name: 'Flyganfall', desc: 'Låser upp taktiska förmågan Flyganfall' },
+                    airstrikeDamage: { name: 'Tungt Flyganfall', desc: '+30% skada på Flyganfall per nivå' },
+                    startGold: { name: 'Startkapital', desc: '+60 startguld per nivå' },
+                    towerDamage: { name: 'Stridsträning', desc: '+8% skada på alla torn/nivå' },
+                    upgradeDiscount: { name: 'Ingenjörskonst', desc: '-7% uppgraderingskostnad/nivå' },
+                    mineIncome: { name: 'Guldgruvsdrift', desc: '+18% inkomst från Guldgruvor/nivå' },
+                    abilityDiscount: { name: 'Taktisk Förtrogenhet', desc: '-12% användningskostnad för förmågor/nivå' },
+                    baseLives: { name: 'Förstärkt Bas', desc: '+3 startliv per nivå' }
+                },
+                toasts: {
+                    needTechForAbility: label => `🔬 Lås upp ${label} i Forskningsträdet först!`,
+                    abilityUnlocked: label => `${label} upplåst!`,
+                    needGoldUnlock: cost => `⚠️ Behöver 🪙${cost} för att låsa upp!`,
+                    needGoldUnlockName: (cost, name) => `⚠️ Behöver 🪙${cost} för att låsa upp ${name}!`,
+                    mineOnRoad: '⚠️ Minan måste placeras på vägen!',
+                    minePlaced: '💣 Mina utlagd!',
+                    bossDefeated: (bn, bonus, stars) => `👑 Boss #${bn} besegrad! +🪙${bonus} & +${stars} ⭐`,
+                    waveCleared: (w, bonus) => `🎉 Våg ${w} klarad! +🪙${bonus}`,
+                    needTechForItem: name => `🔬 Lås upp ${name} i Forskningsträdet först!`,
+                    itemUnlocked: (name, cost) => `🔓 Låste upp ${name} för 🪙${cost}!`,
+                    chooseSpot: name => `Välj plats för ${name}`,
+                    maxBuilding: (max, name) => `⚠️ Max ${max} ${name} tillåtna!`,
+                    needStars: '⚠️ Inte tillräckligt med tech-stjärnor!',
+                    cantPlaceHere: '⚠️ Kan inte placera här!',
+                    notEnoughGold: '❌ Inte tillräckligt med guld!',
+                    clickBombMap: '✈️ Klicka på kartan för att bomba!',
+                    clickMineRoad: '💣 Klicka på vägen för att lägga mina!',
+                    airstrikeCooling: '⏳ Flyganfall laddar om!',
+                    mineCooling: '⏳ Vägmina laddar om!',
+                    matchAborted: '🛑 Match avslutad – välj karta eller starta ny match!'
+                },
+                floating: {
+                    lvlUp: lvl => `⬆️ NIVÅ ${lvl}!`,
+                    airstrikeDmg: dmg => `✈️ BOMBANFALL! (-${dmg})`
+                },
+                bossBannerTitle: (bn, w, maxW) => `⚠️ BOSS #${bn}! VÅG ${w} AV ${maxW} ⚠️`,
+                techUnlockedBadge: 'Upplåst',
+                techLockedBadge: 'Låst',
+                techLvlBadge: (lvl, max) => `Nivå ${lvl}/${max}`,
+                techBtnUnlocked: '✅ UPPLÅST',
+                techBtnMaxed: 'MAXIMERAD',
+                techBtnReq: '🔒 Lås upp förmågan först',
+                techBtnLockedMatch: '🔒 Låst under match',
+                techBtnUnlock: cost => `Lås upp (⭐${cost})`,
+                techBtnUpgrade: cost => `Uppgradera (⭐${cost})`,
+                techTreeBtnLabel: '🔬 Tech-träd',
+                techTreeSubLabel: 'Lås upp i meny',
+                unlockCostShort: cost => `Lås upp: 🪙${cost}`,
+                buildCostShort: cost => `Byggpris: 🪙${cost}`,
+                canvasStart: 'Start',
+                canvasGoal: 'Mål'
+            },
+            en: {
+                menuAndTech: 'Menu & Tech',
+                mapLabel: (mapName, maxWaves, diffName) => `${mapName} (${maxWaves} waves) • ${diffName}`,
+                titleLives: 'Base Lives',
+                titleMoney: 'Gold',
+                titleStars: 'Tech Stars (earned from bosses)',
+                wavePrefix: 'Wave',
+                waveMiddle: 'of',
+                titleSpeed: 'Game Speed (1x / 2x / 3x)',
+                titleSound: 'Sound on/off',
+                titleAutoWave: 'Start next wave automatically',
+                autoLabel: 'Auto',
+                startWaveN: n => `Start Wave ${n}`,
+                startWaveCountdown: (n, s) => `Start Wave ${n} (${s}s)`,
+                waveInProgress: 'Wave active...',
+                mapCleared: 'Map cleared!',
+                allWavesCleared: 'All waves cleared!',
+                bossHudTitle: '👑 MEGA ZOMBIE BOSS',
+                nextWaveLabel: 'Next wave:',
+                bossWarningSub: 'Only the gigantic Zombie Boss attacks!',
+                cancelModeBtn: '✖ Cancel mode (ESC)',
+                levelText: (lvl, maxLvl) => `Level ${lvl} / ${maxLvl}`,
+                statDmg: 'Damage',
+                statFreeze: 'Freeze Time',
+                statGoldTick: 'Gold/Tick',
+                statAuraBoost: 'Aura Boost',
+                statRange: 'Range',
+                statWaveBonus: 'Wave Bonus',
+                statAuraRange: 'Aura Range',
+                statFireRate: 'Fire Rate',
+                statInterval: 'Interval',
+                statType: 'Type',
+                statSupport: 'Support',
+                statActive: 'Active',
+                statFast: 'Fast',
+                statMax: 'MAX',
+                upgradeBtn: '⬆️ Upgrade',
+                sellBtn: '💰 Sell (70%)',
+                goTitle: 'GAME OVER!',
+                goSub: 'The zombies broke through your defenses!',
+                goWaves: 'Waves cleared:',
+                goKills: 'Zombies defeated:',
+                goStars: 'Tech Stars earned:',
+                goMenu: '🏠 Menu & Tech',
+                goRestart: '🔄 Play Again',
+                vicTitle: 'VICTORY!',
+                vicSub: 'You cleared all waves on the map!',
+                abilitiesTitle: 'Tactical Abilities',
+                abilitiesSub: 'Unlock in match',
+                mineTitle: '💣 Road Mine',
+                mineTooltip: 'Road Mine - Place explosive mine',
+                airstrikeTitle: '✈️ Airstrike',
+                airstrikeTooltip: 'Airstrike - Bomb chosen area',
+                researchRequired: 'Research required',
+                unlockInTech: 'Unlock in Tech Tree',
+                unlockGold: cost => `Unlock: 🪙${cost}`,
+                recharging: sec => `Cooling: ${sec.toFixed(1)}s`,
+                useGold: cost => `Use: 🪙${cost}`,
+                factoryTitle: 'Tank Factory',
+                unlockedBadge: (u, t) => `Unlocked: ${u}/${t}`,
+                buildingsTitle: 'Buildings & Economy',
+                mineBadge: (c, m) => `Mine: ${c}/${m}`,
+                radarBadge: (c, m) => `Radar: ${c}/${m}`,
+                depotBadge: (c, m) => `Depot: ${c}/${m}`,
+                guideTitle: '💡 Quick Guide:',
+                guide1: '• Hover or click a tower to see its <b>range circle</b>!',
+                guide2: '• Defeat <b>Bosses every 7th wave</b> to collect Tech Stars (⭐) for the Tech Tree.',
+                guide3: '• Shortcuts: <b>U</b> (Upgrade), <b>S</b> (Sell), <b>ESC</b> (Cancel).',
+                guideSave: '💾 <b>Save Info:</b> Everything is saved in your browser’s <i>localStorage</i> – clearing site data wipes your progress.',
+                menuSub: 'Choose map, difficulty & exclusive permanent research',
+                menuStarsLabel: 'Tech Stars',
+                step1Map: '🗺️ 1. Choose Map',
+                step2Diff: '⚔️ 2. Choose Difficulty',
+                menuResearchInfoTitle: '🎖️ Exclusive Research:',
+                menuResearchInfoBody: 'Defeat bosses every 7th wave to earn Tech Stars (⭐) and unlock new tanks, buildings, abilities and permanent bonuses!',
+                menuSaveInfo: '💾 <b>Important Save Info:</b> All your Tech Stars and unlocks are saved locally in your browser’s <b>localStorage</b>. Clearing cache/localStorage erases all progress.',
+                matchLockedNotice: '⏸️ Match paused: Map, difficulty and tech tree are locked while a match is active. Abort or lose the match to change!',
+                techTreeTitle: '🔬 Exclusive Tech Tree',
+                savedLocalStorageBadge: 'Saved in localStorage',
+                abortMatchBtn: '🛑 Abort match',
+                resumeMatchBtn: '↩️ Resume active match',
+                startNewMatchBtn: 'START NEW MATCH!',
+                mapMeadowName: 'Green Meadow',
+                mapMeadowWaves: '42 Waves (6 Bosses)',
+                mapMeadowDesc: 'Winding road, wooden bridge over stream & pond.',
+                mapDesertName: 'Desert Fort',
+                mapDesertWaves: '70 Waves (10 Bosses)',
+                mapDesertDesc: 'Cacti, oasis & many turns for crossfire.',
+                mapWinterName: 'Winter Pass',
+                mapWinterWaves: '100 Waves (14 Bosses)',
+                mapWinterDesc: 'Snowy pass, ice bridge & frozen alpine lake.',
+                diffEasyName: '😊 Easy',
+                diffEasyDesc: '25 ❤️ • 450 🪙<br>Weaker zombies',
+                diffNormalName: '😎 Normal',
+                diffNormalDesc: '20 ❤️ • 350 🪙<br>Balanced challenge',
+                diffHardName: '💀 Hard',
+                diffHardDesc: '15 ❤️ • 300 🪙<br>Stronger zombies',
+                priorities: { first: 'First on path', strongest: 'Strongest (most HP)', closest: 'Closest to tank', last: 'Last on path' },
+                wavePreviews: {
+                    boss: (bn, stars) => `👑 BOSS #${bn} (+${stars} ⭐)`,
+                    w1: 'Normal Zombies',
+                    w2: 'Normal + Fast Runners',
+                    w3: 'Runners + Heavy Giants',
+                    w4: 'Giants + Shield Zombies',
+                    wDefault: 'Mixed Horde + Necromancers'
+                },
+                tanks: {
+                    normal: { name: 'Standard Tank', desc: 'All-round tank with steady firepower.', special: 'Reliable tank with balanced damage and range.' },
+                    freeze: { name: 'Frost Tank', desc: 'Slows zombies with frost pulse (0 damage).', special: 'Fires frost shells that slow zombies in an area by 55%! Upgrades increase freeze time.' },
+                    speed: { name: 'Rapid Gunner', desc: 'Twin-barrel gatling shredding enemies.', special: 'Extreme fire rate that melts fast zombies!' },
+                    spike: { name: 'Spike Tower', desc: 'Drops sharp spike mats onto the road.', special: 'Drops sharp spike mats directly onto the road within range!' },
+                    sniper: { name: 'Marksman', desc: 'Huge range & heavy armor-piercing damage.', special: 'Reaches far across the map and pierces shields (slow fire rate)!' },
+                    multi: { name: 'Scatter Tank', desc: 'Fires 8 projectiles in all directions at once.', special: 'Fires 8 shots simultaneously in a ring around the tank!' },
+                    blast: { name: 'Mortar Tank', desc: 'Explosive shells with area splash damage.', special: 'Damages all zombies within blast radius & shatters iron shields!' },
+                    flame: { name: 'Flamethrower', desc: 'Flamethrower leaving burning napalm on the road.', special: 'Sprays fire that burns zombies and leaves burning napalm on the road!' }
+                },
+                buildings: {
+                    mine: { name: 'Gold Mine', desc: 'Generates gold during active waves + high wave bonus (Max 1).', special: 'Generates gold during active waves + high wave bonus (Max 1).' },
+                    radar: { name: 'Radar Tower', desc: 'Boosts range (+25%) and damage for nearby towers (Max 2).', special: 'Boosts range (+25%) and damage for nearby towers (Max 2).' },
+                    depot: { name: 'Ammo Depot', desc: 'Increases fire rate (+24%) for nearby towers (Max 2).', special: 'Increases fire rate (+24%) for nearby towers (Max 2).' }
+                },
+                techCats: {
+                    tanks: '🛡️ Tanks (Unlock)',
+                    buildings: '🏗️ Buildings (Unlock)',
+                    abilities: '⚡ Tactical Abilities',
+                    buffs: '⭐ Permanent Bonuses'
+                },
+                techNodes: {
+                    unlock_speed: { name: 'Rapid Gunner', desc: 'Unlocks the Rapid Gunner tank in the factory' },
+                    unlock_spike: { name: 'Spike Tower', desc: 'Unlocks Spike Tower which drops spike mats on the road' },
+                    unlock_sniper: { name: 'Marksman', desc: 'Unlocks Marksman with long range & armor piercing' },
+                    unlock_multi: { name: 'Scatter Tank', desc: 'Unlocks Scatter Tank (8 shots at once)' },
+                    unlock_blast: { name: 'Mortar Tank', desc: 'Unlocks Mortar Tank with explosive splash damage' },
+                    unlock_flame: { name: 'Flamethrower', desc: 'Unlocks Flamethrower that burns & leaves napalm' },
+                    unlock_mine_bldg: { name: 'Gold Mine', desc: 'Unlocks Gold Mine for extra gold during waves' },
+                    unlock_radar: { name: 'Radar Tower', desc: 'Unlocks Radar Tower (+25% range & +14% damage)' },
+                    unlock_depot: { name: 'Ammo Depot', desc: 'Unlocks Ammo Depot (+24% fire rate)' },
+                    unlock_roadmine: { name: 'Road Mine', desc: 'Unlocks the tactical Road Mine ability' },
+                    unlock_airstrike: { name: 'Airstrike', desc: 'Unlocks the tactical Airstrike ability' },
+                    airstrikeDamage: { name: 'Heavy Airstrike', desc: '+30% Airstrike damage per level' },
+                    startGold: { name: 'Starting Capital', desc: '+60 starting gold per level' },
+                    towerDamage: { name: 'Combat Drill', desc: '+8% damage on all towers per level' },
+                    upgradeDiscount: { name: 'Engineering', desc: '-7% upgrade cost per level' },
+                    mineIncome: { name: 'Mining Operations', desc: '+18% income from Gold Mines per level' },
+                    abilityDiscount: { name: 'Tactical Mastery', desc: '-12% ability usage cost per level' },
+                    baseLives: { name: 'Fortified Base', desc: '+3 starting lives per level' }
+                },
+                toasts: {
+                    needTechForAbility: label => `🔬 Unlock ${label} in the Tech Tree first!`,
+                    abilityUnlocked: label => `${label} unlocked!`,
+                    needGoldUnlock: cost => `⚠️ Need 🪙${cost} to unlock!`,
+                    needGoldUnlockName: (cost, name) => `⚠️ Need 🪙${cost} to unlock ${name}!`,
+                    mineOnRoad: '⚠️ Mine must be placed on the road!',
+                    minePlaced: '💣 Mine planted!',
+                    bossDefeated: (bn, bonus, stars) => `👑 Boss #${bn} defeated! +🪙${bonus} & +${stars} ⭐`,
+                    waveCleared: (w, bonus) => `🎉 Wave ${w} cleared! +🪙${bonus}`,
+                    needTechForItem: name => `🔬 Unlock ${name} in the Tech Tree first!`,
+                    itemUnlocked: (name, cost) => `🔓 Unlocked ${name} for 🪙${cost}!`,
+                    chooseSpot: name => `Choose spot for ${name}`,
+                    maxBuilding: (max, name) => `⚠️ Max ${max} ${name} allowed!`,
+                    needStars: '⚠️ Not enough tech stars!',
+                    cantPlaceHere: '⚠️ Cannot place here!',
+                    notEnoughGold: '❌ Not enough gold!',
+                    clickBombMap: '✈️ Click on the map to bomb!',
+                    clickMineRoad: '💣 Click on the road to plant mine!',
+                    airstrikeCooling: '⏳ Airstrike is recharging!',
+                    mineCooling: '⏳ Road Mine is recharging!',
+                    matchAborted: '🛑 Match aborted – choose a map or start a new match!'
+                },
+                floating: {
+                    lvlUp: lvl => `⬆️ LEVEL ${lvl}!`,
+                    airstrikeDmg: dmg => `✈️ AIRSTRIKE! (-${dmg})`
+                },
+                bossBannerTitle: (bn, w, maxW) => `⚠️ BOSS #${bn}! WAVE ${w} OF ${maxW} ⚠️`,
+                techUnlockedBadge: 'Unlocked',
+                techLockedBadge: 'Locked',
+                techLvlBadge: (lvl, max) => `Level ${lvl}/${max}`,
+                techBtnUnlocked: '✅ UNLOCKED',
+                techBtnMaxed: 'MAXED',
+                techBtnReq: '🔒 Unlock ability first',
+                techBtnLockedMatch: '🔒 Locked during match',
+                techBtnUnlock: cost => `Unlock (⭐${cost})`,
+                techBtnUpgrade: cost => `Upgrade (⭐${cost})`,
+                techTreeBtnLabel: '🔬 Tech Tree',
+                techTreeSubLabel: 'Unlock in menu',
+                unlockCostShort: cost => `Unlock: 🪙${cost}`,
+                buildCostShort: cost => `Build: 🪙${cost}`,
+                canvasStart: 'Start',
+                canvasGoal: 'Goal'
+            }
+        };
+
+        function t(key) {
+            return I18N[currentLang][key];
+        }
+
+        function getMapDisplayName(mapId) {
+            const map = MAPS[mapId] || MAPS.meadow;
+            if (currentLang === 'en') {
+                if (mapId === 'meadow') return 'Green Meadow';
+                if (mapId === 'desert') return 'Desert Fort';
+                if (mapId === 'winter') return 'Winter Pass';
+            }
+            return map.name;
+        }
+
+        function getDiffDisplayName(diffId) {
+            const diff = DIFFICULTIES[diffId] || DIFFICULTIES.normal;
+            if (currentLang === 'en') {
+                if (diffId === 'easy') return 'Easy';
+                if (diffId === 'hard') return 'Hard';
+                return 'Normal';
+            }
+            return diff.name;
+        }
+
+        function applyLanguageUI() {
+            document.documentElement.lang = currentLang;
+
+            const btnSv = document.getElementById('btn-lang-sv');
+            const btnEn = document.getElementById('btn-lang-en');
+            if (btnSv && btnEn) {
+                btnSv.classList.toggle('bg-amber-300', currentLang === 'sv');
+                btnSv.classList.toggle('bg-white', currentLang !== 'sv');
+                btnEn.classList.toggle('bg-amber-300', currentLang === 'en');
+                btnEn.classList.toggle('bg-white', currentLang !== 'en');
+            }
+
+            document.querySelector('#btn-open-menu span.hidden.md\\:inline').textContent = t('menuAndTech');
+            document.getElementById('ui-lives').parentElement.title = t('titleLives');
+            document.getElementById('ui-money').parentElement.title = t('titleMoney');
+            document.getElementById('ui-stars').parentElement.title = t('titleStars');
+
+            const wavePill = document.getElementById('ui-wave-pill');
+            wavePill.innerHTML = `<span class="text-sm sm:text-base" id="ui-wave-icon">🌊</span><span class="font-extrabold text-xs sm:text-sm text-sky-950">${t('wavePrefix')} <span id="ui-wave">${state.wave}</span> ${t('waveMiddle')} <span id="ui-max-wave">${getCurrentMap().maxWaves || 42}</span></span>`;
+
+            document.getElementById('btn-speed').title = t('titleSpeed');
+            document.getElementById('btn-sound').title = t('titleSound');
+            document.getElementById('btn-auto-wave').title = t('titleAutoWave');
+            document.getElementById('btn-auto-wave').innerHTML = `🔁 ${t('autoLabel')}: <span id="ui-auto-wave">${state.autoWave ? 'ON' : 'OFF'}</span>`;
+
+            document.querySelector('#boss-hud span.flex').textContent = t('bossHudTitle');
+            const previewPill = document.getElementById('wave-preview-pill');
+            previewPill.innerHTML = `<span class="text-amber-300 font-extrabold">${t('nextWaveLabel')}</span> <span id="wave-preview-text">${getWavePreviewLabel(state.wave + 1)}</span>`;
+            document.querySelector('#boss-banner div.text-xs').textContent = t('bossWarningSub');
+            document.getElementById('placement-cancel-hint').textContent = t('cancelModeBtn');
+
+            document.querySelector('#btn-upgrade span:first-child').textContent = t('upgradeBtn');
+            document.querySelector('#btn-sell span:first-child').textContent = t('sellBtn');
+
+            document.querySelector('#gameover-modal h2').textContent = t('goTitle');
+            document.querySelector('#gameover-modal p').textContent = t('goSub');
+            const goStats = document.querySelectorAll('#gameover-modal .bg-white div');
+            if (goStats.length >= 3) {
+                goStats[0].innerHTML = `${t('goWaves')} <span class="text-sky-700" id="go-waves">${state.wave} / ${getCurrentMap().maxWaves || 42}</span>`;
+                goStats[1].innerHTML = `${t('goKills')} <span class="text-emerald-700" id="go-kills">${state.kills}</span>`;
+                goStats[2].innerHTML = `${t('goStars')} <span class="text-purple-700" id="go-stars">+${state.sessionStars} ⭐</span>`;
+            }
+            document.getElementById('btn-go-menu').textContent = t('goMenu');
+            document.getElementById('btn-restart').textContent = t('goRestart');
+
+            document.querySelector('#victory-modal h2').textContent = t('vicTitle');
+            document.querySelector('#victory-modal p').textContent = t('vicSub');
+            const vicStats = document.querySelectorAll('#victory-modal .bg-white div');
+            if (vicStats.length >= 3) {
+                vicStats[0].innerHTML = `${t('goWaves')} <span class="text-sky-700" id="vic-waves">${state.wave} / ${getCurrentMap().maxWaves || 42}</span>`;
+                vicStats[1].innerHTML = `${t('goKills')} <span class="text-emerald-700" id="vic-kills">${state.kills}</span>`;
+                vicStats[2].innerHTML = `${t('goStars')} <span class="text-purple-700" id="vic-stars">+${state.sessionStars} ⭐</span>`;
+            }
+            document.getElementById('btn-vic-menu').textContent = t('goMenu');
+            document.getElementById('btn-vic-restart').textContent = t('goRestart');
+
+            const asideHeaders = document.querySelectorAll('aside h2');
+            if (asideHeaders[0]) asideHeaders[0].innerHTML = `<span>⚡</span> ${t('abilitiesTitle')}`;
+            document.querySelector('aside .border-b-2 span.text-\\[10px\\]').textContent = t('abilitiesSub');
+            document.getElementById('btn-ability-mine').title = t('mineTooltip');
+            document.getElementById('btn-ability-airstrike').title = t('airstrikeTooltip');
+            if (asideHeaders[1]) asideHeaders[1].innerHTML = `<span>🏭</span> ${t('factoryTitle')}`;
+            if (asideHeaders[2]) asideHeaders[2].innerHTML = `<span>🏗️</span> ${t('buildingsTitle')}`;
+
+            const guideBox = document.querySelector('aside > div.hidden.lg\\:block');
+            if (guideBox) {
+                guideBox.innerHTML = `
+                    <div class="font-extrabold text-stone-950">${t('guideTitle')}</div>
+                    <p>${t('guide1')}</p>
+                    <p>${t('guide2')}</p>
+                    <p>${t('guide3')}</p>
+                    <p class="text-[11px] text-stone-700 pt-1 border-t border-stone-400/60">${t('guideSave')}</p>
+                `;
+            }
+
+            document.querySelector('#start-menu-modal p.text-xs').textContent = t('menuSub');
+            document.querySelector('#start-menu-modal .bg-purple-200 .text-\\[10px\\]').textContent = t('menuStarsLabel');
+            const stepHeaders = document.querySelectorAll('#start-menu-modal h3');
+            if (stepHeaders[0]) stepHeaders[0].textContent = t('step1Map');
+            if (stepHeaders[1]) stepHeaders[1].textContent = t('step2Diff');
+            if (stepHeaders[2]) stepHeaders[2].textContent = t('techTreeTitle');
+
+            const mapBtns = document.querySelectorAll('#map-selector-grid [data-map]');
+            if (mapBtns[0]) {
+                mapBtns[0].querySelector('.font-extrabold').textContent = t('mapMeadowName');
+                mapBtns[0].querySelector('.text-sky-700').textContent = t('mapMeadowWaves');
+                mapBtns[0].querySelector('.text-stone-600').textContent = t('mapMeadowDesc');
+            }
+            if (mapBtns[1]) {
+                mapBtns[1].querySelector('.font-extrabold').textContent = t('mapDesertName');
+                mapBtns[1].querySelector('.text-sky-700').textContent = t('mapDesertWaves');
+                mapBtns[1].querySelector('.text-stone-600').textContent = t('mapDesertDesc');
+            }
+            if (mapBtns[2]) {
+                mapBtns[2].querySelector('.font-extrabold').textContent = t('mapWinterName');
+                mapBtns[2].querySelector('.text-sky-700').textContent = t('mapWinterWaves');
+                mapBtns[2].querySelector('.text-stone-600').textContent = t('mapWinterDesc');
+            }
+
+            const diffBtns = document.querySelectorAll('#diff-selector-grid [data-diff]');
+            if (diffBtns[0]) {
+                diffBtns[0].querySelector('.font-extrabold').textContent = t('diffEasyName');
+                diffBtns[0].querySelector('.text-stone-600').innerHTML = t('diffEasyDesc');
+            }
+            if (diffBtns[1]) {
+                diffBtns[1].querySelector('.font-extrabold').textContent = t('diffNormalName');
+                diffBtns[1].querySelector('.text-stone-600').innerHTML = t('diffNormalDesc');
+            }
+            if (diffBtns[2]) {
+                diffBtns[2].querySelector('.font-extrabold').textContent = t('diffHardName');
+                diffBtns[2].querySelector('.text-stone-600').innerHTML = t('diffHardDesc');
+            }
+
+            const infoBox = document.querySelector('#start-menu-modal .bg-amber-200\\/80');
+            if (infoBox) {
+                infoBox.innerHTML = `
+                    <div>
+                        <span class="font-extrabold text-stone-950">${t('menuResearchInfoTitle')}</span>
+                        ${t('menuResearchInfoBody')}
+                    </div>
+                    <div class="text-[11px] bg-white/75 border border-stone-400 rounded-xl px-2.5 py-1.5 text-stone-700">
+                        ${t('menuSaveInfo')}
+                    </div>
+                `;
+            }
+
+            document.getElementById('menu-match-locked-notice').textContent = t('matchLockedNotice');
+            document.querySelector('#start-menu-modal .bg-purple-100.border-purple-300').textContent = t('savedLocalStorageBadge');
+            document.getElementById('btn-abort-match').textContent = t('abortMatchBtn');
+            document.getElementById('btn-resume-game').textContent = t('resumeMatchBtn');
+            document.getElementById('btn-start-match-label').textContent = t('startNewMatchBtn');
+
+            const map = getCurrentMap();
+            const diff = getCurrentDiff();
+            document.getElementById('hud-map-label').textContent = t('mapLabel')(getMapDisplayName(map.id), map.maxWaves, getDiffDisplayName(diff.id));
+
+            updateHUD();
+            updateAbilityButtonsUI();
+            renderTankShop();
+            renderBuildingShop();
+            renderTechTreeGrid();
+            if (state.selectedEntity) openUpgradePanel(state.selectedEntity);
+        }
 
         // --- AUDIO SYNTHESIS ENGINE ---
         const sfx = {
@@ -1432,17 +2001,18 @@
 
         function getWavePreviewLabel(waveNum) {
             const maxWaves = getCurrentMap().maxWaves || 42;
-            if (waveNum > maxWaves) return 'Alla vågor avklarade!';
+            const wp = t('wavePreviews');
+            if (waveNum > maxWaves) return t('allWavesCleared');
             if (isBossWaveNumber(waveNum)) {
                 const bossNumber = Math.floor(waveNum / 7);
                 const stars = Math.max(1, Math.ceil(bossNumber / 2));
-                return `👑 BOSS #${bossNumber} (+${stars} ⭐)`;
+                return wp.boss(bossNumber, stars);
             }
-            if (waveNum === 1) return 'Vanliga Zombier';
-            if (waveNum === 2) return 'Vanliga + Snabba Löpare';
-            if (waveNum === 3) return 'Löpare + Tunga Jättar';
-            if (waveNum === 4) return 'Jättar + Sköld-Zombier';
-            return 'Blandad Hord + Nekromantiker';
+            if (waveNum === 1) return wp.w1;
+            if (waveNum === 2) return wp.w2;
+            if (waveNum === 3) return wp.w3;
+            if (waveNum === 4) return wp.w4;
+            return wp.wDefault;
         }
 
         function startNextWave() {
@@ -1463,7 +2033,7 @@
                 state.spawnQueue.push({ type: 'boss', hp: bossHp, speed: 36 + Math.min(8, bossNumber), reward: Math.round((180 + state.wave * 10) * diff.rewardMult), delay: 0.5 });
                 sfx.play('boss_alarm');
                 const banner = document.getElementById('boss-banner');
-                document.getElementById('boss-banner-title').textContent = `⚠️ BOSS #${bossNumber}! VÅG ${state.wave} AV ${maxWaves} ⚠️`;
+                document.getElementById('boss-banner-title').textContent = t('bossBannerTitle')(bossNumber, state.wave, maxWaves);
                 banner.classList.remove('hidden');
                 setTimeout(() => banner.classList.add('hidden'), 3200);
             } else {
@@ -1543,8 +2113,10 @@
 
         function triggerAirstrikeAt(x, y) {
             const ab = state.abilities.airstrike;
+            const label = t('airstrikeTitle');
+            const toasts = t('toasts');
             if ((meta.tech[ab.techId] || 0) <= 0) {
-                showToast('🔬 Lås upp Flyganfall i Forskningsträdet först!');
+                showToast(toasts.needTechForAbility(label));
                 return;
             }
             const discount = 1 - meta.tech.abilityDiscount * 0.12;
@@ -1555,11 +2127,11 @@
                     state.money -= ab.unlockCost;
                     ab.unlocked = true;
                     sfx.play('unlock');
-                    showToast('✈️ Flyganfall upplåst!');
+                    showToast(toasts.abilityUnlocked(label));
                     updateAbilityButtonsUI();
                     updateHUD();
                 } else {
-                    showToast(`⚠️ Behöver 🪙${ab.unlockCost} för att låsa upp!`);
+                    showToast(toasts.needGoldUnlock(ab.unlockCost));
                 }
                 return;
             }
@@ -1582,14 +2154,16 @@
                     z.hp -= totalStrikeDmg;
                 }
             }
-            addFloatingText(x, y - 20, `✈️ BOMBANFALL! (-${totalStrikeDmg})`, '#fb923c');
+            addFloatingText(x, y - 20, t('floating').airstrikeDmg(totalStrikeDmg), '#fb923c');
             updateAbilityButtonsUI();
         }
 
         function placeRoadMineAt(x, y) {
             const ab = state.abilities.mine;
+            const label = t('mineTitle');
+            const toasts = t('toasts');
             if ((meta.tech[ab.techId] || 0) <= 0) {
-                showToast('🔬 Lås upp Vägmina i Forskningsträdet först!');
+                showToast(toasts.needTechForAbility(label));
                 return false;
             }
             const discount = 1 - meta.tech.abilityDiscount * 0.12;
@@ -1600,16 +2174,16 @@
                     state.money -= ab.unlockCost;
                     ab.unlocked = true;
                     sfx.play('unlock');
-                    showToast('💣 Vägmina upplåst!');
+                    showToast(toasts.abilityUnlocked(label));
                     updateAbilityButtonsUI();
                     updateHUD();
                 } else {
-                    showToast(`⚠️ Behöver 🪙${ab.unlockCost} för att låsa upp!`);
+                    showToast(toasts.needGoldUnlock(ab.unlockCost));
                 }
                 return false;
             }
             if (!isPointOnPath(x, y, 12) || ab.cd > 0 || state.money < cost) {
-                if (!isPointOnPath(x, y, 12)) showToast('⚠️ Minan måste placeras på vägen!');
+                if (!isPointOnPath(x, y, 12)) showToast(toasts.mineOnRoad);
                 return false;
             }
 
@@ -1618,7 +2192,7 @@
             updateHUD();
             state.roadMines.push({ x, y, damage: 145 + state.wave * 26, radius: 65 });
             sfx.play('coin');
-            addFloatingText(x, y - 16, '💣 Mina utlagd!', '#fda4af');
+            addFloatingText(x, y - 16, toasts.minePlaced, '#fda4af');
             updateAbilityButtonsUI();
             return true;
         }
@@ -1785,6 +2359,7 @@
                 const isBossWave = isBossWaveNumber(state.wave);
                 const bossNumber = Math.floor(state.wave / 7);
                 const starReward = isBossWave ? Math.max(1, Math.ceil(bossNumber / 2)) : 0;
+                const toasts = t('toasts');
 
                 if (starReward > 0) {
                     meta.stars += starReward;
@@ -1797,9 +2372,9 @@
                 state.money += waveClearBonus;
 
                 if (starReward > 0) {
-                    showToast(`👑 Boss #${bossNumber} besegrad! +🪙${waveClearBonus} & +${starReward} ⭐`);
+                    showToast(toasts.bossDefeated(bossNumber, waveClearBonus, starReward));
                 } else {
-                    showToast(`🎉 Våg ${state.wave} klarad! +🪙${waveClearBonus}`);
+                    showToast(toasts.waveCleared(state.wave, waveClearBonus));
                 }
                 updateHUD();
                 renderTechTreeGrid();
@@ -2105,9 +2680,9 @@
             ctx.textBaseline = 'middle';
             ctx.lineWidth = 2.5;
             ctx.strokeStyle = '#1c1917';
-            ctx.strokeText('Start', 4, -15.5 + startWave * 0.5);
+            ctx.strokeText(t('canvasStart'), 4, -15.5 + startWave * 0.5);
             ctx.fillStyle = '#ffffff';
-            ctx.fillText('Start', 4, -15.5 + startWave * 0.5);
+            ctx.fillText(t('canvasStart'), 4, -15.5 + startWave * 0.5);
             ctx.restore();
 
             // MÅL: Liten röd flagga med texten "Mål"
@@ -2153,9 +2728,9 @@
             ctx.textBaseline = 'middle';
             ctx.lineWidth = 2.5;
             ctx.strokeStyle = '#1c1917';
-            ctx.strokeText('Mål', 4, -15.5 + endWave * 0.5);
+            ctx.strokeText(t('canvasGoal'), 4, -15.5 + endWave * 0.5);
             ctx.fillStyle = '#ffffff';
-            ctx.fillText('Mål', 4, -15.5 + endWave * 0.5);
+            ctx.fillText(t('canvasGoal'), 4, -15.5 + endWave * 0.5);
             ctx.restore();
 
             for (const np of state.napalmPools) {
@@ -2420,10 +2995,12 @@
             const unlockedCount = Object.values(state.unlockedTanks).filter(Boolean).length;
             const badgeEl = document.getElementById('unlocked-tanks-badge');
             if (badgeEl) {
-                badgeEl.textContent = `Upplåsta: ${unlockedCount}/${totalTanks}`;
+                badgeEl.textContent = t('unlockedBadge')(unlockedCount, totalTanks);
             }
 
+            const toasts = t('toasts');
             for (const [id, def] of Object.entries(TANK_TYPES)) {
+                const tankLoc = t('tanks')[id] || { name: def.name, desc: def.desc };
                 const techResearched = def.unlockedByDefault || (meta.tech[def.techId] || 0) > 0;
                 const unlocked = state.unlockedTanks[id];
                 const card = document.createElement('div');
@@ -2438,13 +3015,13 @@
                 let priceHtml = '';
                 if (!techResearched) {
                     priceHtml = `<div class="text-right leading-tight shrink-0">
-                        <div class="text-[10px] font-extrabold text-purple-800">🔬 Tech-träd</div>
-                        <div class="text-[9px] font-bold text-stone-500">Lås upp i meny</div>
+                        <div class="text-[10px] font-extrabold text-purple-800">${t('techTreeBtnLabel')}</div>
+                        <div class="text-[9px] font-bold text-stone-500">${t('techTreeSubLabel')}</div>
                     </div>`;
                 } else if (!unlocked) {
                     priceHtml = `<div class="text-right leading-tight shrink-0">
-                        <div class="text-[10px] font-extrabold text-amber-700">Lås upp: 🪙${def.unlockCost}</div>
-                        <div class="text-[9px] font-bold text-stone-500">Byggpris: 🪙${def.buildCost}</div>
+                        <div class="text-[10px] font-extrabold text-amber-700">${t('unlockCostShort')(def.unlockCost)}</div>
+                        <div class="text-[9px] font-bold text-stone-500">${t('buildCostShort')(def.buildCost)}</div>
                     </div>`;
                 } else {
                     priceHtml = `<span class="text-[10px] font-extrabold shrink-0 text-emerald-700">🪙${def.buildCost}</span>`;
@@ -2452,15 +3029,15 @@
 
                 card.innerHTML = `
                     <div class="flex items-start justify-between gap-1">
-                        <span class="font-extrabold text-xs text-stone-900 truncate">${unlocked ? '' : (techResearched ? '🔒 ' : '🔬 ')}${def.name}</span>
+                        <span class="font-extrabold text-xs text-stone-900 truncate">${unlocked ? '' : (techResearched ? '🔒 ' : '🔬 ')}${tankLoc.name}</span>
                         ${priceHtml}
                     </div>
-                    <div class="text-[10px] text-stone-600 mt-1 leading-tight">${def.desc}</div>
+                    <div class="text-[10px] text-stone-600 mt-1 leading-tight">${tankLoc.desc}</div>
                 `;
                 card.onclick = () => {
                     sfx.init();
                     if (!techResearched) {
-                        showToast(`🔬 Lås upp ${def.name} i Forskningsträdet först!`);
+                        showToast(toasts.needTechForItem(tankLoc.name));
                         return;
                     }
                     if (!unlocked) {
@@ -2468,16 +3045,16 @@
                             state.money -= def.unlockCost;
                             state.unlockedTanks[id] = true;
                             sfx.play('unlock');
-                            showToast(`🔓 Låste upp ${def.name} för 🪙${def.unlockCost}!`);
+                            showToast(toasts.itemUnlocked(tankLoc.name, def.unlockCost));
                             updateHUD();
                             renderTankShop();
                         } else {
-                            showToast(`⚠️ Behöver 🪙${def.unlockCost} för att låsa upp ${def.name}!`);
+                            showToast(toasts.needGoldUnlockName(def.unlockCost, tankLoc.name));
                         }
                     } else {
                         state.actionMode = { mode: 'place', category: 'tank', id };
                         document.getElementById('placement-cancel-hint').classList.remove('hidden');
-                        showToast(`Välj plats för ${def.name}`);
+                        showToast(toasts.chooseSpot(tankLoc.name));
                     }
                 };
                 list.appendChild(card);
@@ -2487,7 +3064,9 @@
         function renderBuildingShop() {
             const list = document.getElementById('building-shop-list');
             list.innerHTML = '';
+            const toasts = t('toasts');
             for (const [id, def] of Object.entries(BUILDING_TYPES)) {
+                const bldgLoc = t('buildings')[id] || { name: def.name, desc: def.desc };
                 const techResearched = (meta.tech[def.techId] || 0) > 0;
                 const unlocked = state.unlockedBuildings[id];
                 const count = state.buildings.filter(b => b.type === id).length;
@@ -2508,13 +3087,13 @@
                 let priceHtml = '';
                 if (!techResearched) {
                     priceHtml = `<div class="text-right leading-tight shrink-0">
-                        <div class="text-[10px] font-extrabold text-purple-800">🔬 Tech-träd</div>
-                        <div class="text-[9px] font-bold text-stone-500">Lås upp i meny</div>
+                        <div class="text-[10px] font-extrabold text-purple-800">${t('techTreeBtnLabel')}</div>
+                        <div class="text-[9px] font-bold text-stone-500">${t('techTreeSubLabel')}</div>
                     </div>`;
                 } else if (!unlocked) {
                     priceHtml = `<div class="text-right leading-tight shrink-0">
-                        <div class="text-[10px] font-extrabold text-amber-700">Lås upp: 🪙${def.unlockCost}</div>
-                        <div class="text-[9px] font-bold text-stone-500">Byggpris: 🪙${def.buildCost}</div>
+                        <div class="text-[10px] font-extrabold text-amber-700">${t('unlockCostShort')(def.unlockCost)}</div>
+                        <div class="text-[9px] font-bold text-stone-500">${t('buildCostShort')(def.buildCost)}</div>
                     </div>`;
                 } else {
                     priceHtml = `<span class="text-[10px] font-bold text-amber-800 shrink-0">🪙${def.buildCost}</span>`;
@@ -2522,15 +3101,15 @@
 
                 card.innerHTML = `
                     <div class="flex items-start justify-between gap-1">
-                        <span class="font-extrabold text-xs text-stone-900">${unlocked ? '' : (techResearched ? '🔒 ' : '🔬 ')}${def.name} <span class="text-[10px] text-stone-500">(${count}/${maxCount})</span></span>
+                        <span class="font-extrabold text-xs text-stone-900">${unlocked ? '' : (techResearched ? '🔒 ' : '🔬 ')}${bldgLoc.name} <span class="text-[10px] text-stone-500">(${count}/${maxCount})</span></span>
                         ${priceHtml}
                     </div>
-                    <div class="text-[10px] text-stone-600 mt-1 leading-tight">${def.desc}</div>
+                    <div class="text-[10px] text-stone-600 mt-1 leading-tight">${bldgLoc.desc}</div>
                 `;
                 card.onclick = () => {
                     sfx.init();
                     if (!techResearched) {
-                        showToast(`🔬 Lås upp ${def.name} i Forskningsträdet först!`);
+                        showToast(toasts.needTechForItem(bldgLoc.name));
                         return;
                     }
                     if (!unlocked) {
@@ -2538,22 +3117,22 @@
                             state.money -= def.unlockCost;
                             state.unlockedBuildings[id] = true;
                             sfx.play('unlock');
-                            showToast(`🔓 Låste upp ${def.name} för 🪙${def.unlockCost}!`);
+                            showToast(toasts.itemUnlocked(bldgLoc.name, def.unlockCost));
                             updateHUD();
                             renderBuildingShop();
                         } else {
-                            showToast(`⚠️ Behöver 🪙${def.unlockCost} för att låsa upp ${def.name}!`);
+                            showToast(toasts.needGoldUnlockName(def.unlockCost, bldgLoc.name));
                         }
                         return;
                     }
                     const curCount = state.buildings.filter(b => b.type === id).length;
                     if (curCount >= maxCount) {
-                        showToast(`⚠️ Max ${maxCount} ${def.name} tillåtna!`);
+                        showToast(toasts.maxBuilding(maxCount, bldgLoc.name));
                         return;
                     }
                     state.actionMode = { mode: 'place', category: 'building', id };
                     document.getElementById('placement-cancel-hint').classList.remove('hidden');
-                    showToast(`Välj plats för ${def.name}`);
+                    showToast(toasts.chooseSpot(bldgLoc.name));
                 };
                 list.appendChild(card);
             }
@@ -2568,6 +3147,9 @@
             const lockNotice = document.getElementById('menu-match-locked-notice');
             if (lockNotice) lockNotice.classList.toggle('hidden', !isMatchLocked);
 
+            const abortBtn = document.getElementById('btn-abort-match');
+            if (abortBtn) abortBtn.classList.toggle('hidden', !isMatchLocked);
+
             document.querySelectorAll('#map-selector-grid [data-map], #diff-selector-grid [data-diff]').forEach(btn => {
                 btn.disabled = isMatchLocked;
                 btn.classList.toggle('opacity-55', isMatchLocked);
@@ -2575,11 +3157,13 @@
                 btn.classList.toggle('cursor-pointer', !isMatchLocked);
             });
 
+            const cats = t('techCats');
+            const nodeLocs = t('techNodes');
             const categories = [
-                { id: 'tanks', title: '🛡️ Stridsvagnar (Lås upp)' },
-                { id: 'buildings', title: '🏗️ Byggnader (Lås upp)' },
-                { id: 'abilities', title: '⚡ Taktiska Förmågor' },
-                { id: 'buffs', title: '⭐ Permanenta Bonusar' }
+                { id: 'tanks', title: cats.tanks },
+                { id: 'buildings', title: cats.buildings },
+                { id: 'abilities', title: cats.abilities },
+                { id: 'buffs', title: cats.buffs }
             ];
 
             for (const cat of categories) {
@@ -2589,6 +3173,7 @@
                 subGrid.className = 'grid grid-cols-1 sm:grid-cols-2 gap-2';
 
                 for (const node of TECH_NODES.filter(n => n.category === cat.id)) {
+                    const nLoc = nodeLocs[node.id] || { name: node.name, desc: node.desc };
                     const lvl = meta.tech[node.id] || 0;
                     const nextCost = lvl < node.maxLevel ? node.costs[lvl] : null;
                     const reqMet = !node.requires || (meta.tech[node.requires] || 0) > 0;
@@ -2596,26 +3181,30 @@
 
                     let btnLabel = '';
                     if (lvl >= node.maxLevel) {
-                        btnLabel = node.maxLevel === 1 ? '✅ UPPLÅST' : 'MAXIMERAD';
+                        btnLabel = node.maxLevel === 1 ? t('techBtnUnlocked') : t('techBtnMaxed');
                     } else if (!reqMet) {
-                        btnLabel = '🔒 Lås upp förmågan först';
+                        btnLabel = t('techBtnReq');
                     } else if (isMatchLocked) {
-                        btnLabel = '🔒 Låst under match';
+                        btnLabel = t('techBtnLockedMatch');
                     } else {
-                        btnLabel = node.maxLevel === 1 ? `Lås upp (⭐${nextCost})` : `Uppgradera (⭐${nextCost})`;
+                        btnLabel = node.maxLevel === 1 ? t('techBtnUnlock')(nextCost) : t('techBtnUpgrade')(nextCost);
                     }
+
+                    const statusLabel = node.maxLevel === 1
+                        ? (lvl >= 1 ? t('techUnlockedBadge') : t('techLockedBadge'))
+                        : t('techLvlBadge')(lvl, node.maxLevel);
 
                     const card = document.createElement('div');
                     card.className = `bg-white border-2 border-stone-800 rounded-xl p-2 flex flex-col justify-between ${!reqMet ? 'opacity-65' : ''}`;
                     card.innerHTML = `
                         <div>
                             <div class="flex items-center justify-between gap-1">
-                                <span class="font-extrabold text-xs text-stone-900">${node.icon} ${node.name}</span>
+                                <span class="font-extrabold text-xs text-stone-900">${node.icon} ${nLoc.name}</span>
                                 <span class="text-[10px] font-extrabold text-purple-800 bg-purple-100 px-1.5 py-0.5 rounded shrink-0">
-                                    ${node.maxLevel === 1 ? (lvl >= 1 ? 'Upplåst' : 'Låst') : `Nivå ${lvl}/${node.maxLevel}`}
+                                    ${statusLabel}
                                 </span>
                             </div>
-                            <div class="text-[10px] text-stone-600 mt-1 leading-tight">${node.desc}</div>
+                            <div class="text-[10px] text-stone-600 mt-1 leading-tight">${nLoc.desc}</div>
                         </div>
                         <button class="cartoon-btn mt-2 w-full ${lvl >= node.maxLevel ? 'bg-emerald-600' : 'bg-purple-500 hover:bg-purple-400'} text-white font-extrabold text-[11px] py-1 rounded-lg ${isDisabled ? 'opacity-65 cursor-not-allowed' : 'cursor-pointer'}" ${isDisabled ? 'disabled' : ''}>
                             ${btnLabel}
@@ -2635,7 +3224,7 @@
                             renderBuildingShop();
                             updateAbilityButtonsUI();
                         } else {
-                            showToast('⚠️ Inte tillräckligt med tech-stjärnor!');
+                            showToast(t('toasts').needStars);
                         }
                     };
                     subGrid.appendChild(card);
@@ -2657,16 +3246,16 @@
             const btnStartWave = document.getElementById('btn-start-wave');
             if (state.wave >= maxWaves && !state.waveActive) {
                 btnStartWave.disabled = true;
-                document.getElementById('btn-wave-text').textContent = 'Karta klarad!';
-                document.getElementById('wave-preview-text').textContent = 'Alla vågor avklarade!';
+                document.getElementById('btn-wave-text').textContent = t('mapCleared');
+                document.getElementById('wave-preview-text').textContent = t('allWavesCleared');
             } else {
                 btnStartWave.disabled = false;
                 if (state.waveActive) {
-                    document.getElementById('btn-wave-text').textContent = 'Våg pågår...';
+                    document.getElementById('btn-wave-text').textContent = t('waveInProgress');
                 } else if (state.autoWave && state.wave > 0 && state.autoWaveTimer > 0) {
-                    document.getElementById('btn-wave-text').textContent = `Starta Våg ${state.wave + 1} (${Math.ceil(state.autoWaveTimer)}s)`;
+                    document.getElementById('btn-wave-text').textContent = t('startWaveCountdown')(state.wave + 1, Math.ceil(state.autoWaveTimer));
                 } else {
-                    document.getElementById('btn-wave-text').textContent = `Starta Våg ${state.wave + 1}`;
+                    document.getElementById('btn-wave-text').textContent = t('startWaveN')(state.wave + 1);
                 }
                 document.getElementById('wave-preview-text').textContent = getWavePreviewLabel(state.wave + 1);
             }
@@ -2674,9 +3263,9 @@
             const mineCount = state.buildings.filter(b => b.type === 'mine').length;
             const radarCount = state.buildings.filter(b => b.type === 'radar').length;
             const depotCount = state.buildings.filter(b => b.type === 'depot').length;
-            document.getElementById('mine-count-badge').textContent = `Gruva: ${mineCount}/1`;
-            document.getElementById('radar-count-badge').textContent = `Radar: ${radarCount}/2`;
-            document.getElementById('depot-count-badge').textContent = `Depå: ${depotCount}/2`;
+            document.getElementById('mine-count-badge').textContent = t('mineBadge')(mineCount, 1);
+            document.getElementById('radar-count-badge').textContent = t('radarBadge')(radarCount, 2);
+            document.getElementById('depot-count-badge').textContent = t('depotBadge')(depotCount, 2);
         }
 
         function updateAbilityButtonsUI() {
@@ -2684,23 +3273,23 @@
             const mineResearched = (meta.tech[mine.techId] || 0) > 0;
             const mineCost = Math.round(mine.goldCost * (1 - meta.tech.abilityDiscount * 0.12));
             document.getElementById('icon-mine').textContent = !mineResearched ? '🔬' : (mine.unlocked ? '💣' : '🔒');
-            document.getElementById('title-mine').textContent = '💣 Vägmina';
+            document.getElementById('title-mine').textContent = t('mineTitle');
             document.getElementById('cd-mine').textContent = !mineResearched
-                ? 'Lås upp i Tech-träd'
+                ? t('unlockInTech')
                 : !mine.unlocked
-                    ? `Lås upp: 🪙${mine.unlockCost}`
-                    : (mine.cd > 0 ? `Laddar: ${mine.cd.toFixed(1)}s` : `Använd: 🪙${mineCost}`);
+                    ? t('unlockGold')(mine.unlockCost)
+                    : (mine.cd > 0 ? t('recharging')(mine.cd) : t('useGold')(mineCost));
 
             const air = state.abilities.airstrike;
             const airResearched = (meta.tech[air.techId] || 0) > 0;
             const airCost = Math.round(air.goldCost * (1 - meta.tech.abilityDiscount * 0.12));
             document.getElementById('icon-airstrike').textContent = !airResearched ? '🔬' : (air.unlocked ? '✈️' : '🔒');
-            document.getElementById('title-airstrike').textContent = '✈️ Flyganfall';
+            document.getElementById('title-airstrike').textContent = t('airstrikeTitle');
             document.getElementById('cd-airstrike').textContent = !airResearched
-                ? 'Lås upp i Tech-träd'
+                ? t('unlockInTech')
                 : !air.unlocked
-                    ? `Lås upp: 🪙${air.unlockCost}`
-                    : (air.cd > 0 ? `Laddar: ${air.cd.toFixed(1)}s` : `Använd: 🪙${airCost}`);
+                    ? t('unlockGold')(air.unlockCost)
+                    : (air.cd > 0 ? t('recharging')(air.cd) : t('useGold')(airCost));
         }
 
         function openUpgradePanel(entity) {
@@ -2709,9 +3298,10 @@
             panel.classList.remove('hidden');
 
             const def = entity.category === 'tank' ? TANK_TYPES[entity.type] : BUILDING_TYPES[entity.type];
+            const locDef = entity.category === 'tank' ? t('tanks')[entity.type] : t('buildings')[entity.type];
             const isMax = entity.level >= MAX_UPGRADE_LEVEL;
-            document.getElementById('sel-name').textContent = def.name;
-            document.getElementById('sel-level').textContent = `Nivå ${entity.level} / ${MAX_UPGRADE_LEVEL}`;
+            document.getElementById('sel-name').textContent = locDef ? locDef.name : def.name;
+            document.getElementById('sel-level').textContent = t('levelText')(entity.level, MAX_UPGRADE_LEVEL);
 
             document.getElementById('sel-dmg-bonus').textContent = '';
             document.getElementById('sel-rng-bonus').textContent = '';
@@ -2720,75 +3310,77 @@
             if (entity.category === 'tank') {
                 const boosts = getTankBoosts(entity);
                 if (entity.type === 'freeze') {
-                    document.getElementById('lbl-stat-1').textContent = 'Frystid';
+                    document.getElementById('lbl-stat-1').textContent = t('statFreeze');
                     document.getElementById('sel-dmg').textContent = `${entity.freezeDuration.toFixed(1)}s`;
-                    document.getElementById('sel-dmg-next').textContent = isMax ? 'MAX' : `+0.55s`;
+                    document.getElementById('sel-dmg-next').textContent = isMax ? t('statMax') : `+0.55s`;
                 } else {
-                    document.getElementById('lbl-stat-1').textContent = 'Skada';
+                    document.getElementById('lbl-stat-1').textContent = t('statDmg');
                     document.getElementById('sel-dmg').textContent = `${boosts.effectiveDamage}`;
                     if (boosts.hasDamageBoost) {
                         document.getElementById('sel-dmg-bonus').textContent = `(+${boosts.damageBonusAmount} 📡)`;
                     }
                     const nextDmg = Math.round(boosts.effectiveDamage * 1.38);
-                    document.getElementById('sel-dmg-next').textContent = isMax ? 'MAX' : `+${nextDmg - boosts.effectiveDamage}`;
+                    document.getElementById('sel-dmg-next').textContent = isMax ? t('statMax') : `+${nextDmg - boosts.effectiveDamage}`;
                 }
 
-                document.getElementById('lbl-stat-2').textContent = 'Räckvidd';
+                document.getElementById('lbl-stat-2').textContent = t('statRange');
                 document.getElementById('sel-rng').textContent = `${boosts.effectiveRange}`;
                 if (boosts.hasRangeBoost) {
                     document.getElementById('sel-rng-bonus').textContent = `(+${boosts.rangeBonusAmount} 📡)`;
                 }
                 const nextRng = Math.round(boosts.effectiveRange * 1.08);
-                document.getElementById('sel-rng-next').textContent = isMax ? 'MAX' : `+${nextRng - boosts.effectiveRange}`;
+                document.getElementById('sel-rng-next').textContent = isMax ? t('statMax') : `+${nextRng - boosts.effectiveRange}`;
 
-                document.getElementById('lbl-stat-3').textContent = 'Eldhastighet';
+                document.getElementById('lbl-stat-3').textContent = t('statFireRate');
                 document.getElementById('sel-spd').textContent = `${boosts.effectiveFireRate}/s`;
                 if (boosts.hasFireRateBoost) {
                     document.getElementById('sel-spd-bonus').textContent = `(+${boosts.fireRateBonusAmount}/s 📦)`;
                 }
                 const nextSpd = Number((boosts.effectiveFireRate * 1.12).toFixed(2));
                 const spdDiff = Number((nextSpd - boosts.effectiveFireRate).toFixed(2));
-                document.getElementById('sel-spd-next').textContent = isMax ? 'MAX' : `+${spdDiff}/s`;
+                document.getElementById('sel-spd-next').textContent = isMax ? t('statMax') : `+${spdDiff}/s`;
             } else if (entity.type === 'mine') {
-                document.getElementById('lbl-stat-1').textContent = 'Guld/Tick';
+                document.getElementById('lbl-stat-1').textContent = t('statGoldTick');
                 document.getElementById('sel-dmg').textContent = `🪙${entity.tickGold}`;
                 const nextTick = Math.round(entity.tickGold * 1.35);
-                document.getElementById('sel-dmg-next').textContent = isMax ? 'MAX' : `+🪙${nextTick - entity.tickGold}`;
+                document.getElementById('sel-dmg-next').textContent = isMax ? t('statMax') : `+🪙${nextTick - entity.tickGold}`;
 
-                document.getElementById('lbl-stat-2').textContent = 'Vågbonus';
+                document.getElementById('lbl-stat-2').textContent = t('statWaveBonus');
                 document.getElementById('sel-rng').textContent = `🪙${entity.waveGold}`;
                 const nextWave = Math.round(entity.waveGold * 1.35);
-                document.getElementById('sel-rng-next').textContent = isMax ? 'MAX' : `+🪙${nextWave - entity.waveGold}`;
+                document.getElementById('sel-rng-next').textContent = isMax ? t('statMax') : `+🪙${nextWave - entity.waveGold}`;
 
-                document.getElementById('lbl-stat-3').textContent = 'Intervall';
+                document.getElementById('lbl-stat-3').textContent = t('statInterval');
                 document.getElementById('sel-spd').textContent = '4.5s';
-                document.getElementById('sel-spd-next').textContent = isMax ? 'MAX' : 'Fast';
+                document.getElementById('sel-spd-next').textContent = isMax ? t('statMax') : t('statFast');
             } else {
-                document.getElementById('lbl-stat-1').textContent = 'Aura-boost';
-                document.getElementById('sel-dmg').textContent = entity.type === 'radar' ? '+25% Räckv.' : '+24% Hast.';
-                document.getElementById('sel-dmg-next').textContent = isMax ? 'MAX' : 'Aktiv';
+                document.getElementById('lbl-stat-1').textContent = t('statAuraBoost');
+                document.getElementById('sel-dmg').textContent = entity.type === 'radar'
+                    ? (currentLang === 'en' ? '+25% Range' : '+25% Räckv.')
+                    : (currentLang === 'en' ? '+24% Rate' : '+24% Hast.');
+                document.getElementById('sel-dmg-next').textContent = isMax ? t('statMax') : t('statActive');
 
-                document.getElementById('lbl-stat-2').textContent = 'Auradie';
+                document.getElementById('lbl-stat-2').textContent = t('statAuraRange');
                 document.getElementById('sel-rng').textContent = entity.auraRange;
                 const nextAura = Math.round(entity.auraRange * 1.08);
-                document.getElementById('sel-rng-next').textContent = isMax ? 'MAX' : `+${nextAura - entity.auraRange}`;
+                document.getElementById('sel-rng-next').textContent = isMax ? t('statMax') : `+${nextAura - entity.auraRange}`;
 
-                document.getElementById('lbl-stat-3').textContent = 'Typ';
-                document.getElementById('sel-spd').textContent = 'Stöd';
+                document.getElementById('lbl-stat-3').textContent = t('statType');
+                document.getElementById('sel-spd').textContent = t('statSupport');
                 document.getElementById('sel-spd-next').textContent = '';
             }
 
-            document.getElementById('sel-special').textContent = def.specialText || def.desc;
+            document.getElementById('sel-special').textContent = (locDef && (locDef.special || locDef.desc)) || def.specialText || def.desc;
 
             const upCost = getUpgradeCost(entity);
-            document.getElementById('sel-upgrade-cost').textContent = isMax ? 'MAX' : `🪙 ${upCost} (U)`;
+            document.getElementById('sel-upgrade-cost').textContent = isMax ? t('statMax') : `🪙 ${upCost} (U)`;
             document.getElementById('btn-upgrade').disabled = isMax;
             document.getElementById('sel-sell-value').textContent = `+🪙 ${getSellValue(entity)}`;
 
             if (entity.category === 'tank') {
                 document.getElementById('priority-row').style.display = 'flex';
-                const pObj = PRIORITY_MODES.find(p => p.id === entity.priority) || PRIORITY_MODES[0];
-                document.getElementById('btn-cycle-priority').textContent = pObj.label;
+                document.getElementById('priority-row').firstElementChild.textContent = currentLang === 'en' ? '🎯 Target:' : '🎯 Mål:';
+                document.getElementById('btn-cycle-priority').textContent = t('priorities')[entity.priority] || PRIORITY_MODES[0].label;
             } else {
                 document.getElementById('priority-row').style.display = 'none';
             }
@@ -2865,7 +3457,7 @@
             document.getElementById('gameover-modal').classList.add('hidden');
             document.getElementById('victory-modal').classList.add('hidden');
             document.getElementById('boss-hud').classList.add('hidden');
-            document.getElementById('hud-map-label').textContent = `${map.name} (${map.maxWaves} vågor) • ${diff.name}`;
+            document.getElementById('hud-map-label').textContent = t('mapLabel')(getMapDisplayName(map.id), map.maxWaves, getDiffDisplayName(diff.id));
             closeUpgradePanel();
             generateDecorations();
             resizeCanvas();
@@ -2873,6 +3465,52 @@
             updateAbilityButtonsUI();
             renderTankShop();
             renderBuildingShop();
+        }
+
+        function abortCurrentMatch() {
+            const diff = getCurrentDiff();
+            state.matchStarted = false;
+            state.lives = diff.lives + meta.tech.baseLives * 3;
+            state.money = diff.startGold + meta.tech.startGold * 60;
+            state.wave = 0;
+            state.kills = 0;
+            state.sessionStars = 0;
+            state.gameOver = false;
+            state.victory = false;
+            state.waveActive = false;
+            state.autoWaveTimer = 0;
+            state.spawnQueue = [];
+            state.actionMode = null;
+            state.selectedEntity = null;
+            state.hoveredEntity = null;
+            state.unlockedTanks = { normal: true, freeze: false, speed: false, spike: false, sniper: false, multi: false, blast: false, flame: false };
+            state.unlockedBuildings = { mine: false, radar: false, depot: false };
+            state.abilities.airstrike.unlocked = false;
+            state.abilities.airstrike.cd = 0;
+            state.abilities.mine.unlocked = false;
+            state.abilities.mine.cd = 0;
+
+            state.tanks = [];
+            state.buildings = [];
+            state.zombies = [];
+            state.projectiles = [];
+            state.napalmPools = [];
+            state.shockwaves = [];
+            state.roadMines = [];
+            state.particles = [];
+            state.floatingTexts = [];
+
+            document.getElementById('placement-cancel-hint').classList.add('hidden');
+            document.getElementById('boss-hud').classList.add('hidden');
+            document.getElementById('btn-resume-game').classList.add('hidden');
+            document.getElementById('btn-abort-match').classList.add('hidden');
+            closeUpgradePanel();
+            updateHUD();
+            updateAbilityButtonsUI();
+            renderTankShop();
+            renderBuildingShop();
+            renderTechTreeGrid();
+            showToast(t('toasts').matchAborted);
         }
 
         // --- EVENT LISTENERS WITH PRECISE WORLD COORDS ---
@@ -2898,6 +3536,7 @@
             const pos = screenToWorld(e.clientX, e.clientY);
             state.mouseX = pos.x;
             state.mouseY = pos.y;
+            const toasts = t('toasts');
 
             if (state.actionMode) {
                 const mode = state.actionMode.mode;
@@ -2916,12 +3555,12 @@
                 }
                 if (mode === 'place') {
                     if (!canPlaceAt(pos.x, pos.y)) {
-                        showToast('⚠️ Kan inte placera här!');
+                        showToast(toasts.cantPlaceHere);
                         return;
                     }
                     const def = state.actionMode.category === 'tank' ? TANK_TYPES[state.actionMode.id] : BUILDING_TYPES[state.actionMode.id];
                     if (state.money < def.buildCost) {
-                        showToast('❌ Inte tillräckligt med guld!');
+                        showToast(toasts.notEnoughGold);
                         state.actionMode = null;
                         document.getElementById('placement-cancel-hint').classList.add('hidden');
                         return;
@@ -2982,12 +3621,26 @@
 
         document.getElementById('btn-open-menu').onclick = () => {
             document.getElementById('start-menu-modal').classList.remove('hidden');
-            document.getElementById('btn-resume-game').classList.toggle('hidden', !state.matchStarted || state.victory || state.gameOver);
+            const activeMatch = state.matchStarted && !state.victory && !state.gameOver;
+            document.getElementById('btn-resume-game').classList.toggle('hidden', !activeMatch);
+            document.getElementById('btn-abort-match').classList.toggle('hidden', !activeMatch);
             renderTechTreeGrid();
         };
 
+        document.getElementById('btn-abort-match').onclick = abortCurrentMatch;
+
         document.getElementById('btn-resume-game').onclick = () => {
             document.getElementById('start-menu-modal').classList.add('hidden');
+        };
+
+        document.getElementById('lang-selector-grid').onclick = (e) => {
+            const btn = e.target.closest('[data-lang]');
+            if (!btn) return;
+            const chosen = btn.getAttribute('data-lang');
+            if (chosen === 'sv' || chosen === 'en') {
+                currentLang = chosen;
+                applyLanguageUI();
+            }
         };
 
         document.getElementById('btn-start-match').onclick = startNewMatch;
@@ -3075,8 +3728,10 @@
         document.getElementById('btn-ability-airstrike').onclick = () => {
             sfx.init();
             const ab = state.abilities.airstrike;
+            const label = t('airstrikeTitle');
+            const toasts = t('toasts');
             if ((meta.tech[ab.techId] || 0) <= 0) {
-                showToast('🔬 Lås upp Flyganfall i Forskningsträdet först!');
+                showToast(toasts.needTechForAbility(label));
                 return;
             }
             if (!ab.unlocked) {
@@ -3086,19 +3741,21 @@
             const discount = 1 - meta.tech.abilityDiscount * 0.12;
             const cost = Math.round(ab.goldCost * discount);
             if (ab.cd > 0 || state.money < cost) {
-                showToast(ab.cd > 0 ? '⏳ Flyganfall laddar om!' : `⚠️ Behöver 🪙${cost}!`);
+                showToast(ab.cd > 0 ? toasts.airstrikeCooling : toasts.needGoldUnlock(cost));
                 return;
             }
             state.actionMode = { mode: 'airstrike' };
             document.getElementById('placement-cancel-hint').classList.remove('hidden');
-            showToast('✈️ Klicka på kartan för att bomba!');
+            showToast(toasts.clickBombMap);
         };
 
         document.getElementById('btn-ability-mine').onclick = () => {
             sfx.init();
             const ab = state.abilities.mine;
+            const label = t('mineTitle');
+            const toasts = t('toasts');
             if ((meta.tech[ab.techId] || 0) <= 0) {
-                showToast('🔬 Lås upp Vägmina i Forskningsträdet först!');
+                showToast(toasts.needTechForAbility(label));
                 return;
             }
             if (!ab.unlocked) {
@@ -3108,12 +3765,12 @@
             const discount = 1 - meta.tech.abilityDiscount * 0.12;
             const cost = Math.round(ab.goldCost * discount);
             if (ab.cd > 0 || state.money < cost) {
-                showToast(ab.cd > 0 ? '⏳ Vägmina laddar om!' : `⚠️ Behöver 🪙${cost}!`);
+                showToast(ab.cd > 0 ? toasts.mineCooling : toasts.needGoldUnlock(cost));
                 return;
             }
             state.actionMode = { mode: 'mine' };
             document.getElementById('placement-cancel-hint').classList.remove('hidden');
-            showToast('💣 Klicka på vägen för att lägga mina!');
+            showToast(toasts.clickMineRoad);
         };
 
         document.getElementById('placement-cancel-hint').onclick = () => {
@@ -3150,11 +3807,8 @@
 
         // --- INITIALIZATION ---
         meta.load();
-        renderTechTreeGrid();
-        renderTankShop();
-        renderBuildingShop();
+        applyLanguageUI();
         resizeCanvas();
-        updateHUD();
         requestAnimationFrame(mainLoop);
     })();
     </script>
