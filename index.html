@@ -705,7 +705,7 @@
 
         const TANK_TYPES = {
             normal: { id: 'normal', name: 'Standardvagn', desc: 'Allround-stridsvagn med stabil eldkraft.', specialText: 'Pålitlig stridsvagn med balanserad skada och räckvidd.', buildCost: 75, unlockCost: 0, unlockedByDefault: true, baseDamage: 26, baseRange: 145, baseFireRate: 1.25, projectileSpeed: 520, bodyColor: '#4d7c0f', turretColor: '#65a30d', bulletColor: '#facc15', sound: 'shoot_normal' },
-            freeze: { id: 'freeze', name: 'Frostvagn', desc: 'Saktar ner zombier med frostpuls (0 skada).', specialText: 'Skjuter frostkulor som fryser ner zombier i ett område med 55%! Uppgraderingar ökar frystiden.', buildCost: 105, unlockCost: 0, unlockedByDefault: true, baseDamage: 0, baseFreezeDuration: 2.6, baseRange: 140, baseFireRate: 1.05, projectileSpeed: 470, splashRadius: 58, bodyColor: '#0369a1', turretColor: '#0ea5e9', bulletColor: '#7dd3fc', sound: 'shoot_freeze' },
+            freeze: { id: 'freeze', name: 'Frostvagn', desc: 'Saktar ner zombier med frostpuls (0 skada).', specialText: 'Skjuter frostkulor som fryser ner zombier i ett område med 55%! Uppgraderingar ökar frystiden.', buildCost: 105, unlockCost: 110, unlockedByDefault: true, baseDamage: 0, baseFreezeDuration: 2.6, baseRange: 140, baseFireRate: 1.05, projectileSpeed: 470, splashRadius: 58, bodyColor: '#0369a1', turretColor: '#0ea5e9', bulletColor: '#7dd3fc', sound: 'shoot_freeze' },
             speed: { id: 'speed', name: 'Snabbskytt', desc: 'Dubbelpipig gatling som pepprar fienden.', specialText: 'Extremt hög eldhastighet som smälter snabba zombier!', buildCost: 160, unlockCost: 180, techId: 'unlock_speed', unlockedByDefault: false, baseDamage: 17, baseRange: 138, baseFireRate: 3.5, projectileSpeed: 600, bodyColor: '#b45309', turretColor: '#f59e0b', bulletColor: '#fde047', sound: 'shoot_speed' },
             spike: { id: 'spike', name: 'Spiktorn', desc: 'Lägger ut vassa spikmattor på vägen.', specialText: 'Droppar vassa spikmattor direkt på vägen inom räckvidden!', buildCost: 170, unlockCost: 200, techId: 'unlock_spike', unlockedByDefault: false, baseDamage: 46, baseRange: 140, baseFireRate: 0.68, projectileSpeed: 400, bodyColor: '#475569', turretColor: '#64748b', bulletColor: '#cbd5e1', sound: 'shoot_normal' },
             sniper: { id: 'sniper', name: 'Prickskytt', desc: 'Enorm räckvidd & tung pansarbrytande skada.', specialText: 'Når långt över hela kartan och genomborrar sköldar (långsam eldhastighet)!', buildCost: 205, unlockCost: 230, techId: 'unlock_sniper', unlockedByDefault: false, baseDamage: 105, baseRange: 335, baseFireRate: 0.36, projectileSpeed: 820, bodyColor: '#0f766e', turretColor: '#14b8a6', bulletColor: '#2dd4bf', sound: 'shoot_blast' },
@@ -764,7 +764,7 @@
             waveActive: false,
             spawnQueue: [],
             spawnTimer: 0,
-            unlockedTanks: { normal: true, freeze: true, speed: false, spike: false, sniper: false, multi: false, blast: false, flame: false },
+            unlockedTanks: { normal: true, freeze: false, speed: false, spike: false, sniper: false, multi: false, blast: false, flame: false },
             unlockedBuildings: { mine: false, radar: false, depot: false },
             abilities: {
                 mine: { unlocked: false, techId: 'unlock_roadmine', unlockCost: 140, goldCost: 35, cd: 0, maxCd: 14 },
@@ -2845,7 +2845,7 @@
             state.spawnQueue = [];
             state.actionMode = null;
             state.selectedEntity = null;
-            state.unlockedTanks = { normal: true, freeze: true, speed: false, spike: false, sniper: false, multi: false, blast: false, flame: false };
+            state.unlockedTanks = { normal: true, freeze: false, speed: false, spike: false, sniper: false, multi: false, blast: false, flame: false };
             state.unlockedBuildings = { mine: false, radar: false, depot: false };
             state.abilities.airstrike.unlocked = false;
             state.abilities.airstrike.cd = 0;
