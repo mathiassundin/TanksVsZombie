@@ -110,7 +110,7 @@
 
                 <div id="ui-wave-pill" class="bg-sky-100 border-2 border-stone-900 rounded-xl px-2.5 py-1 flex items-center gap-1 shadow-sm">
                     <span class="text-sm sm:text-base" id="ui-wave-icon">🌊</span>
-                    <span class="font-extrabold text-xs sm:text-sm text-sky-950">Våg <span id="ui-wave">0</span> av <span id="ui-max-wave">35</span></span>
+                    <span class="font-extrabold text-xs sm:text-sm text-sky-950">Våg <span id="ui-wave">0</span> av <span id="ui-max-wave">42</span></span>
                 </div>
             </div>
 
@@ -190,16 +190,19 @@
                     <div class="bg-white border-2 border-stone-300 rounded-xl p-1.5">
                         <div class="text-[10px] font-bold text-stone-500 uppercase" id="lbl-stat-1">Skada</div>
                         <div class="text-xs font-extrabold text-stone-900 leading-tight" id="sel-dmg">25</div>
+                        <div class="text-[9px] font-bold text-sky-700 leading-tight" id="sel-dmg-bonus"></div>
                         <div class="text-[10px] font-black text-emerald-600 leading-tight mt-0.5" id="sel-dmg-next">+9</div>
                     </div>
                     <div class="bg-white border-2 border-stone-300 rounded-xl p-1.5">
                         <div class="text-[10px] font-bold text-stone-500 uppercase" id="lbl-stat-2">Räckvidd</div>
                         <div class="text-xs font-extrabold text-stone-900 leading-tight" id="sel-rng">140</div>
+                        <div class="text-[9px] font-bold text-sky-700 leading-tight" id="sel-rng-bonus"></div>
                         <div class="text-[10px] font-black text-emerald-600 leading-tight mt-0.5" id="sel-rng-next">+11</div>
                     </div>
                     <div class="bg-white border-2 border-stone-300 rounded-xl p-1.5">
                         <div class="text-[10px] font-bold text-stone-500 uppercase" id="lbl-stat-3">Eldhastighet</div>
                         <div class="text-xs font-extrabold text-stone-900 leading-tight" id="sel-spd">1.2/s</div>
+                        <div class="text-[9px] font-bold text-emerald-700 leading-tight" id="sel-spd-bonus"></div>
                         <div class="text-[10px] font-black text-emerald-600 leading-tight mt-0.5" id="sel-spd-next">+0.15/s</div>
                     </div>
                 </div>
@@ -256,7 +259,7 @@
                     <h2 class="cartoon-font text-3xl font-bold text-emerald-700 mb-1">SEGER!</h2>
                     <p class="text-sm font-bold text-stone-700 mb-4">Du klarade alla vågor på kartan!</p>
                     <div class="bg-white border-2 border-stone-800 rounded-2xl p-3 mb-5 space-y-1 text-sm font-extrabold">
-                        <div>Klarade vågor: <span class="text-sky-700" id="vic-waves">35 / 35</span></div>
+                        <div>Klarade vågor: <span class="text-sky-700" id="vic-waves">42 / 42</span></div>
                         <div>Besegrade zombies: <span class="text-emerald-700" id="vic-kills">0</span></div>
                         <div>Intjänade Tech-Stjärnor: <span class="text-purple-700" id="vic-stars">+0 ⭐</span></div>
                     </div>
@@ -306,8 +309,8 @@
                     <h2 class="cartoon-font font-bold text-base sm:text-lg text-stone-900 flex items-center gap-1.5">
                         <span>🏭</span> Stridsvagns-fabrik
                     </h2>
-                    <span class="text-[11px] font-extrabold bg-amber-200 border border-stone-700 px-2 py-0.5 rounded-full text-stone-800">
-                        8 Vagnar
+                    <span id="unlocked-tanks-badge" class="text-[11px] font-extrabold bg-amber-200 border border-stone-700 px-2 py-0.5 rounded-full text-stone-800">
+                        Upplåsta: 1/8
                     </span>
                 </div>
 
@@ -322,7 +325,7 @@
                         </h2>
                         <div class="flex items-center gap-1 flex-wrap justify-end">
                             <span class="text-[10px] font-extrabold text-amber-900 bg-amber-200 px-1.5 py-0.5 rounded-full border border-stone-700" id="mine-count-badge">
-                                Gruvor: 0/3
+                                Gruva: 0/1
                             </span>
                             <span class="text-[10px] font-extrabold text-sky-900 bg-sky-200 px-1.5 py-0.5 rounded-full border border-stone-700" id="radar-count-badge">
                                 Radar: 0/2
@@ -380,19 +383,19 @@
                             <button type="button" data-map="meadow" class="map-option active tank-card bg-white rounded-2xl p-2.5 text-left cursor-pointer">
                                 <div class="text-2xl mb-1">🌿</div>
                                 <div class="font-extrabold text-xs sm:text-sm text-stone-900">Gröna Ängen</div>
-                                <div class="text-[10px] font-extrabold text-sky-700 mt-0.5">35 Vågor (5 Bossar)</div>
+                                <div class="text-[10px] font-extrabold text-sky-700 mt-0.5">42 Vågor (6 Bossar)</div>
                                 <div class="text-[10px] text-stone-600 leading-tight mt-0.5">Slingrande väg, träbro över bäck & damm.</div>
                             </button>
                             <button type="button" data-map="desert" class="map-option tank-card bg-white rounded-2xl p-2.5 text-left cursor-pointer">
                                 <div class="text-2xl mb-1">🏜️</div>
                                 <div class="font-extrabold text-xs sm:text-sm text-stone-900">Ökenfortet</div>
-                                <div class="text-[10px] font-extrabold text-sky-700 mt-0.5">42 Vågor (6 Bossar)</div>
+                                <div class="text-[10px] font-extrabold text-sky-700 mt-0.5">70 Vågor (10 Bossar)</div>
                                 <div class="text-[10px] text-stone-600 leading-tight mt-0.5">Kaktusar, oas & många kurvor för korseld.</div>
                             </button>
                             <button type="button" data-map="winter" class="map-option tank-card bg-white rounded-2xl p-2.5 text-left cursor-pointer">
                                 <div class="text-2xl mb-1">❄️</div>
                                 <div class="font-extrabold text-xs sm:text-sm text-stone-900">Vinterpasset</div>
-                                <div class="text-[10px] font-extrabold text-sky-700 mt-0.5">50 Vågor (7 Bossar)</div>
+                                <div class="text-[10px] font-extrabold text-sky-700 mt-0.5">100 Vågor (14 Bossar)</div>
                                 <div class="text-[10px] text-stone-600 leading-tight mt-0.5">Snöigt pass, isbro & frusen alpsjö.</div>
                             </button>
                         </div>
@@ -569,7 +572,7 @@
             meadow: {
                 id: 'meadow',
                 name: 'Gröna Ängen',
-                maxWaves: 35,
+                maxWaves: 42,
                 grassBase: '#588114',
                 grassAlt: '#659018',
                 roadBorder: '#362312',
@@ -600,7 +603,7 @@
             desert: {
                 id: 'desert',
                 name: 'Ökenfortet',
-                maxWaves: 42,
+                maxWaves: 70,
                 grassBase: '#eab308',
                 grassAlt: '#facc15',
                 roadBorder: '#451a03',
@@ -631,7 +634,7 @@
             winter: {
                 id: 'winter',
                 name: 'Vinterpasset',
-                maxWaves: 50,
+                maxWaves: 100,
                 grassBase: '#cbd5e1',
                 grassAlt: '#e2e8f0',
                 roadBorder: '#1e293b',
@@ -686,7 +689,7 @@
         };
 
         const BUILDING_TYPES = {
-            mine: { id: 'mine', name: 'Guldgruva', desc: 'Genererar guld under aktiva vågor + vågbonus (Max 3st).', buildCost: 150, baseAuraRange: 65, baseTickGold: 8, baseWaveGold: 55, primaryColor: '#d97706' },
+            mine: { id: 'mine', name: 'Guldgruva', desc: 'Genererar guld under aktiva vågor + hög vågbonus (Max 1st).', buildCost: 380, baseAuraRange: 65, baseTickGold: 12, baseWaveGold: 125, primaryColor: '#d97706' },
             radar: { id: 'radar', name: 'Radartorn', desc: 'Boostar räckvidd (+25%) och skada för närliggande torn (Max 2st).', buildCost: 130, baseAuraRange: 135, rangeBoost: 0.25, damageBoost: 0.14, primaryColor: '#0284c7' },
             depot: { id: 'depot', name: 'Ammodepå', desc: 'Ökar eldhastigheten (+24%) för närliggande torn (Max 2st).', buildCost: 140, baseAuraRange: 135, fireRateBoost: 0.24, primaryColor: '#059669' }
         };
@@ -1330,10 +1333,19 @@
                     if (b.fireRateBoost > 0) fireRateMult = Math.max(fireRateMult, 1 + b.fireRateBoost);
                 }
             }
+            const effectiveDamage = Math.round(tank.damage * damageMult);
+            const effectiveRange = Math.round(tank.range * rangeMult);
+            const effectiveFireRate = Number((tank.fireRate * fireRateMult).toFixed(2));
             return {
-                effectiveDamage: Math.round(tank.damage * damageMult),
-                effectiveRange: Math.round(tank.range * rangeMult),
-                effectiveFireRate: Number((tank.fireRate * fireRateMult).toFixed(2)),
+                baseDamageWithTech: Math.round(tank.damage * techDmgMult),
+                baseRange: tank.range,
+                baseFireRate: tank.fireRate,
+                effectiveDamage,
+                effectiveRange,
+                effectiveFireRate,
+                damageBonusAmount: effectiveDamage - Math.round(tank.damage * techDmgMult),
+                rangeBonusAmount: effectiveRange - tank.range,
+                fireRateBonusAmount: Number((effectiveFireRate - tank.fireRate).toFixed(2)),
                 hasRangeBoost: rangeMult > 1,
                 hasDamageBoost: damageMult > techDmgMult,
                 hasFireRateBoost: fireRateMult > 1
@@ -1383,7 +1395,7 @@
         }
 
         function getWavePreviewLabel(waveNum) {
-            const maxWaves = getCurrentMap().maxWaves || 35;
+            const maxWaves = getCurrentMap().maxWaves || 42;
             if (waveNum > maxWaves) return 'Alla vågor avklarade!';
             if (isBossWaveNumber(waveNum)) {
                 const bossNumber = Math.floor(waveNum / 7);
@@ -1398,7 +1410,7 @@
         }
 
         function startNextWave() {
-            const maxWaves = getCurrentMap().maxWaves || 35;
+            const maxWaves = getCurrentMap().maxWaves || 42;
             if (state.waveActive || state.gameOver || !state.matchStarted || state.wave >= maxWaves) return;
             state.wave++;
             state.waveActive = true;
@@ -1412,7 +1424,7 @@
             if (isBossWave) {
                 const bossNumber = Math.floor(state.wave / 7);
                 const bossHp = Math.round(2150 * Math.pow(1.65, bossNumber - 1) * diff.hpMult);
-                state.spawnQueue.push({ type: 'boss', hp: bossHp, speed: 36 + Math.min(8, bossNumber), reward: Math.round((240 + state.wave * 15) * diff.rewardMult), delay: 0.5 });
+                state.spawnQueue.push({ type: 'boss', hp: bossHp, speed: 36 + Math.min(8, bossNumber), reward: Math.round((180 + state.wave * 10) * diff.rewardMult), delay: 0.5 });
                 sfx.play('boss_alarm');
                 const banner = document.getElementById('boss-banner');
                 document.getElementById('boss-banner-title').textContent = `⚠️ BOSS #${bossNumber}! VÅG ${state.wave} AV ${maxWaves} ⚠️`;
@@ -1422,12 +1434,12 @@
                 const count = 6 + state.wave * 3;
                 for (let i = 0; i < count; i++) {
                     let type = 'normal', hp = Math.round(62 * scale), speed = 56 + Math.min(26, state.wave * 1.4);
-                    let reward = Math.round((11 + Math.floor(state.wave * 0.8)) * diff.rewardMult);
+                    let reward = Math.round((7 + Math.floor(state.wave * 0.45)) * diff.rewardMult);
 
                     if (state.wave >= 2 && i % 4 === 3) { type = 'fast'; hp = Math.round(48 * scale); speed = 94; }
-                    else if (state.wave >= 3 && i % 6 === 5) { type = 'giant'; hp = Math.round(180 * scale); speed = 42; }
-                    else if (state.wave >= 4 && i % 7 === 4) { type = 'shield'; hp = Math.round(140 * scale); speed = 48; }
-                    else if (state.wave >= 5 && i % 9 === 8) { type = 'necro'; hp = Math.round(115 * scale); speed = 46; }
+                    else if (state.wave >= 3 && i % 6 === 5) { type = 'giant'; hp = Math.round(180 * scale); speed = 42; reward = Math.round(reward * 1.4); }
+                    else if (state.wave >= 4 && i % 7 === 4) { type = 'shield'; hp = Math.round(140 * scale); speed = 48; reward = Math.round(reward * 1.25); }
+                    else if (state.wave >= 5 && i % 9 === 8) { type = 'necro'; hp = Math.round(115 * scale); speed = 46; reward = Math.round(reward * 1.3); }
 
                     state.spawnQueue.push({ type, hp, speed, reward, delay: Math.max(0.32, 0.92 - state.wave * 0.025) });
                 }
@@ -1568,7 +1580,7 @@
             if (state.gameOver || state.victory || !state.matchStarted) return;
             const scaledDt = dt * state.gameSpeed;
             const wps = getCurrentMap().waypoints;
-            const maxWaves = getCurrentMap().maxWaves || 35;
+            const maxWaves = getCurrentMap().maxWaves || 42;
 
             if (!state.waveActive && state.autoWave && state.wave > 0 && state.wave < maxWaves) {
                 state.autoWaveTimer -= scaledDt;
@@ -1665,7 +1677,7 @@
                     if (z.summonTimer <= 0) {
                         z.summonTimer = 6.0;
                         spawnParticles(z.x, z.y, '#c084fc', 12);
-                        spawnZombieFromSpec({ type: 'mini', hp: Math.round(35 * Math.pow(1.18, state.wave - 1)), speed: 78, reward: 4 }, z.x, z.y, z.waypointIndex);
+                        spawnZombieFromSpec({ type: 'mini', hp: Math.round(35 * Math.pow(1.18, state.wave - 1)), speed: 78, reward: 3 }, z.x, z.y, z.waypointIndex);
                     }
                 }
 
@@ -1733,7 +1745,7 @@
                 }
 
                 const mineWaveBonus = state.buildings.filter(b => b.type === 'mine').reduce((sum, b) => sum + Math.round(b.waveGold * (1 + meta.tech.mineIncome * 0.18)), 0);
-                const waveClearBonus = 40 + state.wave * 12 + mineWaveBonus;
+                const waveClearBonus = 35 + state.wave * 10 + mineWaveBonus;
                 state.money += waveClearBonus;
 
                 if (starReward > 0) {
@@ -2200,11 +2212,20 @@
 
             const focusEntity = state.selectedEntity || state.hoveredEntity;
             if (focusEntity && !state.actionMode) {
-                const rng = focusEntity.category === 'tank' ? getTankBoosts(focusEntity).effectiveRange : focusEntity.auraRange;
-                if (rng > 0) {
-                    drawRangeCircle(ctx, focusEntity.x, focusEntity.y, rng, 'rgba(56, 189, 248, 0.16)', 'rgba(14, 165, 233, 0.9)', true);
+                if (focusEntity.category === 'tank') {
+                    const boosts = getTankBoosts(focusEntity);
+                    drawRangeCircle(ctx, focusEntity.x, focusEntity.y, boosts.baseRange, 'rgba(56, 189, 248, 0.16)', 'rgba(14, 165, 233, 0.9)', true);
+                    if (boosts.hasRangeBoost) {
+                        drawRangeCircle(ctx, focusEntity.x, focusEntity.y, boosts.effectiveRange, 'rgba(16, 185, 129, 0.10)', 'rgba(16, 185, 129, 0.95)', true);
+                    }
                     if (state.selectedEntity && state.hoverUpgradeBtn && state.selectedEntity.level < MAX_UPGRADE_LEVEL) {
-                        const nextRng = Math.round(rng * 1.08);
+                        const nextRng = Math.round(boosts.effectiveRange * 1.08);
+                        drawRangeCircle(ctx, focusEntity.x, focusEntity.y, nextRng, 'rgba(250, 204, 21, 0.08)', 'rgba(250, 204, 21, 0.95)', true);
+                    }
+                } else if (focusEntity.auraRange > 0) {
+                    drawRangeCircle(ctx, focusEntity.x, focusEntity.y, focusEntity.auraRange, 'rgba(56, 189, 248, 0.16)', 'rgba(14, 165, 233, 0.9)', true);
+                    if (state.selectedEntity && state.hoverUpgradeBtn && state.selectedEntity.level < MAX_UPGRADE_LEVEL) {
+                        const nextRng = Math.round(focusEntity.auraRange * 1.08);
                         drawRangeCircle(ctx, focusEntity.x, focusEntity.y, nextRng, 'rgba(250, 204, 21, 0.08)', 'rgba(250, 204, 21, 0.95)', true);
                     }
                 }
@@ -2368,14 +2389,27 @@
         function renderTankShop() {
             const list = document.getElementById('tank-shop-list');
             list.innerHTML = '';
+            const totalTanks = Object.keys(TANK_TYPES).length;
+            const unlockedCount = Object.values(state.unlockedTanks).filter(Boolean).length;
+            const badgeEl = document.getElementById('unlocked-tanks-badge');
+            if (badgeEl) {
+                badgeEl.textContent = `Upplåsta: ${unlockedCount}/${totalTanks}`;
+            }
+
             for (const [id, def] of Object.entries(TANK_TYPES)) {
                 const unlocked = state.unlockedTanks[id];
                 const card = document.createElement('div');
                 card.className = `tank-card bg-white rounded-xl p-2 flex flex-col justify-between cursor-pointer ${unlocked ? '' : 'locked bg-amber-50/90 border-dashed'}`;
                 card.innerHTML = `
-                    <div class="flex items-center justify-between gap-1">
+                    <div class="flex items-start justify-between gap-1">
                         <span class="font-extrabold text-xs text-stone-900 truncate">${unlocked ? '' : '🔒 '}${def.name}</span>
-                        <span class="text-[10px] font-extrabold shrink-0 ${unlocked ? 'text-emerald-700' : 'text-amber-700'}">${unlocked ? `🪙${def.buildCost}` : `Lås upp: 🪙${def.unlockCost}`}</span>
+                        ${unlocked
+                            ? `<span class="text-[10px] font-extrabold shrink-0 text-emerald-700">🪙${def.buildCost}</span>`
+                            : `<div class="text-right leading-tight shrink-0">
+                                <div class="text-[10px] font-extrabold text-amber-700">Lås upp: 🪙${def.unlockCost}</div>
+                                <div class="text-[9px] font-bold text-stone-500">Byggpris: 🪙${def.buildCost}</div>
+                               </div>`
+                        }
                     </div>
                     <div class="text-[10px] text-stone-600 mt-1 leading-tight">${def.desc}</div>
                 `;
@@ -2407,7 +2441,7 @@
             list.innerHTML = '';
             for (const [id, def] of Object.entries(BUILDING_TYPES)) {
                 const count = state.buildings.filter(b => b.type === id).length;
-                const maxCount = id === 'mine' ? 3 : 2;
+                const maxCount = id === 'mine' ? 1 : 2;
                 const isMaxed = count >= maxCount;
                 const card = document.createElement('div');
                 card.className = `tank-card bg-white rounded-xl p-2 flex flex-col justify-between cursor-pointer ${isMaxed ? 'opacity-65' : ''}`;
@@ -2485,7 +2519,7 @@
         }
 
         function updateHUD() {
-            const maxWaves = getCurrentMap().maxWaves || 35;
+            const maxWaves = getCurrentMap().maxWaves || 42;
             document.getElementById('ui-lives').textContent = state.lives;
             document.getElementById('ui-money').textContent = state.money;
             document.getElementById('ui-stars').textContent = meta.stars;
@@ -2512,7 +2546,7 @@
             const mineCount = state.buildings.filter(b => b.type === 'mine').length;
             const radarCount = state.buildings.filter(b => b.type === 'radar').length;
             const depotCount = state.buildings.filter(b => b.type === 'depot').length;
-            document.getElementById('mine-count-badge').textContent = `Gruvor: ${mineCount}/3`;
+            document.getElementById('mine-count-badge').textContent = `Gruva: ${mineCount}/1`;
             document.getElementById('radar-count-badge').textContent = `Radar: ${radarCount}/2`;
             document.getElementById('depot-count-badge').textContent = `Depå: ${depotCount}/2`;
         }
@@ -2545,6 +2579,10 @@
             document.getElementById('sel-name').textContent = def.name;
             document.getElementById('sel-level').textContent = `Nivå ${entity.level} / ${MAX_UPGRADE_LEVEL}`;
 
+            document.getElementById('sel-dmg-bonus').textContent = '';
+            document.getElementById('sel-rng-bonus').textContent = '';
+            document.getElementById('sel-spd-bonus').textContent = '';
+
             if (entity.category === 'tank') {
                 const boosts = getTankBoosts(entity);
                 if (entity.type === 'freeze') {
@@ -2553,18 +2591,27 @@
                     document.getElementById('sel-dmg-next').textContent = isMax ? 'MAX' : `+0.55s`;
                 } else {
                     document.getElementById('lbl-stat-1').textContent = 'Skada';
-                    document.getElementById('sel-dmg').textContent = boosts.hasDamageBoost ? `${boosts.effectiveDamage} ⚡` : `${boosts.effectiveDamage}`;
+                    document.getElementById('sel-dmg').textContent = `${boosts.effectiveDamage}`;
+                    if (boosts.hasDamageBoost) {
+                        document.getElementById('sel-dmg-bonus').textContent = `(+${boosts.damageBonusAmount} 📡)`;
+                    }
                     const nextDmg = Math.round(boosts.effectiveDamage * 1.38);
                     document.getElementById('sel-dmg-next').textContent = isMax ? 'MAX' : `+${nextDmg - boosts.effectiveDamage}`;
                 }
 
                 document.getElementById('lbl-stat-2').textContent = 'Räckvidd';
-                document.getElementById('sel-rng').textContent = boosts.hasRangeBoost ? `${boosts.effectiveRange} 📡` : `${boosts.effectiveRange}`;
+                document.getElementById('sel-rng').textContent = `${boosts.effectiveRange}`;
+                if (boosts.hasRangeBoost) {
+                    document.getElementById('sel-rng-bonus').textContent = `(+${boosts.rangeBonusAmount} 📡)`;
+                }
                 const nextRng = Math.round(boosts.effectiveRange * 1.08);
                 document.getElementById('sel-rng-next').textContent = isMax ? 'MAX' : `+${nextRng - boosts.effectiveRange}`;
 
                 document.getElementById('lbl-stat-3').textContent = 'Eldhastighet';
-                document.getElementById('sel-spd').textContent = boosts.hasFireRateBoost ? `${boosts.effectiveFireRate}/s 📦` : `${boosts.effectiveFireRate}/s`;
+                document.getElementById('sel-spd').textContent = `${boosts.effectiveFireRate}/s`;
+                if (boosts.hasFireRateBoost) {
+                    document.getElementById('sel-spd-bonus').textContent = `(+${boosts.fireRateBonusAmount}/s 📦)`;
+                }
                 const nextSpd = Number((boosts.effectiveFireRate * 1.12).toFixed(2));
                 const spdDiff = Number((nextSpd - boosts.effectiveFireRate).toFixed(2));
                 document.getElementById('sel-spd-next').textContent = isMax ? 'MAX' : `+${spdDiff}/s`;
@@ -2633,7 +2680,7 @@
 
         function triggerGameOver() {
             state.gameOver = true;
-            document.getElementById('go-waves').textContent = `${state.wave} / ${getCurrentMap().maxWaves || 35}`;
+            document.getElementById('go-waves').textContent = `${state.wave} / ${getCurrentMap().maxWaves || 42}`;
             document.getElementById('go-kills').textContent = state.kills;
             document.getElementById('go-stars').textContent = `+${state.sessionStars} ⭐`;
             document.getElementById('gameover-modal').classList.remove('hidden');
@@ -2641,7 +2688,7 @@
 
         function triggerVictory() {
             state.victory = true;
-            const maxWaves = getCurrentMap().maxWaves || 35;
+            const maxWaves = getCurrentMap().maxWaves || 42;
             document.getElementById('vic-waves').textContent = `${state.wave} / ${maxWaves}`;
             document.getElementById('vic-kills').textContent = state.kills;
             document.getElementById('vic-stars').textContent = `+${state.sessionStars} ⭐`;
