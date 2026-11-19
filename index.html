@@ -103,14 +103,14 @@
                     <span class="font-extrabold text-xs sm:text-sm text-amber-900" id="ui-money">350</span>
                 </div>
 
-                <div class="bg-purple-200 border-2 border-stone-900 rounded-xl px-2.5 py-1 flex items-center gap-1 shadow-sm" title="Tech-Stjärnor (sparas permanent)">
+                <div class="bg-purple-200 border-2 border-stone-900 rounded-xl px-2.5 py-1 flex items-center gap-1 shadow-sm" title="Tech-Stjärnor (tjänas från bossar)">
                     <span class="text-sm sm:text-base">⭐</span>
                     <span class="font-extrabold text-xs sm:text-sm text-purple-950" id="ui-stars">0</span>
                 </div>
 
                 <div id="ui-wave-pill" class="bg-sky-100 border-2 border-stone-900 rounded-xl px-2.5 py-1 flex items-center gap-1 shadow-sm">
                     <span class="text-sm sm:text-base" id="ui-wave-icon">🌊</span>
-                    <span class="font-extrabold text-xs sm:text-sm text-sky-950">Våg <span id="ui-wave">0</span></span>
+                    <span class="font-extrabold text-xs sm:text-sm text-sky-950">Våg <span id="ui-wave">0</span> av <span id="ui-max-wave">35</span></span>
                 </div>
             </div>
 
@@ -248,12 +248,34 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Victory Modal -->
+            <div id="victory-modal" class="hidden absolute inset-0 bg-stone-950/85 backdrop-blur-xs flex items-center justify-center p-4 z-40">
+                <div class="bg-amber-100 border-4 border-stone-900 rounded-3xl p-6 max-w-sm w-full text-center shadow-2xl">
+                    <div class="text-5xl mb-2">🏆🎉</div>
+                    <h2 class="cartoon-font text-3xl font-bold text-emerald-700 mb-1">SEGER!</h2>
+                    <p class="text-sm font-bold text-stone-700 mb-4">Du klarade alla vågor på kartan!</p>
+                    <div class="bg-white border-2 border-stone-800 rounded-2xl p-3 mb-5 space-y-1 text-sm font-extrabold">
+                        <div>Klarade vågor: <span class="text-sky-700" id="vic-waves">35 / 35</span></div>
+                        <div>Besegrade zombies: <span class="text-emerald-700" id="vic-kills">0</span></div>
+                        <div>Intjänade Tech-Stjärnor: <span class="text-purple-700" id="vic-stars">+0 ⭐</span></div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button id="btn-vic-menu" class="cartoon-btn bg-amber-300 hover:bg-amber-200 text-stone-950 font-extrabold text-sm py-3 rounded-2xl cursor-pointer">
+                            🏠 Meny & Tech
+                        </button>
+                        <button id="btn-vic-restart" class="cartoon-btn bg-lime-500 hover:bg-lime-400 text-stone-950 font-extrabold text-sm py-3 rounded-2xl cursor-pointer">
+                            🔄 Spela Igen
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Right / Bottom: Tank Factory & Support Buildings Shop -->
         <aside class="w-full lg:w-80 xl:w-96 bg-amber-100 rounded-2xl cartoon-panel p-3 flex flex-col justify-between max-h-[380px] lg:max-h-none overflow-y-auto shrink-0">
             <div>
-                <!-- Active Tactical Abilities Bar (Cleanly integrated in panel!) -->
+                <!-- Active Tactical Abilities Bar -->
                 <div class="mb-3 pb-2.5 border-b-2 border-stone-300">
                     <div class="flex items-center justify-between mb-1.5">
                         <h2 class="cartoon-font font-bold text-sm sm:text-base text-stone-900 flex items-center gap-1.5">
@@ -319,7 +341,7 @@
             <div class="hidden lg:block mt-3 bg-amber-200/70 border-2 border-stone-400 rounded-xl p-2.5 text-xs text-stone-800 space-y-1">
                 <div class="font-extrabold text-stone-950">💡 Snabbguide:</div>
                 <p>• Hovra eller klicka på ett torn för att se dess <b>räckviddscirkel</b>!</p>
-                <p>• Uppgradera torn (Nivå 2 & 3+) för tydligt <b>nytt pansar & vapen</b>.</p>
+                <p>• Besegra <b>Bossar var 7:e våg</b> för att samla Tech-Stjärnor (⭐).</p>
                 <p>• Kortkommandon: <b>U</b> (Uppgradera), <b>S</b> (Sälj), <b>ESC</b> (Avbryt).</p>
             </div>
         </aside>
@@ -358,16 +380,19 @@
                             <button type="button" data-map="meadow" class="map-option active tank-card bg-white rounded-2xl p-2.5 text-left cursor-pointer">
                                 <div class="text-2xl mb-1">🌿</div>
                                 <div class="font-extrabold text-xs sm:text-sm text-stone-900">Gröna Ängen</div>
+                                <div class="text-[10px] font-extrabold text-sky-700 mt-0.5">35 Vågor (5 Bossar)</div>
                                 <div class="text-[10px] text-stone-600 leading-tight mt-0.5">Slingrande väg, träbro över bäck & damm.</div>
                             </button>
                             <button type="button" data-map="desert" class="map-option tank-card bg-white rounded-2xl p-2.5 text-left cursor-pointer">
                                 <div class="text-2xl mb-1">🏜️</div>
                                 <div class="font-extrabold text-xs sm:text-sm text-stone-900">Ökenfortet</div>
+                                <div class="text-[10px] font-extrabold text-sky-700 mt-0.5">42 Vågor (6 Bossar)</div>
                                 <div class="text-[10px] text-stone-600 leading-tight mt-0.5">Kaktusar, oas & många kurvor för korseld.</div>
                             </button>
                             <button type="button" data-map="winter" class="map-option tank-card bg-white rounded-2xl p-2.5 text-left cursor-pointer">
                                 <div class="text-2xl mb-1">❄️</div>
                                 <div class="font-extrabold text-xs sm:text-sm text-stone-900">Vinterpasset</div>
+                                <div class="text-[10px] font-extrabold text-sky-700 mt-0.5">50 Vågor (7 Bossar)</div>
                                 <div class="text-[10px] text-stone-600 leading-tight mt-0.5">Snöigt pass, isbro & frusen alpsjö.</div>
                             </button>
                         </div>
@@ -393,7 +418,7 @@
 
                     <div class="bg-amber-200/80 border-2 border-stone-400 rounded-2xl p-3 text-xs text-stone-800">
                         <div class="font-extrabold text-stone-950 mb-1">🎖️ Exklusiv Forskning:</div>
-                        Samla stjärnor från vågor och bossar för att låsa upp kraftfulla permanenta bonusar i tech-trädet!
+                        Besegra de gigantiska bossarna var 7:e våg för att tjäna Tech-Stjärnor (⭐) till permanenta uppgraderingar!
                     </div>
 
                     <div id="menu-match-locked-notice" class="hidden bg-red-100 border-2 border-red-500 rounded-2xl p-3 text-xs font-extrabold text-red-900">
@@ -544,6 +569,7 @@
             meadow: {
                 id: 'meadow',
                 name: 'Gröna Ängen',
+                maxWaves: 35,
                 grassBase: '#588114',
                 grassAlt: '#659018',
                 roadBorder: '#362312',
@@ -574,6 +600,7 @@
             desert: {
                 id: 'desert',
                 name: 'Ökenfortet',
+                maxWaves: 42,
                 grassBase: '#eab308',
                 grassAlt: '#facc15',
                 roadBorder: '#451a03',
@@ -604,6 +631,7 @@
             winter: {
                 id: 'winter',
                 name: 'Vinterpasset',
+                maxWaves: 50,
                 grassBase: '#cbd5e1',
                 grassAlt: '#e2e8f0',
                 roadBorder: '#1e293b',
@@ -638,12 +666,12 @@
         };
 
         const TECH_NODES = [
-            { id: 'startGold', name: 'Startkapital', icon: '💰', desc: '+60 startguld per nivå', maxLevel: 3, costs: [15, 35, 60] },
-            { id: 'towerDamage', name: 'Stridsträning', icon: '💥', desc: '+8% skada på alla torn/nivå', maxLevel: 3, costs: [20, 40, 70] },
-            { id: 'upgradeDiscount', name: 'Ingenjörskonst', icon: '🔧', desc: '-7% uppgraderingskostnad/nivå', maxLevel: 3, costs: [18, 38, 65] },
-            { id: 'mineIncome', name: 'Guldgruvsdrift', icon: '⛏️', desc: '+18% inkomst från Guldgruvor/nivå', maxLevel: 3, costs: [20, 45, 75] },
-            { id: 'abilityDiscount', name: 'Taktisk Förtrogenhet', icon: '⚡', desc: '-12% kostnad för aktiva förmågor/nivå', maxLevel: 3, costs: [15, 35, 60] },
-            { id: 'baseLives', name: 'Förstärkt Bas', icon: '❤️', desc: '+3 startliv per nivå', maxLevel: 3, costs: [12, 30, 50] }
+            { id: 'startGold', name: 'Startkapital', icon: '💰', desc: '+60 startguld per nivå', maxLevel: 3, costs: [2, 4, 7] },
+            { id: 'towerDamage', name: 'Stridsträning', icon: '💥', desc: '+8% skada på alla torn/nivå', maxLevel: 3, costs: [3, 5, 8] },
+            { id: 'upgradeDiscount', name: 'Ingenjörskonst', icon: '🔧', desc: '-7% uppgraderingskostnad/nivå', maxLevel: 3, costs: [2, 5, 8] },
+            { id: 'mineIncome', name: 'Guldgruvsdrift', icon: '⛏️', desc: '+18% inkomst från Guldgruvor/nivå', maxLevel: 3, costs: [3, 6, 9] },
+            { id: 'abilityDiscount', name: 'Taktisk Förtrogenhet', icon: '⚡', desc: '-12% kostnad för aktiva förmågor/nivå', maxLevel: 3, costs: [2, 4, 7] },
+            { id: 'baseLives', name: 'Förstärkt Bas', icon: '❤️', desc: '+3 startliv per nivå', maxLevel: 3, costs: [2, 4, 6] }
         ];
 
         const TANK_TYPES = {
@@ -698,6 +726,7 @@
             autoWave: false,
             autoWaveTimer: 0,
             gameOver: false,
+            victory: false,
             waveActive: false,
             spawnQueue: [],
             spawnTimer: 0,
@@ -725,14 +754,14 @@
             roadStones: [],
             atmosphereParticles: []
         };
-        // --- DRAMATIC VISUAL SPRITE EVOLUTION (LEVEL 1 -> LEVEL 2 -> LEVEL 3+ ELITE) ---
+
+        // --- DRAMATIC VISUAL SPRITE EVOLUTION ---
         function drawTankSprite(c, typeId, angle, level = 1, recoil = 0, isGhost = false, validGhost = true) {
             const def = TANK_TYPES[typeId];
             const now = performance.now() * 0.005;
             c.save();
             if (isGhost) c.globalAlpha = 0.78;
 
-            // Level 3+ Elite Radiant Aura Ring beneath tank
             if (!isGhost && level >= 3) {
                 const pulse = 25 + Math.sin(now * 2) * 2.5;
                 c.strokeStyle = level === 5 ? 'rgba(250, 204, 21, 0.7)' : 'rgba(56, 189, 248, 0.5)';
@@ -742,18 +771,15 @@
                 c.stroke();
             }
 
-            // Ground Shadow
             c.fillStyle = 'rgba(0, 0, 0, 0.34)';
             c.beginPath();
             c.ellipse(0, 6, level >= 3 ? 28 : 25, level >= 3 ? 22 : 19, 0, 0, Math.PI * 2);
             c.fill();
 
-            // Tracks (Evolve in size & armor plating)
             c.save();
             c.lineWidth = 3;
             c.strokeStyle = '#1c1917';
             if (level >= 3) {
-                // Heavy Dreadnought Tracks with Gold Spikes
                 c.fillStyle = '#0f172a';
                 c.beginPath();
                 c.roundRect(-26, -23, 52, 12, 4);
@@ -767,7 +793,6 @@
                     c.fillRect(tx - 2, 22, 4, 3);
                 });
             } else if (level === 2) {
-                // Level 2 Reinforced Tracks
                 c.fillStyle = '#1e293b';
                 c.beginPath();
                 c.roundRect(-24, -21, 48, 10, 4);
@@ -775,7 +800,6 @@
                 c.fill();
                 c.stroke();
             } else {
-                // Level 1 Standard Tracks
                 c.fillStyle = '#292524';
                 c.beginPath();
                 c.roundRect(-21, -18, 42, 8, 4);
@@ -784,7 +808,6 @@
                 c.stroke();
             }
 
-            // Main Chassis Hull
             const hullW = level >= 3 ? 42 : level === 2 ? 40 : 36;
             const hullH = level >= 3 ? 30 : level === 2 ? 28 : 26;
             c.fillStyle = isGhost && !validGhost ? '#ef4444' : def.bodyColor;
@@ -793,7 +816,6 @@
             c.fill();
             c.stroke();
 
-            // Level 2 Silver Side Skirts & Front Bumper
             if (level === 2) {
                 c.fillStyle = '#cbd5e1';
                 c.beginPath();
@@ -804,7 +826,6 @@
                 c.stroke();
             }
 
-            // Level 3+ Heavy Gold Armor Plates & Rivets
             if (level >= 3) {
                 c.fillStyle = '#f59e0b';
                 c.beginPath();
@@ -814,7 +835,6 @@
                 c.fill();
                 c.stroke();
 
-                // Metallic Rivets
                 c.fillStyle = '#fef08a';
                 [-12, 0, 12].forEach(rx => {
                     c.beginPath();
@@ -825,7 +845,6 @@
             }
             c.restore();
 
-            // Rotating Turret & Weapons
             c.save();
             c.rotate(angle);
             c.translate(-recoil * 6, 0);
@@ -833,7 +852,6 @@
             c.strokeStyle = '#1c1917';
 
             if (typeId === 'multi') {
-                // 8-Way Tack Turret
                 const spokes = level >= 3 ? 8 : 4;
                 c.fillStyle = level >= 3 ? '#facc15' : '#cbd5e1';
                 for (let s = 0; s < spokes; s++) {
@@ -846,7 +864,6 @@
                     c.restore();
                 }
             } else if (typeId === 'spike') {
-                // Spike Factory Dispenser Chute
                 c.fillStyle = '#334155';
                 c.beginPath();
                 c.roundRect(6, -9, 18, 18, 4);
@@ -857,7 +874,6 @@
                 c.arc(16, 0, 4, 0, Math.PI * 2);
                 c.fill();
             } else if (typeId === 'speed' || level >= 3) {
-                // Twin Heavy Barrels for Speed or Level 3+ Elite Tanks
                 const barrelLen = typeId === 'sniper' ? 34 : 26;
                 c.fillStyle = level >= 3 ? '#facc15' : def.turretColor;
                 c.beginPath();
@@ -866,7 +882,6 @@
                 c.fill();
                 c.stroke();
             } else {
-                // Single Barrel (thicker on Level 2)
                 const barrelLen = typeId === 'sniper' ? 32 : 22;
                 const barrelW = level === 2 ? 13 : 10;
                 c.fillStyle = def.turretColor;
@@ -876,14 +891,12 @@
                 c.stroke();
 
                 if (level === 2) {
-                    // Muzzle Brake
                     c.fillStyle = '#cbd5e1';
                     c.fillRect(6 + barrelLen - 5, -barrelW / 2 - 1.5, 6, barrelW + 3);
                     c.strokeRect(6 + barrelLen - 5, -barrelW / 2 - 1.5, 6, barrelW + 3);
                 }
             }
 
-            // Turret Dome
             const domeR = level >= 3 ? 16 : level === 2 ? 14.5 : 13;
             c.fillStyle = isGhost && !validGhost ? '#f87171' : def.turretColor;
             c.beginPath();
@@ -891,7 +904,6 @@
             c.fill();
             c.stroke();
 
-            // Hatch / Glowing Power Core on Dome
             if (level >= 3) {
                 c.strokeStyle = '#facc15';
                 c.lineWidth = 2.5;
@@ -912,7 +924,6 @@
             }
             c.restore();
 
-            // Clear Level Badge Below Unit
             if (!isGhost && level > 1) {
                 c.save();
                 c.translate(0, 26);
@@ -944,20 +955,17 @@
             c.strokeStyle = '#1c1917';
 
             if (typeId === 'mine') {
-                // Gold Mine Visual Evolution: Wood Shack -> Reinforced Rail -> Golden Refinery
                 c.fillStyle = isGhost && !validGhost ? '#ef4444' : (level >= 3 ? '#b45309' : level === 2 ? '#92400e' : '#78350f');
                 c.beginPath();
                 c.roundRect(-23, -20, 46, 40, 10);
                 c.fill();
                 c.stroke();
 
-                // Dark Mine Tunnel Opening
                 c.fillStyle = '#1c1917';
                 c.beginPath();
                 c.arc(0, 4, 12, Math.PI, 0);
                 c.fill();
 
-                // Gold Ore Pile inside / on cart
                 c.fillStyle = '#facc15';
                 c.beginPath();
                 c.arc(-4, 5, level >= 3 ? 6.5 : 5, 0, Math.PI * 2);
@@ -966,14 +974,12 @@
                 c.fill();
                 c.stroke();
 
-                // Level 2+ Timber / Gold Roof Trim
                 if (level >= 2) {
                     c.fillStyle = level >= 3 ? '#fde047' : '#cbd5e1';
                     c.fillRect(-20, -17, 40, 6);
                     c.strokeRect(-20, -17, 40, 6);
                 }
             } else {
-                // Radar / Ammo Depot Evolution
                 c.fillStyle = isGhost && !validGhost ? '#ef4444' : (level >= 3 ? '#334155' : '#64748b');
                 c.beginPath();
                 c.roundRect(-22, -22, 44, 44, 11);
@@ -994,7 +1000,6 @@
                 c.fill();
                 c.stroke();
 
-                // Spinning Radar Dish / Ammo Core
                 c.save();
                 c.rotate(now * (level >= 3 ? 2.5 : 1.5));
                 c.fillStyle = level >= 3 ? '#fde047' : '#ffffff';
@@ -1027,13 +1032,11 @@
             const scale = z.type === 'boss' ? 1.95 : z.type === 'giant' ? 1.38 : z.type === 'mini' ? 0.78 : 1.0;
             c.scale(scale, scale);
 
-            // Rotate body to face movement direction!
             const walkPhase = z.walkPhase || 0;
             const wobble = Math.sin(walkPhase) * 0.14;
             c.save();
             c.rotate((z.facingAngle || 0) + wobble);
 
-            // Ground Shadow
             c.fillStyle = 'rgba(0, 0, 0, 0.34)';
             c.beginPath();
             c.ellipse(-2, 4, 15, 13, 0, 0, Math.PI * 2);
@@ -1044,38 +1047,32 @@
 
             const skin = z.slowTimer > 0 ? '#7dd3fc' : (z.burnTimer > 0 ? '#fb923c' : z.skinColor);
 
-            // Outstretched Shambling Zombie Arms (Reaching forward!)
             const leftArmReach = 14 + Math.sin(walkPhase) * 3.5;
             const rightArmReach = 14 - Math.sin(walkPhase) * 3.5;
 
             c.fillStyle = skin;
-            // Left Arm & Hand
             c.beginPath();
             c.roundRect(2, -14, leftArmReach, 6.5, 3);
             c.fill();
             c.stroke();
 
-            // Right Arm & Hand
             c.beginPath();
             c.roundRect(2, 7.5, rightArmReach, 6.5, 3);
             c.fill();
             c.stroke();
 
-            // Tattered Zombie Torso / Shoulders
             c.fillStyle = z.shirtColor;
             c.beginPath();
             c.roundRect(-9, -12, 17, 24, 6);
             c.fill();
             c.stroke();
 
-            // Ripped Shirt Holes revealing Zombie Skin
             c.fillStyle = skin;
             c.beginPath();
             c.arc(-3, -6, 2.5, 0, Math.PI * 2);
             c.arc(2, 6, 2.2, 0, Math.PI * 2);
             c.fill();
 
-            // Necromancer Hood & Glowing Staff
             if (z.type === 'necro') {
                 c.strokeStyle = '#a855f7';
                 c.lineWidth = 3;
@@ -1091,14 +1088,12 @@
                 c.strokeStyle = '#1c1917';
             }
 
-            // Round Zombie Head
             c.fillStyle = skin;
             c.beginPath();
             c.arc(3, 0, 10.5, 0, Math.PI * 2);
             c.fill();
             c.stroke();
 
-            // Zombie Hair Tufts & Stitch Scar on Head
             c.strokeStyle = '#1c1917';
             c.lineWidth = 1.8;
             c.beginPath();
@@ -1108,14 +1103,12 @@
             c.lineTo(1, -1);
             c.stroke();
 
-            // Glowing Creepy Zombie Eyes (Looking forward!)
             c.fillStyle = z.type === 'boss' ? '#ef4444' : '#fef08a';
             c.beginPath();
             c.arc(9, -4, 2.5, 0, Math.PI * 2);
             c.arc(9, 4, 2.5, 0, Math.PI * 2);
             c.fill();
 
-            // Heavy Bolted Iron Door Shield in front of Shield-Zombie
             if (z.hasShield) {
                 c.fillStyle = '#64748b';
                 c.strokeStyle = '#0f172a';
@@ -1133,7 +1126,6 @@
                 });
             }
 
-            // Boss Horns & Crown
             if (z.type === 'boss') {
                 c.fillStyle = '#facc15';
                 c.beginPath();
@@ -1142,9 +1134,8 @@
                 c.stroke();
             }
 
-            c.restore(); // End rotated zombie body
+            c.restore();
 
-            // Upright Health Bar Above Zombie
             if (z.type !== 'boss') {
                 const hpPct = Math.max(0, z.hp / z.maxHp);
                 c.fillStyle = '#1c1917';
@@ -1390,8 +1381,15 @@
             renderUpgradePanel();
             return true;
         }
+
         function getWavePreviewLabel(waveNum) {
-            if (isBossWaveNumber(waveNum)) return '👑 MEGA ZOMBIE-BOSS!';
+            const maxWaves = getCurrentMap().maxWaves || 35;
+            if (waveNum > maxWaves) return 'Alla vågor avklarade!';
+            if (isBossWaveNumber(waveNum)) {
+                const bossNumber = Math.floor(waveNum / 7);
+                const stars = Math.max(1, Math.ceil(bossNumber / 2));
+                return `👑 BOSS #${bossNumber} (+${stars} ⭐)`;
+            }
             if (waveNum === 1) return 'Vanliga Zombier';
             if (waveNum === 2) return 'Vanliga + Snabba Löpare';
             if (waveNum === 3) return 'Löpare + Tunga Jättar';
@@ -1400,7 +1398,8 @@
         }
 
         function startNextWave() {
-            if (state.waveActive || state.gameOver || !state.matchStarted) return;
+            const maxWaves = getCurrentMap().maxWaves || 35;
+            if (state.waveActive || state.gameOver || !state.matchStarted || state.wave >= maxWaves) return;
             state.wave++;
             state.waveActive = true;
             state.spawnQueue = [];
@@ -1411,11 +1410,12 @@
             const scale = Math.pow(1.22, state.wave - 1) * diff.hpMult;
 
             if (isBossWave) {
-                const bossHp = Math.round(1850 * Math.pow(1.55, (state.wave / 7) - 1) * diff.hpMult);
-                state.spawnQueue.push({ type: 'boss', hp: bossHp, speed: 34, reward: Math.round((220 + state.wave * 15) * diff.rewardMult), delay: 0.5 });
+                const bossNumber = Math.floor(state.wave / 7);
+                const bossHp = Math.round(2150 * Math.pow(1.65, bossNumber - 1) * diff.hpMult);
+                state.spawnQueue.push({ type: 'boss', hp: bossHp, speed: 36 + Math.min(8, bossNumber), reward: Math.round((240 + state.wave * 15) * diff.rewardMult), delay: 0.5 });
                 sfx.play('boss_alarm');
                 const banner = document.getElementById('boss-banner');
-                document.getElementById('boss-banner-title').textContent = `⚠️ BOSS-NIVÅ! VÅG ${state.wave} ⚠️`;
+                document.getElementById('boss-banner-title').textContent = `⚠️ BOSS #${bossNumber}! VÅG ${state.wave} AV ${maxWaves} ⚠️`;
                 banner.classList.remove('hidden');
                 setTimeout(() => banner.classList.add('hidden'), 3200);
             } else {
@@ -1565,11 +1565,12 @@
 
         // --- UPDATE LOOP ---
         function update(dt) {
-            if (state.gameOver || !state.matchStarted) return;
+            if (state.gameOver || state.victory || !state.matchStarted) return;
             const scaledDt = dt * state.gameSpeed;
             const wps = getCurrentMap().waypoints;
+            const maxWaves = getCurrentMap().maxWaves || 35;
 
-            if (!state.waveActive && state.autoWave && state.wave > 0) {
+            if (!state.waveActive && state.autoWave && state.wave > 0 && state.wave < maxWaves) {
                 state.autoWaveTimer -= scaledDt;
                 updateHUD();
                 if (state.autoWaveTimer <= 0) {
@@ -1633,7 +1634,6 @@
                 }
             }
 
-            // Gold mines only generate tick-gold while a wave is actively running!
             if (state.waveActive) {
                 for (const b of state.buildings) {
                     if (b.type === 'mine') {
@@ -1660,7 +1660,6 @@
                     z.hp -= z.burnDps * scaledDt;
                 }
 
-                // Necromancer summons mini-zombies
                 if (z.type === 'necro') {
                     z.summonTimer -= scaledDt;
                     if (z.summonTimer <= 0) {
@@ -1711,7 +1710,6 @@
                 }
             }
 
-            // Boss HUD bar update
             const bossHud = document.getElementById('boss-hud');
             if (activeBoss) {
                 bossHud.classList.remove('hidden');
@@ -1724,18 +1722,31 @@
             if (state.waveActive && state.spawnQueue.length === 0 && state.zombies.length === 0) {
                 state.waveActive = false;
                 state.autoWaveTimer = 6.0;
-                const starReward = isBossWaveNumber(state.wave) ? 3 : 1;
-                meta.stars += starReward;
-                state.sessionStars += starReward;
-                meta.save();
+                const isBossWave = isBossWaveNumber(state.wave);
+                const bossNumber = Math.floor(state.wave / 7);
+                const starReward = isBossWave ? Math.max(1, Math.ceil(bossNumber / 2)) : 0;
+
+                if (starReward > 0) {
+                    meta.stars += starReward;
+                    state.sessionStars += starReward;
+                    meta.save();
+                }
 
                 const mineWaveBonus = state.buildings.filter(b => b.type === 'mine').reduce((sum, b) => sum + Math.round(b.waveGold * (1 + meta.tech.mineIncome * 0.18)), 0);
                 const waveClearBonus = 40 + state.wave * 12 + mineWaveBonus;
                 state.money += waveClearBonus;
 
-                showToast(`🎉 Våg ${state.wave} klarad! +🪙${waveClearBonus} & +${starReward} ⭐`);
+                if (starReward > 0) {
+                    showToast(`👑 Boss #${bossNumber} besegrad! +🪙${waveClearBonus} & +${starReward} ⭐`);
+                } else {
+                    showToast(`🎉 Våg ${state.wave} klarad! +🪙${waveClearBonus}`);
+                }
                 updateHUD();
                 renderTechTreeGrid();
+
+                if (state.wave >= maxWaves) {
+                    triggerVictory();
+                }
             }
 
             for (const tank of state.tanks) {
@@ -1816,7 +1827,6 @@
             sfx.play(def.sound);
 
             if (tank.type === 'spike') {
-                // Find a point on the road within range
                 const wps = getCurrentMap().waypoints;
                 let dropX = tank.x, dropY = tank.y, bestDist = Infinity;
                 for (let i = 0; i < wps.length - 1; i++) {
@@ -1880,7 +1890,6 @@
             const wps = map.waypoints;
             const nowTime = performance.now() * 0.001;
 
-            // Rich Grass / Terrain Background with subtle checkerboard pattern
             ctx.fillStyle = map.grassBase;
             ctx.fillRect(0, 0, LOGICAL_WIDTH, LOGICAL_HEIGHT);
             ctx.fillStyle = map.grassAlt;
@@ -1895,7 +1904,6 @@
                 }
             }
 
-            // Pond & Stream
             if (map.streamX !== null) {
                 ctx.fillStyle = map.waterColor;
                 ctx.fillRect(map.streamX - 20, 0, 40, LOGICAL_HEIGHT);
@@ -1916,7 +1924,6 @@
                 ctx.lineWidth = 4;
                 ctx.stroke();
 
-                // Lily pads
                 ctx.fillStyle = '#15803d';
                 ctx.beginPath();
                 ctx.arc(map.pond.x - 18, map.pond.y - 10, 8, 0, Math.PI * 2);
@@ -1924,7 +1931,6 @@
                 ctx.fill();
             }
 
-            // Winding Road with rich borders
             ctx.lineWidth = PATH_WIDTH + 14;
             ctx.strokeStyle = map.roadBorder;
             ctx.lineCap = 'round';
@@ -1938,7 +1944,6 @@
             ctx.strokeStyle = map.roadFill;
             ctx.stroke();
 
-            // Gravel road texture stones
             for (const s of state.roadStones) {
                 ctx.fillStyle = s.shade;
                 ctx.beginPath();
@@ -1946,7 +1951,6 @@
                 ctx.fill();
             }
 
-            // Wooden Bridge if applicable
             if (map.bridge) {
                 const b = map.bridge;
                 ctx.fillStyle = '#78350f';
@@ -1960,7 +1964,6 @@
                 }
             }
 
-            // Charming Decorations (Trees, bushes, flowers)
             for (const d of state.decorations) {
                 if (d.type === 'tree' || d.type === 'pine') {
                     ctx.fillStyle = '#451a03';
@@ -2003,13 +2006,11 @@
             ctx.save();
             ctx.translate(startWp.x, startWp.y);
 
-            // Ground shadow under coffin
             ctx.fillStyle = 'rgba(0, 0, 0, 0.38)';
             ctx.beginPath();
             ctx.ellipse(0, 8, 30, 18, 0, 0, Math.PI * 2);
             ctx.fill();
 
-            // Coffin outer wooden body (hexagonal coffin shape)
             ctx.fillStyle = '#451a03';
             ctx.strokeStyle = '#1c1917';
             ctx.lineWidth = 3;
@@ -2025,7 +2026,6 @@
             ctx.fill();
             ctx.stroke();
 
-            // Inner lid planks & eerie glowing crack
             ctx.fillStyle = '#78350f';
             ctx.beginPath();
             ctx.moveTo(-21, -9);
@@ -2039,7 +2039,6 @@
             ctx.fill();
             ctx.stroke();
 
-            // Glowing green zombie mist seeping from coffin crack
             const mistAlpha = 0.65 + Math.sin(nowTime * 3.5) * 0.25;
             ctx.strokeStyle = `rgba(74, 222, 128, ${mistAlpha})`;
             ctx.lineWidth = 3;
@@ -2048,7 +2047,6 @@
             ctx.lineTo(16, -4);
             ctx.stroke();
 
-            // Gold cross / hinges on coffin lid
             ctx.fillStyle = '#facc15';
             ctx.fillRect(-5, -12, 4, 16);
             ctx.fillRect(-10, -6, 14, 4);
@@ -2058,7 +2056,6 @@
             ctx.save();
             ctx.translate(endWp.x, endWp.y);
 
-            // Ground shadow
             ctx.fillStyle = 'rgba(0, 0, 0, 0.36)';
             ctx.beginPath();
             ctx.ellipse(0, 12, 36, 18, 0, 0, Math.PI * 2);
@@ -2067,14 +2064,12 @@
             ctx.lineWidth = 3;
             ctx.strokeStyle = '#1c1917';
 
-            // Main Castle Keep Wall
             ctx.fillStyle = '#94a3b8';
             ctx.beginPath();
             ctx.roundRect(-24, -28, 48, 38, 4);
             ctx.fill();
             ctx.stroke();
 
-            // Left & Right Castle Turret Towers
             ctx.fillStyle = '#cbd5e1';
             ctx.beginPath();
             ctx.roundRect(-34, -36, 16, 46, 3);
@@ -2082,14 +2077,12 @@
             ctx.fill();
             ctx.stroke();
 
-            // Battlements (crenellations) on top
             ctx.fillStyle = '#e2e8f0';
             [-34, -24, -14, -4, 6, 18, 28].forEach(bx => {
                 ctx.fillRect(bx, -41, 6, 6);
                 ctx.strokeRect(bx, -41, 6, 6);
             });
 
-            // Royal Red Roofs on Side Towers
             ctx.fillStyle = '#dc2626';
             ctx.beginPath();
             ctx.moveTo(-36, -36);
@@ -2107,7 +2100,6 @@
             ctx.fill();
             ctx.stroke();
 
-            // Waving Flag on Center Keep
             ctx.strokeStyle = '#1c1917';
             ctx.lineWidth = 2.5;
             ctx.beginPath();
@@ -2125,7 +2117,6 @@
             ctx.fill();
             ctx.stroke();
 
-            // Arched Castle Gatehouse Door
             ctx.fillStyle = '#451a03';
             ctx.beginPath();
             ctx.arc(0, -4, 11, Math.PI, 0);
@@ -2136,7 +2127,6 @@
             ctx.stroke();
             ctx.restore();
 
-            // Napalm Fire Pools on Road (Animated flickering fire)
             for (const np of state.napalmPools) {
                 const flicker = 1 + Math.sin(nowTime * 10 + np.x) * 0.12;
                 ctx.save();
@@ -2164,7 +2154,6 @@
                 ctx.restore();
             }
 
-            // Road Mines & Sharp Metallic Spike Clusters
             for (const m of state.roadMines) {
                 if (m.isSpike) {
                     ctx.save();
@@ -2209,13 +2198,11 @@
                 }
             }
 
-            // Range Circle for Hovered or Selected Entity
             const focusEntity = state.selectedEntity || state.hoveredEntity;
             if (focusEntity && !state.actionMode) {
                 const rng = focusEntity.category === 'tank' ? getTankBoosts(focusEntity).effectiveRange : focusEntity.auraRange;
                 if (rng > 0) {
                     drawRangeCircle(ctx, focusEntity.x, focusEntity.y, rng, 'rgba(56, 189, 248, 0.16)', 'rgba(14, 165, 233, 0.9)', true);
-                    // Preview upgraded range ring if hovering Upgrade button
                     if (state.selectedEntity && state.hoverUpgradeBtn && state.selectedEntity.level < MAX_UPGRADE_LEVEL) {
                         const nextRng = Math.round(rng * 1.08);
                         drawRangeCircle(ctx, focusEntity.x, focusEntity.y, nextRng, 'rgba(250, 204, 21, 0.08)', 'rgba(250, 204, 21, 0.95)', true);
@@ -2223,7 +2210,6 @@
                 }
             }
 
-            // Buildings & Tanks
             for (const b of state.buildings) {
                 ctx.save();
                 ctx.translate(b.x, b.y);
@@ -2235,7 +2221,6 @@
                 ctx.save();
                 ctx.translate(tank.x, tank.y);
 
-                // Visual Flame Cone when Flame Tank fires!
                 if (tank.type === 'flame' && tank.recoil > 0.25) {
                     ctx.save();
                     ctx.rotate(tank.angle);
@@ -2258,12 +2243,10 @@
                 ctx.restore();
             }
 
-            // Zombies
             for (const z of state.zombies) {
                 drawZombieSprite(ctx, z);
             }
 
-            // Projectiles (Distinct visuals for Blast Shells & Flame Clouds)
             for (const p of state.projectiles) {
                 if (p.type === 'blast') {
                     ctx.save();
@@ -2276,7 +2259,6 @@
                     ctx.ellipse(0, 0, 9, 6.5, 0, 0, Math.PI * 2);
                     ctx.fill();
                     ctx.stroke();
-                    // Glowing fuse spark
                     ctx.fillStyle = '#facc15';
                     ctx.beginPath();
                     ctx.arc(-8, 0, 3, 0, Math.PI * 2);
@@ -2305,7 +2287,6 @@
                 }
             }
 
-            // Shockwaves (Blast Explosions & Upgrade Pulse)
             for (const sw of state.shockwaves) {
                 ctx.save();
                 if (sw.isBlast) {
@@ -2324,7 +2305,6 @@
                 ctx.restore();
             }
 
-            // Particles
             for (const pt of state.particles) {
                 ctx.fillStyle = pt.color;
                 ctx.beginPath();
@@ -2332,7 +2312,6 @@
                 ctx.fill();
             }
 
-            // Floating Texts (Coin float animation with smooth fade out)
             for (const ft of state.floatingTexts) {
                 ctx.save();
                 ctx.globalAlpha = Math.max(0, ft.life / ft.maxLife);
@@ -2346,7 +2325,6 @@
                 ctx.restore();
             }
 
-            // Atmosphere particles (Wind dust/leaves)
             for (const ap of state.atmosphereParticles) {
                 ctx.fillStyle = `rgba(255, 255, 255, ${ap.alpha})`;
                 ctx.beginPath();
@@ -2354,7 +2332,6 @@
                 ctx.fill();
             }
 
-            // Ghost placement preview + CLEAR RANGE CIRCLE
             if (state.actionMode && state.actionMode.mode === 'place') {
                 const valid = canPlaceAt(state.mouseX, state.mouseY);
                 const def = state.actionMode.category === 'tank'
@@ -2461,7 +2438,7 @@
             grid.innerHTML = '';
             document.getElementById('menu-stars').textContent = meta.stars;
 
-            const isMatchLocked = state.matchStarted && !state.gameOver;
+            const isMatchLocked = state.matchStarted && !state.gameOver && !state.victory;
             const lockNotice = document.getElementById('menu-match-locked-notice');
             if (lockNotice) lockNotice.classList.toggle('hidden', !isMatchLocked);
 
@@ -2491,7 +2468,7 @@
                     </button>
                 `;
                 card.querySelector('button').onclick = () => {
-                    if (state.matchStarted && !state.gameOver) return;
+                    if (state.matchStarted && !state.gameOver && !state.victory) return;
                     sfx.init();
                     if (lvl < node.maxLevel && meta.stars >= nextCost) {
                         meta.stars -= nextCost;
@@ -2508,18 +2485,30 @@
         }
 
         function updateHUD() {
+            const maxWaves = getCurrentMap().maxWaves || 35;
             document.getElementById('ui-lives').textContent = state.lives;
             document.getElementById('ui-money').textContent = state.money;
             document.getElementById('ui-stars').textContent = meta.stars;
             document.getElementById('ui-wave').textContent = state.wave;
-            if (state.waveActive) {
-                document.getElementById('btn-wave-text').textContent = 'Våg pågår...';
-            } else if (state.autoWave && state.wave > 0 && state.autoWaveTimer > 0) {
-                document.getElementById('btn-wave-text').textContent = `Starta Våg ${state.wave + 1} (${Math.ceil(state.autoWaveTimer)}s)`;
+            document.getElementById('ui-max-wave').textContent = maxWaves;
+
+            const btnStartWave = document.getElementById('btn-start-wave');
+            if (state.wave >= maxWaves && !state.waveActive) {
+                btnStartWave.disabled = true;
+                document.getElementById('btn-wave-text').textContent = 'Karta klarad!';
+                document.getElementById('wave-preview-text').textContent = 'Alla vågor avklarade!';
             } else {
-                document.getElementById('btn-wave-text').textContent = `Starta Våg ${state.wave + 1}`;
+                btnStartWave.disabled = false;
+                if (state.waveActive) {
+                    document.getElementById('btn-wave-text').textContent = 'Våg pågår...';
+                } else if (state.autoWave && state.wave > 0 && state.autoWaveTimer > 0) {
+                    document.getElementById('btn-wave-text').textContent = `Starta Våg ${state.wave + 1} (${Math.ceil(state.autoWaveTimer)}s)`;
+                } else {
+                    document.getElementById('btn-wave-text').textContent = `Starta Våg ${state.wave + 1}`;
+                }
+                document.getElementById('wave-preview-text').textContent = getWavePreviewLabel(state.wave + 1);
             }
-            document.getElementById('wave-preview-text').textContent = getWavePreviewLabel(state.wave + 1);
+
             const mineCount = state.buildings.filter(b => b.type === 'mine').length;
             const radarCount = state.buildings.filter(b => b.type === 'radar').length;
             const depotCount = state.buildings.filter(b => b.type === 'depot').length;
@@ -2595,7 +2584,7 @@
                 document.getElementById('sel-spd-next').textContent = isMax ? 'MAX' : 'Fast';
             } else {
                 document.getElementById('lbl-stat-1').textContent = 'Aura-boost';
-                document.getElementById('sel-dmg').textContent = entity.type === 'radar' ? '+20% Räckv.' : '+24% Hast.';
+                document.getElementById('sel-dmg').textContent = entity.type === 'radar' ? '+25% Räckv.' : '+24% Hast.';
                 document.getElementById('sel-dmg-next').textContent = isMax ? 'MAX' : 'Aktiv';
 
                 document.getElementById('lbl-stat-2').textContent = 'Auradie';
@@ -2644,14 +2633,25 @@
 
         function triggerGameOver() {
             state.gameOver = true;
-            document.getElementById('go-waves').textContent = state.wave;
+            document.getElementById('go-waves').textContent = `${state.wave} / ${getCurrentMap().maxWaves || 35}`;
             document.getElementById('go-kills').textContent = state.kills;
             document.getElementById('go-stars').textContent = `+${state.sessionStars} ⭐`;
             document.getElementById('gameover-modal').classList.remove('hidden');
         }
 
+        function triggerVictory() {
+            state.victory = true;
+            const maxWaves = getCurrentMap().maxWaves || 35;
+            document.getElementById('vic-waves').textContent = `${state.wave} / ${maxWaves}`;
+            document.getElementById('vic-kills').textContent = state.kills;
+            document.getElementById('vic-stars').textContent = `+${state.sessionStars} ⭐`;
+            document.getElementById('victory-modal').classList.remove('hidden');
+            sfx.play('unlock');
+        }
+
         function startNewMatch() {
             const diff = getCurrentDiff();
+            const map = getCurrentMap();
             state.matchStarted = true;
             state.lives = diff.lives + meta.tech.baseLives * 3;
             state.money = diff.startGold + meta.tech.startGold * 60;
@@ -2659,12 +2659,12 @@
             state.kills = 0;
             state.sessionStars = 0;
             state.gameOver = false;
+            state.victory = false;
             state.waveActive = false;
             state.spawnQueue = [];
             state.actionMode = null;
             state.selectedEntity = null;
 
-            // Reset match-based unlocks for towers & abilities
             state.unlockedTanks = { normal: true, freeze: false, blast: false, speed: false, multi: false, sniper: false, flame: false, spike: false };
             state.abilities.airstrike.unlocked = false;
             state.abilities.airstrike.cd = 0;
@@ -2682,8 +2682,9 @@
 
             document.getElementById('start-menu-modal').classList.add('hidden');
             document.getElementById('gameover-modal').classList.add('hidden');
+            document.getElementById('victory-modal').classList.add('hidden');
             document.getElementById('boss-hud').classList.add('hidden');
-            document.getElementById('hud-map-label').textContent = `${getCurrentMap().name} • ${getCurrentDiff().name}`;
+            document.getElementById('hud-map-label').textContent = `${map.name} (${map.maxWaves} vågor) • ${diff.name}`;
             closeUpgradePanel();
             generateDecorations();
             resizeCanvas();
@@ -2705,7 +2706,7 @@
         });
 
         canvas.addEventListener('pointerdown', (e) => {
-            if (!state.matchStarted || state.gameOver) return;
+            if (!state.matchStarted || state.gameOver || state.victory) return;
             if (e.button === 2) {
                 state.actionMode = null;
                 document.getElementById('placement-cancel-hint').classList.add('hidden');
@@ -2800,7 +2801,7 @@
 
         document.getElementById('btn-open-menu').onclick = () => {
             document.getElementById('start-menu-modal').classList.remove('hidden');
-            document.getElementById('btn-resume-game').classList.toggle('hidden', !state.matchStarted);
+            document.getElementById('btn-resume-game').classList.toggle('hidden', !state.matchStarted || state.victory || state.gameOver);
             renderTechTreeGrid();
         };
 
@@ -2811,16 +2812,17 @@
         document.getElementById('btn-start-match').onclick = startNewMatch;
 
         document.getElementById('map-selector-grid').onclick = (e) => {
-            if (state.matchStarted && !state.gameOver) return;
+            if (state.matchStarted && !state.gameOver && !state.victory) return;
             const btn = e.target.closest('[data-map]');
             if (!btn) return;
             document.querySelectorAll('#map-selector-grid [data-map]').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             state.selectedMapId = btn.getAttribute('data-map');
+            updateHUD();
         };
 
         document.getElementById('diff-selector-grid').onclick = (e) => {
-            if (state.matchStarted && !state.gameOver) return;
+            if (state.matchStarted && !state.gameOver && !state.victory) return;
             const btn = e.target.closest('[data-diff]');
             if (!btn) return;
             document.querySelectorAll('#diff-selector-grid [data-diff]').forEach(b => b.classList.remove('active'));
@@ -2838,7 +2840,7 @@
                 btn.classList.remove('bg-stone-200', 'hover:bg-stone-100');
                 btn.classList.add('bg-sky-300', 'hover:bg-sky-200');
                 state.autoWaveTimer = 6.0;
-                if (!state.waveActive && state.matchStarted && !state.gameOver && state.wave === 0) {
+                if (!state.waveActive && state.matchStarted && !state.gameOver && !state.victory && state.wave === 0) {
                     startNextWave();
                 }
             } else {
@@ -2878,7 +2880,7 @@
         };
 
         window.addEventListener('keydown', (e) => {
-            if (!state.matchStarted || state.gameOver) return;
+            if (!state.matchStarted || state.gameOver || state.victory) return;
             const k = e.key.toLowerCase();
             if (k === 'u' && state.selectedEntity) upgradeEntity(state.selectedEntity);
             else if (k === 's' && state.selectedEntity) sellEntity(state.selectedEntity);
@@ -2937,6 +2939,13 @@
             renderTechTreeGrid();
         };
 
+        document.getElementById('btn-vic-restart').onclick = startNewMatch;
+        document.getElementById('btn-vic-menu').onclick = () => {
+            document.getElementById('victory-modal').classList.add('hidden');
+            document.getElementById('start-menu-modal').classList.remove('hidden');
+            renderTechTreeGrid();
+        };
+
         // --- GAME LOOP ---
         let lastTime = performance.now();
         function mainLoop(now) {
@@ -2956,6 +2965,7 @@
         renderTankShop();
         renderBuildingShop();
         resizeCanvas();
+        updateHUD();
         requestAnimationFrame(mainLoop);
     })();
     </script>
