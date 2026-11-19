@@ -78,6 +78,10 @@
             outline: 3px solid #1d4ed8;
             outline-offset: 2px;
         }
+        /* Keep game board at natural 960:560 aspect ratio so it never squishes */
+        #canvas-container {
+            aspect-ratio: 960 / 560;
+        }
         .sr-only {
             position: absolute;
             width: 1px;
@@ -156,10 +160,10 @@
     </header>
 
     <!-- Main Game Container -->
-    <main id="main-game-area" tabindex="-1" class="flex-1 max-w-7xl w-full mx-auto p-2 sm:p-3 flex flex-col lg:flex-row gap-3 items-stretch justify-center overflow-hidden">
+    <main id="main-game-area" tabindex="-1" class="flex-1 max-w-7xl w-full mx-auto p-2 sm:p-3 flex flex-col lg:flex-row gap-3 items-start justify-center">
 
         <!-- Left / Top: Game Map Canvas Wrapper -->
-        <div class="relative flex-1 min-h-[350px] sm:min-h-[480px] lg:min-h-[580px] bg-emerald-900 rounded-2xl cartoon-panel overflow-hidden flex items-center justify-center" id="canvas-container">
+        <div class="relative w-full lg:flex-1 bg-emerald-900 rounded-2xl cartoon-panel overflow-hidden flex items-center justify-center" id="canvas-container">
             <canvas id="gameCanvas" role="img" aria-label="Spelkarta för Tank Vs. Zombie" class="w-full h-full block cursor-crosshair"></canvas>
 
             <!-- Top Boss Health Bar Overlay -->
@@ -300,7 +304,7 @@
         </div>
 
         <!-- Right / Bottom: Tank Factory & Support Buildings Shop -->
-        <aside id="shop-aside" aria-label="Butik och Taktiska Förmågor" class="w-full lg:w-80 xl:w-96 bg-amber-100 rounded-2xl cartoon-panel p-3 flex flex-col justify-between max-h-[380px] lg:max-h-none overflow-y-auto shrink-0">
+        <aside id="shop-aside" aria-label="Butik och Taktiska Förmågor" class="w-full lg:w-80 xl:w-96 bg-amber-100 rounded-2xl cartoon-panel p-3 flex flex-col justify-between max-h-[380px] lg:max-h-[calc(100vh-5.5rem)] overflow-y-auto shrink-0">
             <div>
                 <!-- Active Tactical Abilities Bar -->
                 <div class="mb-3 pb-2.5 border-b-2 border-stone-400">
@@ -4040,8 +4044,10 @@
             const container = document.getElementById('canvas-container');
             const rect = container.getBoundingClientRect();
             const dpr = window.devicePixelRatio || 1;
-            canvas.width = Math.max(1, Math.floor(rect.width * dpr));
-            canvas.height = Math.max(1, Math.floor(rect.height * dpr));
+            const targetW = Math.max(1, Math.floor(rect.width * dpr));
+            const targetH = Math.max(1, Math.floor(targetW * (VIRTUAL_H / VIRTUAL_W)));
+            canvas.width = targetW;
+            canvas.height = targetH;
             ctx.setTransform(canvas.width / VIRTUAL_W, 0, 0, canvas.height / VIRTUAL_H, 0, 0);
         }
 
@@ -4067,6 +4073,10 @@
 
         window.onload = function () {
             resizeCanvas();
+            if (window.ResizeObserver) {
+                const ro = new ResizeObserver(() => resizeCanvas());
+                ro.observe(document.getElementById('canvas-container'));
+            }
             applyLanguageUI();
             openStartMenu();
             requestAnimationFrame(gameLoop);
