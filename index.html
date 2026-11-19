@@ -1164,6 +1164,10 @@
             return DIFFICULTIES[state.selectedDiffId] || DIFFICULTIES.normal;
         }
 
+        function getZombieHitRadius(z) {
+            return z.type === 'boss' ? 28 : z.type === 'giant' ? 19 : z.type === 'mini' ? 11 : 14;
+        }
+
         function isBossWaveNumber(waveNum) {
             return waveNum > 0 && waveNum % 7 === 0;
         }
@@ -1769,7 +1773,7 @@
                 let bestTarget = null, bestScore = -Infinity;
                 for (const z of state.zombies) {
                     const d = Math.hypot(z.x - tank.x, z.y - tank.y);
-                    if (d > boosts.effectiveRange) continue;
+                    if (d > boosts.effectiveRange + getZombieHitRadius(z)) continue;
                     const progress = z.waypointIndex * 1000 - Math.hypot(wps[z.waypointIndex].x - z.x, wps[z.waypointIndex].y - z.y);
                     let score = progress;
                     if (tank.priority === 'strongest') score = z.hp;
