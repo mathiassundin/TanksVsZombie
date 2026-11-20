@@ -1770,8 +1770,8 @@
                 }
 
                 const levelBadge = node.maxLvl > 1
-                    ? `<span class="text-[10px] font-black bg-purple-200 text-purple-950 px-1.5 py-0.5 rounded-full border border-purple-400">Nivå ${lvl}/${node.maxLvl}</span>`
-                    : (lvl > 0 ? `<span class="text-[10px] font-black bg-emerald-200 text-emerald-950 px-1.5 py-0.5 rounded-full border border-emerald-500">✓</span>` : '');
+                    ? `<span class="text-[10px] font-black bg-purple-200 text-purple-950 px-1.5 py-0.5 rounded-full border border-purple-400 whitespace-nowrap shrink-0">Nivå ${lvl}/${node.maxLvl}</span>`
+                    : (lvl > 0 ? `<span class="text-[10px] font-black bg-emerald-200 text-emerald-950 px-1.5 py-0.5 rounded-full border border-emerald-500 whitespace-nowrap shrink-0">✓</span>` : '');
 
                 card.innerHTML = `
                     <div>
