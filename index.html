@@ -80,8 +80,8 @@
         }
         #canvas-container {
             aspect-ratio: 960 / 560;
-            max-width: min(100%, calc((100dvh - 155px) * (960 / 560)));
-            max-height: calc(100dvh - 155px);
+            max-width: min(100%, calc((100dvh - 245px) * (960 / 560)));
+            max-height: calc(100dvh - 245px);
             touch-action: none;
         }
         @media (max-width: 1023px) {
@@ -232,8 +232,8 @@
                 </div>
             </div>
 
-            <!-- Upgrade / Sell / Clear Obstacle Panel (Docked below canvas on desktop & bottom sheet on mobile) -->
-            <div id="upgrade-panel" role="region" aria-label="Tornuppgradering" class="hidden fixed bottom-0 inset-x-0 rounded-t-3xl border-t-4 border-x-0 border-b-0 sm:static sm:w-full sm:rounded-2xl sm:border-3 bg-amber-50 border-stone-900 p-3.5 sm:p-3 cartoon-panel z-40 sm:z-10">
+            <!-- Upgrade / Sell / Clear Obstacle Panel (Always docked cleanly below the map) -->
+            <div id="upgrade-panel" role="region" aria-label="Tornuppgradering" class="hidden w-full rounded-2xl border-3 bg-amber-50 border-stone-900 p-3 cartoon-panel z-10">
                 <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-2.5">
                     <!-- Left: Identity + Stats -->
                     <div class="flex-1 min-w-0">
