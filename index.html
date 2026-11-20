@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧟</text></svg>">
-    <title>Tanks Vs. Zombie</title>
+    <title>Zombie Vs. Zombie</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1793,6 +1793,7 @@
                 slowFactor: 1,
                 burnTimer: 0,
                 burnDps: 0,
+                angle: 0,
                 walkPhase: Math.random() * Math.PI * 2,
                 hitFlash: 0
             });
@@ -1830,17 +1831,18 @@
         }
 
         function initWeatherParticles(type) {
-            const count = type === 'rain' ? 115 : (type === 'sandstorm' ? 95 : 85);
+            const count = type === 'rain' ? 130 : (type === 'sandstorm' ? 115 : 105);
             const list = [];
             for (let i = 0; i < count; i++) {
                 list.push({
-                    x: Math.random() * (VIRTUAL_W + 160) - 80,
+                    x: Math.random() * (VIRTUAL_W + 180) - 90,
                     y: Math.random() * VIRTUAL_H,
-                    size: type === 'rain' ? (10 + Math.random() * 8) : (1.8 + Math.random() * 3.2),
-                    speedX: type === 'rain' ? (-95 - Math.random() * 45) : (type === 'sandstorm' ? (280 + Math.random() * 190) : (-18 + Math.random() * 36)),
-                    speedY: type === 'rain' ? (440 + Math.random() * 160) : (type === 'sandstorm' ? (18 + Math.random() * 35) : (38 + Math.random() * 48)),
+                    size: type === 'rain' ? (14 + Math.random() * 10) : (type === 'snow' ? (2.6 + Math.random() * 3.0) : (2.2 + Math.random() * 3.2)),
+                    speedX: type === 'rain' ? (-115 - Math.random() * 55) : (type === 'sandstorm' ? (320 + Math.random() * 210) : (-24 + Math.random() * 48)),
+                    speedY: type === 'rain' ? (490 + Math.random() * 170) : (type === 'sandstorm' ? (14 + Math.random() * 32) : (42 + Math.random() * 52)),
                     wobble: Math.random() * Math.PI * 2,
-                    alpha: 0.35 + Math.random() * 0.45
+                    alpha: 0.55 + Math.random() * 0.4,
+                    shade: Math.random()
                 });
             }
             state.weather.particles = list;
@@ -1855,7 +1857,7 @@
                 w.wavesRemaining--;
                 if (w.wavesRemaining <= 0) {
                     w.active = false;
-                    w.cooldownWaves = 2 + Math.floor(Math.random() * 4);
+                    w.cooldownWaves = 1 + Math.floor(Math.random() * 3);
                 }
                 return;
             }
@@ -1865,13 +1867,12 @@
                 return;
             }
 
-            if (Math.random() < 0.42) {
+            const chance = state.wave === 1 ? 0.60 : 0.48;
+            if (Math.random() < chance) {
                 w.active = true;
                 w.type = targetType;
                 w.wavesRemaining = 1 + Math.floor(Math.random() * 5);
-                if (w.particles.length === 0) {
-                    initWeatherParticles(targetType);
-                }
+                initWeatherParticles(targetType);
             } else {
                 w.cooldownWaves = 1;
             }
@@ -1881,9 +1882,9 @@
             const w = state.weather;
             const targetIntensity = w.active ? 1 : 0;
             if (w.intensity < targetIntensity) {
-                w.intensity = Math.min(1, w.intensity + dt * 0.45);
+                w.intensity = Math.min(1, w.intensity + dt * 0.9);
             } else if (w.intensity > targetIntensity) {
-                w.intensity = Math.max(0, w.intensity - dt * 0.45);
+                w.intensity = Math.max(0, w.intensity - dt * 0.6);
             }
 
             if (w.intensity <= 0.01) {
@@ -1895,26 +1896,26 @@
             }
 
             for (const p of w.particles) {
-                p.wobble += dt * 3.2;
-                const sway = w.type === 'snow' ? Math.sin(p.wobble) * 26 : (w.type === 'sandstorm' ? Math.sin(p.wobble * 1.6) * 22 : 0);
+                p.wobble += dt * 3.4;
+                const sway = w.type === 'snow' ? Math.sin(p.wobble) * 32 : (w.type === 'sandstorm' ? Math.sin(p.wobble * 1.8) * 26 : 0);
                 p.x += (p.speedX + sway) * dt;
                 p.y += p.speedY * dt;
 
                 if (p.y > VIRTUAL_H + 15) {
-                    if (w.type === 'rain' && Math.random() < 0.25 && w.splashes.length < 35) {
-                        w.splashes.push({ x: p.x, y: Math.random() * VIRTUAL_H, r: 1, alpha: 0.55 });
+                    if (w.type === 'rain' && Math.random() < 0.35 && w.splashes.length < 45) {
+                        w.splashes.push({ x: p.x, y: Math.random() * VIRTUAL_H, r: 1.5, alpha: 0.7 });
                     }
                     p.y = -15;
-                    p.x = Math.random() * (VIRTUAL_W + 160) - 80;
+                    p.x = Math.random() * (VIRTUAL_W + 180) - 90;
                 }
-                if (p.x < -90) p.x = VIRTUAL_W + 80;
-                if (p.x > VIRTUAL_W + 90) p.x = -80;
+                if (p.x < -100) p.x = VIRTUAL_W + 90;
+                if (p.x > VIRTUAL_W + 100) p.x = -90;
             }
 
             for (let i = w.splashes.length - 1; i >= 0; i--) {
                 const s = w.splashes[i];
-                s.r += 18 * dt;
-                s.alpha -= 1.5 * dt;
+                s.r += 22 * dt;
+                s.alpha -= 1.6 * dt;
                 if (s.alpha <= 0) w.splashes.splice(i, 1);
             }
         }
@@ -1927,51 +1928,72 @@
             const alphaScale = w.intensity;
 
             if (w.type === 'rain') {
-                ctx.fillStyle = `rgba(15, 23, 42, ${0.14 * alphaScale})`;
+                // Overcast rain atmosphere
+                ctx.fillStyle = `rgba(15, 23, 42, ${0.20 * alphaScale})`;
                 ctx.fillRect(0, 0, VIRTUAL_W, VIRTUAL_H);
 
-                ctx.strokeStyle = `rgba(224, 242, 254, ${0.45 * alphaScale})`;
-                ctx.lineWidth = 1.2;
+                // Rain splash rings on ground
+                ctx.strokeStyle = `rgba(224, 242, 254, ${0.65 * alphaScale})`;
+                ctx.lineWidth = 1.6;
                 for (const s of w.splashes) {
                     ctx.save();
                     ctx.globalAlpha = Math.max(0, s.alpha * alphaScale);
                     ctx.beginPath();
-                    ctx.ellipse(s.x, s.y, s.r * 1.4, s.r * 0.65, 0, 0, Math.PI * 2);
+                    ctx.ellipse(s.x, s.y, s.r * 1.5, s.r * 0.7, 0, 0, Math.PI * 2);
                     ctx.stroke();
                     ctx.restore();
                 }
 
-                ctx.strokeStyle = 'rgba(186, 230, 253, 0.65)';
-                ctx.lineWidth = 1.5;
+                // Crisp angled rain streaks
+                ctx.strokeStyle = '#e0f2fe';
+                ctx.lineWidth = 2.1;
                 ctx.lineCap = 'round';
                 for (const p of w.particles) {
                     ctx.globalAlpha = p.alpha * alphaScale;
                     ctx.beginPath();
                     ctx.moveTo(p.x, p.y);
-                    ctx.lineTo(p.x - p.size * 0.24, p.y + p.size);
+                    ctx.lineTo(p.x - p.size * 0.25, p.y + p.size);
                     ctx.stroke();
                 }
             } else if (w.type === 'sandstorm') {
-                ctx.fillStyle = `rgba(217, 119, 6, ${0.16 * alphaScale})`;
+                // Warm desert dust storm tint
+                ctx.fillStyle = `rgba(180, 83, 9, ${0.20 * alphaScale})`;
                 ctx.fillRect(0, 0, VIRTUAL_W, VIRTUAL_H);
 
+                // Sweeping wind dust bands
+                const tNow = performance.now() / 1000;
+                for (let b = 0; b < 4; b++) {
+                    const bandY = ((b * 145 + tNow * 22) % VIRTUAL_H);
+                    const grad = ctx.createLinearGradient(0, bandY - 25, 0, bandY + 25);
+                    grad.addColorStop(0, 'rgba(217, 119, 6, 0)');
+                    grad.addColorStop(0.5, `rgba(180, 83, 9, ${0.18 * alphaScale})`);
+                    grad.addColorStop(1, 'rgba(217, 119, 6, 0)');
+                    ctx.fillStyle = grad;
+                    ctx.fillRect(0, bandY - 25, VIRTUAL_W, 50);
+                }
+
+                // High-contrast sand grains & wind streaks
                 for (const p of w.particles) {
                     ctx.globalAlpha = p.alpha * alphaScale;
-                    ctx.fillStyle = '#fde68a';
+                    ctx.fillStyle = p.shade > 0.45 ? '#92400e' : '#fef3c7';
                     ctx.beginPath();
-                    ctx.ellipse(p.x, p.y, p.size * 1.8, p.size * 0.7, 0.08, 0, Math.PI * 2);
+                    ctx.ellipse(p.x, p.y, p.size * 2.4, p.size * 0.65, 0.06, 0, Math.PI * 2);
                     ctx.fill();
                 }
             } else if (w.type === 'snow') {
-                ctx.fillStyle = `rgba(241, 245, 249, ${0.10 * alphaScale})`;
+                // Cool winter sky tint so white snow pops clearly
+                ctx.fillStyle = `rgba(15, 23, 42, ${0.18 * alphaScale})`;
                 ctx.fillRect(0, 0, VIRTUAL_W, VIRTUAL_H);
 
+                ctx.strokeStyle = 'rgba(14, 116, 144, 0.55)';
+                ctx.lineWidth = 1.2;
                 ctx.fillStyle = '#ffffff';
                 for (const p of w.particles) {
                     ctx.globalAlpha = p.alpha * alphaScale;
                     ctx.beginPath();
                     ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
                     ctx.fill();
+                    ctx.stroke();
                 }
             }
 
@@ -2829,6 +2851,9 @@
                     const dx = targetWp.x - z.x;
                     const dy = targetWp.y - z.y;
                     const dist = Math.hypot(dx, dy);
+                    if (dist > 0.001) {
+                        z.angle = Math.atan2(dy, dx);
+                    }
                     if (dist <= moveDist) {
                         z.x = targetWp.x;
                         z.y = targetWp.y;
@@ -3417,113 +3442,150 @@
             c.save();
             c.translate(z.x, z.y);
 
-            const sway = Math.sin(z.walkPhase) * 3.5;
-            const armSwing = Math.sin(z.walkPhase) * 4.5;
+            const r = z.radius;
+            const sway = Math.sin(z.walkPhase) * 0.14;
+            const armReach = Math.sin(z.walkPhase) * 3.5;
 
-            // Shadow
-            c.fillStyle = 'rgba(0, 0, 0, 0.26)';
+            // Ground shadow
+            c.fillStyle = 'rgba(0, 0, 0, 0.28)';
             c.beginPath();
-            c.ellipse(0, z.radius * 0.72, z.radius * 0.9, z.radius * 0.42, 0, 0, Math.PI * 2);
+            c.ellipse(0, 4, r * 0.95, r * 0.72, 0, 0, Math.PI * 2);
             c.fill();
 
-            // Torso / shirt
-            let shirtColor = '#3f6212';
-            if (z.type === 'fast') shirtColor = '#991b1b';
+            // Rotate body toward movement direction
+            c.save();
+            c.rotate((z.angle || 0) + sway);
+
+            // Outstretched zombie arms reaching forward
+            const armColor = z.hitFlash > 0 ? '#ffffff' : (z.slowTimer > 0 ? '#7dd3fc' : '#65a30d');
+            c.fillStyle = armColor;
+            c.strokeStyle = '#1c1917';
+            c.lineWidth = z.type === 'boss' ? 2.8 : 2;
+
+            // Left arm
+            c.beginPath();
+            c.roundRect(r * 0.15, -r * 0.88, r * 0.95 + armReach, r * 0.34, 4);
+            c.fill();
+            c.stroke();
+
+            // Right arm
+            c.beginPath();
+            c.roundRect(r * 0.15, r * 0.54, r * 0.95 - armReach, r * 0.34, 4);
+            c.fill();
+            c.stroke();
+
+            // Torso / shoulders
+            let shirtColor = '#3b82f6';
+            if (z.type === 'fast') shirtColor = '#ef4444';
             else if (z.type === 'tank') shirtColor = '#334155';
-            else if (z.type === 'swarm') shirtColor = '#65a30d';
+            else if (z.type === 'swarm') shirtColor = '#a855f7';
             else if (z.type === 'boss') shirtColor = '#581c87';
             if (z.hitFlash > 0) shirtColor = '#ffffff';
 
             c.fillStyle = shirtColor;
-            c.strokeStyle = '#1c1917';
-            c.lineWidth = z.type === 'boss' ? 3 : 2.2;
+            c.lineWidth = z.type === 'boss' ? 3 : 2.3;
             c.beginPath();
-            c.roundRect(-z.radius * 0.72, -z.radius * 0.2, z.radius * 1.44, z.radius * 0.95, 6);
+            c.roundRect(-r * 0.58, -r * 0.82, r * 1.12, r * 1.64, 6);
             c.fill();
             c.stroke();
 
-            // Armored shoulder pads for tank & boss
+            // Armored shoulder pads for Giant (tank) & Boss
             if (z.type === 'tank' || z.type === 'boss') {
                 c.fillStyle = z.type === 'boss' ? '#f59e0b' : '#64748b';
                 c.beginPath();
-                c.arc(-z.radius * 0.75, z.radius * 0.05, z.radius * 0.36, 0, Math.PI * 2);
-                c.arc(z.radius * 0.75, z.radius * 0.05, z.radius * 0.36, 0, Math.PI * 2);
+                c.arc(0, -r * 0.82, r * 0.38, 0, Math.PI * 2);
+                c.arc(0, r * 0.82, r * 0.38, 0, Math.PI * 2);
                 c.fill();
                 c.stroke();
             }
 
-            // Outstretched zombie arms
-            c.strokeStyle = z.slowTimer > 0 ? '#7dd3fc' : '#84cc16';
-            c.lineWidth = z.type === 'boss' ? 6 : 4;
-            c.lineCap = 'round';
-            c.beginPath();
-            c.moveTo(-z.radius * 0.65, sway * 0.4);
-            c.lineTo(-z.radius * 1.15, -4 + armSwing);
-            c.moveTo(z.radius * 0.65, sway * 0.4);
-            c.lineTo(z.radius * 1.15, -4 - armSwing);
-            c.stroke();
-
-            // Head
+            // Zombie Head
             let headColor = '#84cc16';
             if (z.type === 'fast') headColor = '#a3e635';
-            else if (z.type === 'tank') headColor = '#65a30d';
+            else if (z.type === 'tank') headColor = '#4d7c0f';
+            else if (z.type === 'swarm') headColor = '#bef264';
             else if (z.type === 'boss') headColor = '#22c55e';
-            if (z.slowTimer > 0) headColor = '#7dd3fc';
+            if (z.slowTimer > 0) headColor = '#38bdf8';
             if (z.hitFlash > 0) headColor = '#ffffff';
 
             c.fillStyle = headColor;
-            c.strokeStyle = '#1c1917';
             c.lineWidth = z.type === 'boss' ? 3 : 2.2;
             c.beginPath();
-            c.arc(sway * 0.3, -z.radius * 0.45, z.radius * 0.65, 0, Math.PI * 2);
+            c.arc(r * 0.14, 0, r * 0.64, 0, Math.PI * 2);
             c.fill();
             c.stroke();
 
-            // Eyes
-            c.fillStyle = z.type === 'boss' ? '#ef4444' : '#1c1917';
-            const eyeY = -z.radius * 0.5;
+            // Cartoon White Eyes with Pupils
+            const eyeX = r * 0.42;
+            const eyeOffset = r * 0.24;
+            const eyeR = Math.max(2.3, r * 0.18);
+            c.fillStyle = z.type === 'boss' ? '#fef08a' : '#ffffff';
             c.beginPath();
-            c.arc(sway * 0.3 - z.radius * 0.22, eyeY, Math.max(1.8, z.radius * 0.13), 0, Math.PI * 2);
-            c.arc(sway * 0.3 + z.radius * 0.22, eyeY, Math.max(1.8, z.radius * 0.13), 0, Math.PI * 2);
+            c.arc(eyeX, -eyeOffset, eyeR, 0, Math.PI * 2);
+            c.arc(eyeX, eyeOffset, eyeR, 0, Math.PI * 2);
             c.fill();
 
-            // Golden crown on boss
+            c.fillStyle = z.type === 'boss' ? '#dc2626' : '#1c1917';
+            c.beginPath();
+            c.arc(eyeX + eyeR * 0.3, -eyeOffset, eyeR * 0.52, 0, Math.PI * 2);
+            c.arc(eyeX + eyeR * 0.3, eyeOffset, eyeR * 0.52, 0, Math.PI * 2);
+            c.fill();
+
+            c.restore();
+
+            // Upright overlays: Boss Crown, Frost Crystals, Burn Flames & Health Bar
             if (z.type === 'boss') {
                 c.fillStyle = '#facc15';
+                c.strokeStyle = '#1c1917';
+                c.lineWidth = 2.2;
                 c.beginPath();
-                c.moveTo(-14, -z.radius * 1.02);
-                c.lineTo(-10, -z.radius * 1.48);
-                c.lineTo(-3, -z.radius * 1.18);
-                c.lineTo(0, -z.radius * 1.56);
-                c.lineTo(3, -z.radius * 1.18);
-                c.lineTo(10, -z.radius * 1.48);
-                c.lineTo(14, -z.radius * 1.02);
+                c.moveTo(-13, -r * 0.85);
+                c.lineTo(-10, -r * 1.32);
+                c.lineTo(-3, -r * 1.02);
+                c.lineTo(0, -r * 1.42);
+                c.lineTo(3, -r * 1.02);
+                c.lineTo(10, -r * 1.32);
+                c.lineTo(13, -r * 0.85);
                 c.closePath();
                 c.fill();
                 c.stroke();
             }
 
-            // Burn flame indicator
+            if (z.slowTimer > 0) {
+                c.strokeStyle = '#bae6fd';
+                c.lineWidth = 2;
+                c.beginPath();
+                c.arc(0, 0, r * 1.05, 0, Math.PI * 2);
+                c.stroke();
+            }
+
             if (z.burnTimer > 0) {
                 const flick = Math.sin(timeSec * 22) * 3;
                 c.fillStyle = '#f97316';
                 c.beginPath();
-                c.moveTo(-6, -z.radius * 0.8);
-                c.lineTo(flick, -z.radius * 1.35);
-                c.lineTo(6, -z.radius * 0.8);
+                c.moveTo(-6, -r * 0.7);
+                c.lineTo(flick, -r * 1.35);
+                c.lineTo(6, -r * 0.7);
+                c.closePath();
+                c.fill();
+
+                c.fillStyle = '#fde047';
+                c.beginPath();
+                c.moveTo(-3, -r * 0.7);
+                c.lineTo(flick * 0.6, -r * 1.12);
+                c.lineTo(3, -r * 0.7);
                 c.closePath();
                 c.fill();
             }
 
-            // Health bar for damaged non-boss zombies
             if (z.type !== 'boss' && z.hp < z.maxHp) {
-                const bw = Math.max(22, z.radius * 1.8);
+                const bw = Math.max(22, r * 1.85);
                 const bh = 4.5;
                 const bx = -bw / 2;
-                const by = -z.radius * 1.35;
+                const by = -r * 1.25;
                 c.fillStyle = '#1c1917';
                 c.fillRect(bx - 1, by - 1, bw + 2, bh + 2);
-                c.fillStyle = '#ef4444';
+                c.fillStyle = '#22c55e';
                 c.fillRect(bx, by, bw * Math.max(0, z.hp / z.maxHp), bh);
             }
 
