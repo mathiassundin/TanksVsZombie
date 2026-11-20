@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Tanks Vs. Zombie</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧟</text></svg>">
+    <title>Zombie Vs. Zombie</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -276,261 +277,228 @@
                         <span id="lbl-sell-btn">💰 Sälj (70%)</span>
                         <span class="text-[11px] font-black" id="sel-sell-value">+🪙 56</span>
                     </button>
-                </div>
-            </div>
-
-            <!-- Game Over Modal -->
-            <div id="gameover-modal" role="dialog" aria-modal="true" aria-labelledby="gameover-title" class="hidden absolute inset-0 bg-stone-950/85 backdrop-blur-xs flex items-center justify-center p-4 z-40">
-                <div class="bg-amber-100 border-4 border-stone-900 rounded-3xl p-6 max-w-sm w-full text-center shadow-2xl">
-                    <div class="text-5xl mb-2" aria-hidden="true">🧟‍♂️💥</div>
-                    <h2 id="gameover-title" class="cartoon-font text-3xl font-bold text-red-700 mb-1">SPELET SLUT!</h2>
-                    <p id="gameover-sub" class="text-sm font-bold text-stone-800 mb-4">Zombierna bröt igenom ditt försvar!</p>
-                    <div class="bg-white border-2 border-stone-800 rounded-2xl p-3 mb-5 space-y-1 text-sm font-extrabold text-stone-900">
-                        <div><span id="lbl-go-waves">Klarade vågor:</span> <span class="text-sky-800" id="go-waves">0</span></div>
-                        <div><span id="lbl-go-kills">Besegrade zombies:</span> <span class="text-emerald-800" id="go-kills">0</span></div>
-                        <div><span id="lbl-go-stars">Intjänade Tech-Stjärnor:</span> <span class="text-purple-800" id="go-stars">+0 ⭐</span></div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-2">
-                        <button id="btn-go-menu" class="cartoon-btn bg-amber-300 hover:bg-amber-200 text-stone-950 font-extrabold text-sm py-3 rounded-2xl cursor-pointer min-h-[44px]">
-                            <span aria-hidden="true">🏠</span> <span id="lbl-go-menu">Meny & Tech</span>
-                        </button>
-                        <button id="btn-restart" class="cartoon-btn bg-lime-400 hover:bg-lime-300 text-stone-950 font-extrabold text-sm py-3 rounded-2xl cursor-pointer min-h-[44px]">
-                            <span id="lbl-go-restart">🔄 Spela Igen</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Victory Modal -->
-            <div id="victory-modal" role="dialog" aria-modal="true" aria-labelledby="victory-title" class="hidden absolute inset-0 bg-stone-950/85 backdrop-blur-xs flex items-center justify-center p-4 z-40">
-                <div class="bg-amber-100 border-4 border-stone-900 rounded-3xl p-6 max-w-sm w-full text-center shadow-2xl">
-                    <div class="text-5xl mb-2" aria-hidden="true">🏆🎉</div>
-                    <h2 id="victory-title" class="cartoon-font text-3xl font-bold text-emerald-800 mb-1">SEGER!</h2>
-                    <p id="victory-sub" class="text-sm font-bold text-stone-800 mb-4">Du klarade alla vågor på kartan!</p>
-                    <div class="bg-white border-2 border-stone-800 rounded-2xl p-3 mb-5 space-y-1 text-sm font-extrabold text-stone-900">
-                        <div><span id="lbl-vic-waves">Klarade vågor:</span> <span class="text-sky-800" id="vic-waves">42 / 42</span></div>
-                        <div><span id="lbl-vic-kills">Besegrade zombies:</span> <span class="text-emerald-800" id="vic-kills">0</span></div>
-                        <div><span id="lbl-vic-stars">Intjänade Tech-Stjärnor:</span> <span class="text-purple-800" id="vic-stars">+0 ⭐</span></div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-2">
-                        <button id="btn-vic-menu" class="cartoon-btn bg-amber-300 hover:bg-amber-200 text-stone-950 font-extrabold text-sm py-3 rounded-2xl cursor-pointer min-h-[44px]">
-                            <span aria-hidden="true">🏠</span> <span id="lbl-vic-menu">Meny & Tech</span>
-                        </button>
-                        <button id="btn-vic-restart" class="cartoon-btn bg-lime-400 hover:bg-lime-300 text-stone-950 font-extrabold text-sm py-3 rounded-2xl cursor-pointer min-h-[44px]">
-                            <span id="lbl-vic-restart">🔄 Spela Igen</span>
-                        </button>
-                    </div>
+                    <button id="btn-clear-obstacle" class="hidden col-span-2 cartoon-btn bg-amber-400 hover:bg-amber-300 text-stone-950 font-extrabold text-xs sm:text-sm py-2.5 px-3 rounded-xl flex items-center justify-center gap-2 cursor-pointer min-h-[46px]">
+                        <span id="lbl-clear-obstacle-btn">🪓 Riv & rensa ytan (🪙 15)</span>
+                    </button>
                 </div>
             </div>
         </div>
 
-        <!-- Right / Bottom: Tank Factory & Support Buildings Shop -->
-        <aside id="shop-aside" aria-label="Butik och Taktiska Förmågor" class="w-full lg:w-80 xl:w-96 bg-amber-100 rounded-2xl cartoon-panel p-3 flex flex-col justify-between max-h-[380px] lg:max-h-[calc(100vh-5.5rem)] overflow-y-auto shrink-0">
+        <!-- Right / Bottom: Shop, Tactical Abilities & Quick Guide -->
+        <aside id="shop-aside" aria-label="Butik och Taktiska Förmågor" class="w-full lg:w-96 bg-amber-100 rounded-2xl cartoon-panel p-3 flex flex-col gap-3 shrink-0">
+            <!-- Tactical Abilities -->
             <div>
-                <!-- Active Tactical Abilities Bar -->
-                <div class="mb-3 pb-2.5 border-b-2 border-stone-400">
-                    <div class="flex items-center justify-between mb-1.5">
-                        <h2 id="lbl-tactical-title" class="cartoon-font font-bold text-sm sm:text-base text-stone-950 flex items-center gap-1.5">
-                            ⚡ Taktiska Förmågor
-                        </h2>
-                        <span id="lbl-tactical-sub" class="text-[10px] font-bold text-stone-700">Lås upp i matchen</span>
-                    </div>
-                    <div class="grid grid-cols-2 gap-2">
-                        <button id="btn-ability-mine" class="cartoon-btn bg-rose-700 hover:bg-rose-600 text-white font-extrabold text-xs px-2.5 py-2 rounded-xl flex items-center gap-2 cursor-pointer min-h-[44px]" title="Vägmina - Placera sprängmina">
-                            <span class="text-base shrink-0" id="icon-mine" aria-hidden="true">💣</span>
-                            <div class="text-left leading-tight overflow-hidden">
-                                <div class="truncate" id="title-mine">Vägmina</div>
-                                <div class="text-[10px] text-rose-100 truncate" id="cd-mine">Forskning krävs</div>
-                            </div>
-                        </button>
-
-                        <button id="btn-ability-airstrike" class="cartoon-btn bg-orange-700 hover:bg-orange-600 text-white font-extrabold text-xs px-2.5 py-2 rounded-xl flex items-center gap-2 cursor-pointer min-h-[44px]" title="Flyganfall - Bombar valt område">
-                            <span class="text-base shrink-0" id="icon-airstrike" aria-hidden="true">✈️</span>
-                            <div class="text-left leading-tight overflow-hidden">
-                                <div class="truncate" id="title-airstrike">Flyganfall</div>
-                                <div class="text-[10px] text-orange-100 truncate" id="cd-airstrike">Forskning krävs</div>
-                            </div>
-                        </button>
-                    </div>
+                <div class="flex items-center justify-between mb-1.5">
+                    <h2 class="cartoon-font text-sm sm:text-base font-bold text-stone-950" id="lbl-tactical-title">⚡ Taktiska Förmågor</h2>
+                    <span class="text-[11px] font-bold text-stone-700" id="lbl-tactical-sub">Lås upp i matchen</span>
                 </div>
-
-                <div class="flex items-center justify-between mb-2">
-                    <h2 id="lbl-tank-factory" class="cartoon-font font-bold text-base sm:text-lg text-stone-950 flex items-center gap-1.5">
-                        🏭 Stridsvagns-fabrik
-                    </h2>
-                    <span id="unlocked-tanks-badge" class="text-[11px] font-extrabold bg-amber-200 border border-stone-800 px-2 py-0.5 rounded-full text-stone-900">
-                        Upplåsta: 2/8
-                    </span>
-                </div>
-
-                <div id="tank-shop-list" class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-2 gap-2">
-                    <!-- Populated via JS -->
-                </div>
-
-                <div class="mt-3 pt-2.5 border-t-2 border-stone-400">
-                    <div class="flex items-center justify-between mb-2">
-                        <h2 id="lbl-buildings-title" class="cartoon-font font-bold text-base sm:text-lg text-stone-950 flex items-center gap-1.5">
-                            🏗️ Byggnader & Ekonomi
-                        </h2>
-                        <div class="flex items-center gap-1 flex-wrap justify-end">
-                            <span class="text-[10px] font-extrabold text-amber-950 bg-amber-200 px-1.5 py-0.5 rounded-full border border-stone-800" id="mine-count-badge">
-                                Gruva: 0/1
-                            </span>
-                            <span class="text-[10px] font-extrabold text-sky-950 bg-sky-200 px-1.5 py-0.5 rounded-full border border-stone-800" id="radar-count-badge">
-                                Radar: 0/2
-                            </span>
-                            <span class="text-[10px] font-extrabold text-emerald-950 bg-emerald-200 px-1.5 py-0.5 rounded-full border border-stone-800" id="depot-count-badge">
-                                Depå: 0/2
-                            </span>
+                <div class="grid grid-cols-2 gap-2">
+                    <button id="btn-ability-mine" class="cartoon-btn bg-rose-200 hover:bg-rose-100 text-stone-950 p-2 rounded-xl flex items-center gap-2 text-left cursor-pointer min-h-[52px]">
+                        <span id="icon-mine" class="text-xl shrink-0" aria-hidden="true">🔒</span>
+                        <div class="min-w-0">
+                            <div class="font-extrabold text-xs truncate" id="title-mine">Vägmina</div>
+                            <div class="text-[10px] font-bold text-stone-800 truncate" id="cd-mine">Forskning krävs</div>
                         </div>
-                    </div>
-                    <div id="building-shop-list" class="grid grid-cols-3 lg:grid-cols-1 xl:grid-cols-2 gap-2">
-                        <!-- Populated via JS -->
-                    </div>
+                    </button>
+                    <button id="btn-ability-airstrike" class="cartoon-btn bg-orange-200 hover:bg-orange-100 text-stone-950 p-2 rounded-xl flex items-center gap-2 text-left cursor-pointer min-h-[52px]">
+                        <span id="icon-airstrike" class="text-xl shrink-0" aria-hidden="true">🔒</span>
+                        <div class="min-w-0">
+                            <div class="font-extrabold text-xs truncate" id="title-airstrike">Flyganfall</div>
+                            <div class="text-[10px] font-bold text-stone-800 truncate" id="cd-airstrike">Forskning krävs</div>
+                        </div>
+                    </button>
                 </div>
             </div>
 
-            <div class="hidden lg:block mt-3 bg-amber-200/80 border-2 border-stone-500 rounded-xl p-2.5 text-xs text-stone-900 space-y-1">
+            <!-- Tank Factory -->
+            <div>
+                <div class="flex items-center justify-between mb-1.5">
+                    <h2 class="cartoon-font text-sm sm:text-base font-bold text-stone-950" id="lbl-tank-factory">🏭 Stridsvagns-fabrik</h2>
+                    <span class="text-[11px] font-extrabold bg-amber-300 border border-stone-800 px-2 py-0.5 rounded-full text-stone-950" id="unlocked-tanks-badge">Upplåsta: 1/8</span>
+                </div>
+                <div id="tank-shop-list" class="grid grid-cols-2 gap-2"></div>
+            </div>
+
+            <!-- Economy & Support Buildings -->
+            <div>
+                <div class="flex items-center justify-between mb-1.5 flex-wrap gap-1">
+                    <h2 class="cartoon-font text-sm sm:text-base font-bold text-stone-950" id="lbl-buildings-title">🏗️ Byggnader & Ekonomi</h2>
+                    <div class="flex items-center gap-1 text-[10px] font-extrabold">
+                        <span id="mine-count-badge" class="bg-yellow-200 border border-stone-700 px-1.5 py-0.5 rounded-md">Gruva: 0/1</span>
+                        <span id="radar-count-badge" class="bg-sky-200 border border-stone-700 px-1.5 py-0.5 rounded-md">Radar: 0/2</span>
+                        <span id="depot-count-badge" class="bg-emerald-200 border border-stone-700 px-1.5 py-0.5 rounded-md">Depå: 0/2</span>
+                    </div>
+                </div>
+                <div id="building-shop-list" class="grid grid-cols-3 gap-1.5"></div>
+            </div>
+
+            <!-- Quick Guide -->
+            <div class="bg-amber-50 border-2 border-stone-800 rounded-xl p-2.5 text-[11px] font-semibold text-stone-800 space-y-1">
                 <div class="font-extrabold text-stone-950" id="lbl-guide-title">💡 Snabbguide:</div>
                 <p id="lbl-guide-1">• Hovra eller klicka på ett torn för att se dess <b>räckviddscirkel</b>!</p>
                 <p id="lbl-guide-2">• Besegra <b>Bossar var 7:e våg</b> för att samla Tech-Stjärnor (⭐) till Forskningsträdet.</p>
                 <p id="lbl-guide-3">• Kortkommandon: <b>U</b> (Uppgradera), <b>S</b> (Sälj), <b>ESC</b> (Avbryt).</p>
-                <p id="lbl-guide-save" class="text-[11px] text-stone-800 pt-1 border-t border-stone-500/60">💾 <b>Sparinfo:</b> Allt sparas i webbläsarens <i>localStorage</i> – tömmer du webbplatsdata rensas dina framsteg.</p>
+                <p id="lbl-guide-save" class="pt-1 border-t border-amber-300 text-[10px] text-stone-700">💾 <b>Sparinfo:</b> Allt sparas i webbläsarens <i>localStorage</i>.</p>
             </div>
         </aside>
-
     </main>
 
-    <!-- START MENU & EXCLUSIVE PERMANENT TECH TREE MODAL -->
-    <div id="start-menu-modal" role="dialog" aria-modal="true" aria-labelledby="menu-modal-title" class="fixed inset-0 bg-stone-950/85 backdrop-blur-xs flex items-center justify-center p-3 sm:p-5 z-50 overflow-y-auto">
-        <div class="bg-amber-100 border-4 border-stone-900 rounded-3xl max-w-5xl w-full p-4 sm:p-6 shadow-2xl my-auto">
-            <div class="flex flex-wrap items-center justify-between gap-2 pb-3 border-b-3 border-stone-400">
-                <div class="flex items-center gap-3">
-                    <div class="w-12 h-12 rounded-2xl bg-lime-400 border-3 border-stone-900 flex items-center justify-center text-2xl shadow" aria-hidden="true">
-                        🛡️
-                    </div>
-                    <div>
-                        <h2 id="menu-modal-title" class="cartoon-font text-2xl sm:text-3xl font-bold text-stone-950 leading-none">
-                            TANK <span class="text-red-700">VS.</span> ZOMBIE
-                        </h2>
-                        <p id="lbl-menu-subtitle" class="text-xs sm:text-sm font-bold text-stone-700">Välj karta, svårighetsgrad & exklusiv permanent forskning</p>
-                    </div>
+    <!-- Start Menu & Tech Tree Modal -->
+    <div id="start-menu-modal" role="dialog" aria-modal="true" aria-labelledby="menu-main-title" class="fixed inset-0 bg-stone-950/85 backdrop-blur-sm z-50 flex items-center justify-center p-2 sm:p-4 overflow-y-auto">
+        <div class="bg-amber-100 border-4 border-stone-950 rounded-3xl max-w-5xl w-full max-h-[94vh] overflow-y-auto p-4 sm:p-6 shadow-2xl my-auto">
+            <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b-3 border-stone-800">
+                <div>
+                    <h2 id="menu-main-title" class="cartoon-font text-2xl sm:text-3xl font-bold text-stone-950">
+                        TANK <span class="text-red-700">VS.</span> ZOMBIE
+                    </h2>
+                    <p class="text-xs sm:text-sm font-bold text-stone-700" id="lbl-menu-subtitle">Välj karta, svårighetsgrad & exklusiv permanent forskning</p>
                 </div>
-                <div class="bg-purple-200 border-3 border-stone-900 rounded-2xl px-3.5 py-1.5 flex items-center gap-2 shadow">
-                    <span class="text-xl" aria-hidden="true">⭐</span>
-                    <div>
-                        <div id="lbl-tech-stars-header" class="text-[10px] font-extrabold uppercase text-purple-950">Tech-Stjärnor</div>
-                        <div class="font-black text-base text-purple-950 leading-none" id="menu-stars">0</div>
-                    </div>
-                </div>
-            </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
-                <div class="space-y-4">
-                    <div>
-                        <h3 id="heading-step-1" class="cartoon-font font-bold text-lg text-stone-950 mb-2">🗺️ 1. Välj Karta</h3>
-                        <div class="grid grid-cols-3 gap-2" id="map-selector-grid" role="radiogroup" aria-labelledby="heading-step-1">
-                            <button type="button" role="radio" aria-checked="true" data-map="meadow" class="map-option active tank-card bg-white rounded-2xl p-2.5 text-left cursor-pointer">
-                                <div class="text-2xl mb-1" aria-hidden="true">🌿</div>
-                                <div class="font-extrabold text-xs sm:text-sm text-stone-950" id="map-name-meadow">Gröna Ängen</div>
-                                <div class="text-[10px] font-extrabold text-sky-800 mt-0.5" id="map-waves-meadow">42 Vågor (6 Bossar)</div>
-                                <div class="text-[10px] text-stone-700 leading-tight mt-0.5" id="map-desc-meadow">Slingrande väg, träbro över bäck & damm.</div>
-                            </button>
-                            <button type="button" role="radio" aria-checked="false" data-map="desert" class="map-option tank-card bg-white rounded-2xl p-2.5 text-left cursor-pointer">
-                                <div class="text-2xl mb-1" aria-hidden="true">🏜️</div>
-                                <div class="font-extrabold text-xs sm:text-sm text-stone-950" id="map-name-desert">Ökenfortet</div>
-                                <div class="text-[10px] font-extrabold text-sky-800 mt-0.5" id="map-waves-desert">70 Vågor (10 Bossar)</div>
-                                <div class="text-[10px] text-stone-700 leading-tight mt-0.5" id="map-desc-desert">Kaktusar, oas & många kurvor för korseld.</div>
-                            </button>
-                            <button type="button" role="radio" aria-checked="false" data-map="winter" class="map-option tank-card bg-white rounded-2xl p-2.5 text-left cursor-pointer">
-                                <div class="text-2xl mb-1" aria-hidden="true">❄️</div>
-                                <div class="font-extrabold text-xs sm:text-sm text-stone-950" id="map-name-winter">Vinterpasset</div>
-                                <div class="text-[10px] font-extrabold text-sky-800 mt-0.5" id="map-waves-winter">100 Vågor (14 Bossar)</div>
-                                <div class="text-[10px] text-stone-700 leading-tight mt-0.5" id="map-desc-winter">Snöigt pass, isbro & frusen alpsjö.</div>
-                            </button>
-                        </div>
+                <div class="flex items-center gap-2">
+                    <!-- Language Switcher -->
+                    <div class="flex items-center gap-1 bg-stone-200 p-1 rounded-xl border-2 border-stone-900">
+                        <button id="btn-lang-sv" type="button" aria-pressed="true" class="px-2.5 py-1 rounded-lg font-extrabold text-xs cursor-pointer transition">🇸🇪 SV</button>
+                        <button id="btn-lang-en" type="button" aria-pressed="false" class="px-2.5 py-1 rounded-lg font-extrabold text-xs cursor-pointer transition">🇬🇧 EN</button>
                     </div>
-
-                    <div>
-                        <h3 id="heading-step-2" class="cartoon-font font-bold text-lg text-stone-950 mb-2">⚔️ 2. Välj Svårighetsgrad</h3>
-                        <div class="grid grid-cols-3 gap-2" id="diff-selector-grid" role="radiogroup" aria-labelledby="heading-step-2">
-                            <button type="button" role="radio" aria-checked="false" data-diff="easy" class="diff-option tank-card bg-white rounded-2xl p-2.5 text-left cursor-pointer">
-                                <div class="font-extrabold text-xs sm:text-sm text-emerald-800" id="diff-name-easy">😊 Lätt</div>
-                                <div class="text-[10px] text-stone-700 mt-0.5" id="diff-desc-easy">25 ❤️ • 340 🪙<br>Svagare zombies</div>
-                            </button>
-                            <button type="button" role="radio" aria-checked="true" data-diff="normal" class="diff-option active tank-card bg-white rounded-2xl p-2.5 text-left cursor-pointer">
-                                <div class="font-extrabold text-xs sm:text-sm text-amber-800" id="diff-name-normal">😎 Normal</div>
-                                <div class="text-[10px] text-stone-700 mt-0.5" id="diff-desc-normal">20 ❤️ • 275 🪙<br>Balanserad utmaning</div>
-                            </button>
-                            <button type="button" role="radio" aria-checked="false" data-diff="hard" class="diff-option tank-card bg-white rounded-2xl p-2.5 text-left cursor-pointer">
-                                <div class="font-extrabold text-xs sm:text-sm text-red-700" id="diff-name-hard">💀 Svår</div>
-                                <div class="text-[10px] text-stone-700 mt-0.5" id="diff-desc-hard">15 ❤️ • 300 🪙<br>Starkare zombies</div>
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="bg-amber-200/80 border-2 border-stone-500 rounded-2xl p-3 text-xs text-stone-900 space-y-1.5">
+                    <!-- Tech Stars Counter -->
+                    <div class="bg-purple-200 border-3 border-stone-950 rounded-2xl px-3.5 py-1.5 flex items-center gap-1.5 shadow-sm">
+                        <span class="text-lg" aria-hidden="true">⭐</span>
                         <div>
-                            <span class="font-extrabold text-stone-950" id="lbl-exclusive-title">🎖️ Exklusiv Forskning:</span>
-                            <span id="lbl-exclusive-box">Besegra bossarna var 7:e våg för att tjäna Tech-Stjärnor (⭐) och låsa upp nya stridsvagnar, byggnader, förmågor och permanenta bonusar!</span>
-                        </div>
-                        <div class="text-[11px] bg-white/85 border border-stone-500 rounded-xl px-2.5 py-1.5 text-stone-800">
-                            <b id="lbl-save-notice-title">💾 Viktigt om sparfiler:</b> <span id="lbl-save-notice-body">Alla dina Tech-stjärnor och upplåsningar sparas lokalt i webbläsarens <b>localStorage</b>. Om du rensar cache/localStorage försvinner alla framsteg i spelet.</span>
-                        </div>
-                    </div>
-
-                    <div id="menu-match-locked-notice" role="status" class="hidden bg-red-100 border-2 border-red-600 rounded-2xl p-3 text-xs font-extrabold text-red-950">
-                        ⏸️ Match pausad: Karta, svårighetsgrad och forskningsträdet är låsta medan en match pågår. Starta en ny match eller förlora för att ändra!
-                    </div>
-                </div>
-
-                <!-- Right Col: Classic 2-Column Card Tech Tree -->
-                <div class="bg-amber-50 border-3 border-stone-800 rounded-2xl p-3 flex flex-col justify-between max-h-[520px] overflow-y-auto">
-                    <div>
-                        <div class="flex items-center justify-between mb-2">
-                            <h3 id="lbl-tech-tree-title" class="cartoon-font font-bold text-lg text-stone-950">🔬 Exklusivt Forskningsträd</h3>
-                            <span id="lbl-saved-local" class="text-[11px] font-bold text-purple-950 bg-purple-100 px-2 py-0.5 rounded-full border border-purple-400">
-                                Sparas i localStorage
-                            </span>
-                        </div>
-                        <div id="tech-tree-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                            <!-- Populated via JS -->
+                            <div class="text-[10px] font-extrabold uppercase text-purple-900 leading-none" id="lbl-tech-stars-header">Tech-Stjärnor</div>
+                            <div class="text-base sm:text-lg font-black text-purple-950 leading-tight" id="menu-stars">0</div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="mt-5 flex flex-wrap items-center justify-between gap-3 pt-3 border-t-3 border-stone-400">
-                <div class="flex items-center gap-2.5" id="lang-selector-grid" role="group" aria-label="Välj språk / Choose language">
-                    <button type="button" data-lang="sv" id="btn-lang-sv" aria-label="Svenska" aria-pressed="true" title="Svenska" class="cartoon-btn bg-white hover:bg-amber-50 p-2 rounded-xl cursor-pointer flex items-center justify-center min-w-[48px] min-h-[44px]">
-                        <svg class="w-8 h-5 rounded-sm border border-stone-800 block" viewBox="0 0 16 10" aria-hidden="true">
-                            <rect width="16" height="10" fill="#006AA7"/>
-                            <rect x="5" width="2" height="10" fill="#FECC02"/>
-                            <rect y="4" width="16" height="2" fill="#FECC02"/>
-                        </svg>
-                    </button>
-                    <button type="button" data-lang="en" id="btn-lang-en" aria-label="English" aria-pressed="false" title="English" class="cartoon-btn bg-white hover:bg-amber-50 p-2 rounded-xl cursor-pointer flex items-center justify-center min-w-[48px] min-h-[44px]">
-                        <svg class="w-8 h-5 rounded-sm border border-stone-800 block" viewBox="0 0 60 30" aria-hidden="true">
-                            <rect width="60" height="30" fill="#012169"/>
-                            <path d="M0,0 L60,30 M60,0 L0,30" stroke="#ffffff" stroke-width="6"/>
-                            <path d="M0,0 L60,30 M60,0 L0,30" stroke="#C8102E" stroke-width="2.5"/>
-                            <path d="M30,0 v30 M0,15 h60" stroke="#ffffff" stroke-width="10"/>
-                            <path d="M30,0 v30 M0,15 h60" stroke="#C8102E" stroke-width="6"/>
-                        </svg>
-                    </button>
+            <div id="menu-match-locked-notice" class="hidden mt-3 bg-amber-300 border-2 border-stone-950 rounded-xl px-3 py-2 text-xs font-extrabold text-stone-950">
+                ⏸️ Match pausad: Karta, svårighetsgrad och forskningsträdet är låsta medan en match pågår.
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 mt-4">
+                <!-- Left Column: Map & Difficulty -->
+                <div class="lg:col-span-5 flex flex-col gap-3">
+                    <div>
+                        <h3 class="cartoon-font text-base sm:text-lg font-bold text-stone-950 mb-1.5" id="heading-step-1">🗺️ 1. Välj Karta</h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-1 gap-2" role="radiogroup">
+                            <button type="button" role="radio" aria-checked="true" data-map="meadow" class="map-option cartoon-btn bg-white p-2.5 rounded-2xl text-left cursor-pointer">
+                                <div class="flex items-center justify-between">
+                                    <span class="font-extrabold text-sm text-stone-950" id="map-name-meadow">Gröna Ängen</span>
+                                    <span class="text-[11px] font-black bg-lime-200 border border-stone-800 px-2 py-0.5 rounded-full" id="map-waves-meadow">42 Vågor</span>
+                                </div>
+                                <p class="text-xs font-semibold text-stone-700 mt-0.5" id="map-desc-meadow">Slingrande väg, träbro över bäck & damm.</p>
+                            </button>
+                            <button type="button" role="radio" aria-checked="false" data-map="desert" class="map-option cartoon-btn bg-white p-2.5 rounded-2xl text-left cursor-pointer">
+                                <div class="flex items-center justify-between">
+                                    <span class="font-extrabold text-sm text-stone-950" id="map-name-desert">Ökenfortet</span>
+                                    <span class="text-[11px] font-black bg-amber-200 border border-stone-800 px-2 py-0.5 rounded-full" id="map-waves-desert">70 Vågor</span>
+                                </div>
+                                <p class="text-xs font-semibold text-stone-700 mt-0.5" id="map-desc-desert">Kaktusar, oas & många kurvor för korseld.</p>
+                            </button>
+                            <button type="button" role="radio" aria-checked="false" data-map="winter" class="map-option cartoon-btn bg-white p-2.5 rounded-2xl text-left cursor-pointer">
+                                <div class="flex items-center justify-between">
+                                    <span class="font-extrabold text-sm text-stone-950" id="map-name-winter">Vinterpasset</span>
+                                    <span class="text-[11px] font-black bg-sky-200 border border-stone-800 px-2 py-0.5 rounded-full" id="map-waves-winter">100 Vågor</span>
+                                </div>
+                                <p class="text-xs font-semibold text-stone-700 mt-0.5" id="map-desc-winter">Snöigt pass, isbro & frusen alpsjö.</p>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="cartoon-font text-base sm:text-lg font-bold text-stone-950 mb-1.5" id="heading-step-2">⚔️ 2. Välj Svårighetsgrad</h3>
+                        <div class="grid grid-cols-3 gap-2" role="radiogroup">
+                            <button type="button" role="radio" aria-checked="false" data-diff="easy" class="diff-option cartoon-btn bg-white p-2 rounded-2xl text-center cursor-pointer">
+                                <div class="font-extrabold text-xs sm:text-sm text-stone-950" id="diff-name-easy">😊 Lätt</div>
+                                <div class="text-[11px] font-semibold text-stone-700 mt-0.5 leading-tight" id="diff-desc-easy">25 ❤️ • 340 🪙<br>Svagare zombies</div>
+                            </button>
+                            <button type="button" role="radio" aria-checked="true" data-diff="normal" class="diff-option cartoon-btn bg-white p-2 rounded-2xl text-center cursor-pointer">
+                                <div class="font-extrabold text-xs sm:text-sm text-stone-950" id="diff-name-normal">😎 Normal</div>
+                                <div class="text-[11px] font-semibold text-stone-700 mt-0.5 leading-tight" id="diff-desc-normal">20 ❤️ • 275 🪙<br>Balanserad utmaning</div>
+                            </button>
+                            <button type="button" role="radio" aria-checked="false" data-diff="hard" class="diff-option cartoon-btn bg-white p-2 rounded-2xl text-center cursor-pointer">
+                                <div class="font-extrabold text-xs sm:text-sm text-stone-950" id="diff-name-hard">💀 Svår</div>
+                                <div class="text-[11px] font-semibold text-stone-700 mt-0.5 leading-tight" id="diff-desc-hard">15 ❤️ • 300 🪙<br>Starkare zombies</div>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="bg-purple-100 border-2 border-purple-800 rounded-2xl p-2.5 text-xs text-purple-950">
+                        <div class="font-extrabold mb-0.5" id="lbl-exclusive-title">🎖️ Exklusiv Forskning:</div>
+                        <p class="font-semibold leading-snug" id="lbl-exclusive-box">Besegra bossarna var 7:e våg för att tjäna Tech-Stjärnor (⭐)!</p>
+                    </div>
+
+                    <div class="bg-amber-50 border-2 border-stone-700 rounded-2xl p-2.5 text-[11px] text-stone-800">
+                        <div class="font-extrabold text-stone-950 mb-0.5" id="lbl-save-notice-title">💾 Viktigt om sparfiler:</div>
+                        <p class="font-semibold leading-snug" id="lbl-save-notice-body">Alla dina Tech-stjärnor sparas lokalt i webbläsarens <b>localStorage</b>.</p>
+                    </div>
                 </div>
 
-                <div class="flex flex-wrap items-center justify-end gap-3">
-                    <button id="btn-abort-match" class="hidden cartoon-btn bg-rose-700 hover:bg-rose-600 text-white font-extrabold text-sm px-4 py-3 rounded-2xl cursor-pointer min-h-[44px]">
-                        <span id="lbl-abort-btn">🛑 Avsluta match</span>
-                    </button>
-                    <button id="btn-resume-game" class="hidden cartoon-btn bg-stone-200 hover:bg-stone-100 text-stone-950 font-extrabold text-sm px-5 py-3 rounded-2xl cursor-pointer min-h-[44px]">
-                        <span id="lbl-resume-btn">↩️ Återgå till pågående match</span>
-                    </button>
-                    <button id="btn-start-match" class="cartoon-btn bg-lime-400 hover:bg-lime-300 text-stone-950 font-extrabold text-base sm:text-lg px-7 py-3 rounded-2xl cursor-pointer flex items-center gap-2 min-h-[48px]">
-                        <span aria-hidden="true">🚀</span> <span id="btn-start-match-label">STARTA NY MATCH!</span>
-                    </button>
+                <!-- Right Column: Tech Tree -->
+                <div class="lg:col-span-7 flex flex-col">
+                    <div class="flex items-center justify-between mb-1.5">
+                        <h3 class="cartoon-font text-base sm:text-lg font-bold text-stone-950" id="lbl-tech-tree-title">🔬 Exklusivt Forskningsträd</h3>
+                        <span class="text-[11px] font-bold text-stone-700" id="lbl-saved-local">Sparas i localStorage</span>
+                    </div>
+                    <div id="tech-tree-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-[360px] overflow-y-auto pr-1"></div>
                 </div>
+            </div>
+
+            <!-- Modal Footer Actions -->
+            <div class="mt-4 pt-3 border-t-3 border-stone-800 flex flex-wrap items-center justify-end gap-2">
+                <button id="btn-abort-match" type="button" class="hidden cartoon-btn bg-rose-700 hover:bg-rose-600 text-white font-extrabold text-xs sm:text-sm px-4 py-2.5 rounded-2xl cursor-pointer">
+                    <span id="lbl-abort-btn">🛑 Avsluta match</span>
+                </button>
+                <button id="btn-resume-game" type="button" class="hidden cartoon-btn bg-sky-300 hover:bg-sky-200 text-stone-950 font-extrabold text-xs sm:text-sm px-4 py-2.5 rounded-2xl cursor-pointer">
+                    <span id="lbl-resume-btn">↩️ Återgå till pågående match</span>
+                </button>
+                <button id="btn-start-match" type="button" class="cartoon-btn bg-lime-400 hover:bg-lime-300 text-stone-950 cartoon-font text-base sm:text-lg font-bold px-6 py-2.5 rounded-2xl cursor-pointer">
+                    ▶️ <span id="btn-start-match-label">STARTA NY MATCH!</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Game Over Modal -->
+    <div id="gameover-modal" role="dialog" aria-modal="true" class="hidden fixed inset-0 bg-stone-950/85 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-amber-100 border-4 border-stone-950 rounded-3xl max-w-md w-full p-6 text-center shadow-2xl">
+            <div class="text-5xl mb-2" aria-hidden="true">💀</div>
+            <h2 id="gameover-title" class="cartoon-font text-3xl font-bold text-red-700">SPELET SLUT!</h2>
+            <p id="gameover-sub" class="text-sm font-bold text-stone-800 mt-1">Zombierna bröt igenom ditt försvar!</p>
+            <div class="bg-white border-2 border-stone-800 rounded-2xl p-3 my-4 space-y-1.5 text-sm font-extrabold">
+                <div class="flex justify-between"><span id="lbl-go-waves">Klarade vågor:</span><span id="go-waves">0</span></div>
+                <div class="flex justify-between"><span id="lbl-go-kills">Besegrade zombies:</span><span id="go-kills">0</span></div>
+                <div class="flex justify-between text-purple-900"><span id="lbl-go-stars">Intjänade Tech-Stjärnor:</span><span id="go-stars">+0 ⭐</span></div>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+                <button id="btn-go-menu" class="cartoon-btn bg-amber-300 hover:bg-amber-200 text-stone-950 font-extrabold text-sm py-2.5 px-3 rounded-2xl cursor-pointer">
+                    🏠 <span id="lbl-go-menu">Meny & Tech</span>
+                </button>
+                <button id="btn-restart" class="cartoon-btn bg-lime-400 hover:bg-lime-300 text-stone-950 font-extrabold text-sm py-2.5 px-3 rounded-2xl cursor-pointer">
+                    <span id="lbl-go-restart">🔄 Spela Igen</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Victory Modal -->
+    <div id="victory-modal" role="dialog" aria-modal="true" class="hidden fixed inset-0 bg-stone-950/85 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-amber-100 border-4 border-stone-950 rounded-3xl max-w-md w-full p-6 text-center shadow-2xl">
+            <div class="text-5xl mb-2" aria-hidden="true">🏆</div>
+            <h2 id="victory-title" class="cartoon-font text-3xl font-bold text-emerald-700">SEGER!</h2>
+            <p id="victory-sub" class="text-sm font-bold text-stone-800 mt-1">Du klarade alla vågor på kartan!</p>
+            <div class="bg-white border-2 border-stone-800 rounded-2xl p-3 my-4 space-y-1.5 text-sm font-extrabold">
+                <div class="flex justify-between"><span id="lbl-vic-waves">Klarade vågor:</span><span id="vic-waves">42 / 42</span></div>
+                <div class="flex justify-between"><span id="lbl-vic-kills">Besegrade zombies:</span><span id="vic-kills">0</span></div>
+                <div class="flex justify-between text-purple-900"><span id="lbl-vic-stars">Intjänade Tech-Stjärnor:</span><span id="vic-stars">+0 ⭐</span></div>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+                <button id="btn-vic-menu" class="cartoon-btn bg-amber-300 hover:bg-amber-200 text-stone-950 font-extrabold text-sm py-2.5 px-3 rounded-2xl cursor-pointer">
+                    🏠 <span id="lbl-vic-menu">Meny & Tech</span>
+                </button>
+                <button id="btn-vic-restart" class="cartoon-btn bg-lime-400 hover:bg-lime-300 text-stone-950 font-extrabold text-sm py-2.5 px-3 rounded-2xl cursor-pointer">
+                    <span id="lbl-vic-restart">🔄 Spela Igen</span>
+                </button>
             </div>
         </div>
     </div>
@@ -592,6 +560,18 @@
                 upgradeBtn: '⬆️ Uppgradera',
                 maxLevelBtn: '⭐ MAXNIVÅ',
                 sellBtn: '💰 Sälj (70%)',
+                clearObstacleBtn: cost => `🪓 Riv & rensa ytan (🪙 ${cost})`,
+                obstacleTitle: 'Naturhinder',
+                obstacleLevel: 'Blockerar byggyta',
+                obstacleDesc: 'Det går inte att placera stridsvagnar eller byggnader här förrän hindret har rivits.',
+                obstacleNames: {
+                    tree: 'Lövträd',
+                    bush: 'Bärbuske',
+                    rock: 'Stenblock',
+                    cactus: 'Kaktus',
+                    mesa: 'Ökenklippa',
+                    pine: 'Snögran'
+                },
                 tacticalTitle: '⚡ Taktiska Förmågor',
                 tacticalSub: 'Lås upp i matchen',
                 mineName: 'Vägmina',
@@ -729,6 +709,8 @@
                     minePlaced: '💣 Vägmina placerad på vägen!',
                     mineMustRoad: '⚠️ Vägminan måste placeras direkt på vägen!',
                     cantBuildOnRoad: '⚠️ Kan inte bygga på vägen!',
+                    cantBuildOnObstacle: '🌳 Träd/sten blockerar! Klicka på hindret för att riva det (🪙15).',
+                    obstacleCleared: (name, cost) => `🪓 Rev ${name}! (-🪙${cost})`,
                     tooCloseBuilding: '⚠️ För nära en annan byggnad eller vagn!',
                     needGold: cost => `⚠️ Behöver 🪙${cost}!`,
                     builtName: name => `✅ Byggde ${name}!`,
@@ -791,6 +773,18 @@
                 upgradeBtn: '⬆️ Upgrade',
                 maxLevelBtn: '⭐ MAX LEVEL',
                 sellBtn: '💰 Sell (70%)',
+                clearObstacleBtn: cost => `🪓 Demolish & Clear (🪙 ${cost})`,
+                obstacleTitle: 'Map Obstacle',
+                obstacleLevel: 'Blocks building',
+                obstacleDesc: 'You cannot place tanks or buildings here until this obstacle has been cleared.',
+                obstacleNames: {
+                    tree: 'Oak Tree',
+                    bush: 'Berry Bush',
+                    rock: 'Boulder',
+                    cactus: 'Cactus',
+                    mesa: 'Desert Rock',
+                    pine: 'Snow Pine'
+                },
                 tacticalTitle: '⚡ Tactical Abilities',
                 tacticalSub: 'Unlock in match',
                 mineName: 'Road Mine',
@@ -928,6 +922,8 @@
                     minePlaced: '💣 Road Mine placed on the road!',
                     mineMustRoad: '⚠️ Road Mine must be placed directly on the road!',
                     cantBuildOnRoad: '⚠️ Cannot build on the road!',
+                    cantBuildOnObstacle: '🌳 Blocked by tree/rock! Tap the obstacle to clear it (🪙15).',
+                    obstacleCleared: (name, cost) => `🪓 Cleared ${name}! (-🪙${cost})`,
                     tooCloseBuilding: '⚠️ Too close to another building or tank!',
                     needGold: cost => `⚠️ Need 🪙${cost}!`,
                     builtName: name => `✅ Built ${name}!`,
@@ -1451,6 +1447,7 @@
             mousePos: { x: -100, y: -100 },
             tanks: [],
             buildings: [],
+            obstacles: [],
             roadMines: [],
             zombies: [],
             bullets: [],
@@ -1636,10 +1633,26 @@
             return dx * dx + dy * dy <= 1;
         }
 
+        const OBSTACLE_CLEAR_COST = 15;
+
+        function getObstacleRadius(dec) {
+            return Math.round(24 * (dec.s || 1));
+        }
+
+        function isPointOnObstacle(x, y, extraMargin = 10) {
+            for (const obs of state.obstacles) {
+                if (Math.hypot(x - obs.x, y - obs.y) < getObstacleRadius(obs) + extraMargin) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         function isValidBuildSpot(x, y) {
             if (x < 24 || x > VIRTUAL_W - 24 || y < 24 || y > VIRTUAL_H - 24) return false;
             if (isPointOnRoad(x, y)) return false;
             if (isPointInPond(x, y)) return false;
+            if (isPointOnObstacle(x, y, 10)) return false;
             for (const tk of state.tanks) {
                 if (Math.hypot(x - tk.x, y - tk.y) < 38) return false;
             }
@@ -2505,6 +2518,39 @@
             panel.classList.remove('hidden');
 
             const previewCanvas = document.getElementById('selected-tank-preview');
+            const statsGrid = previewCanvas.closest('#upgrade-panel').querySelector('.grid.grid-cols-3');
+            const btnUpgrade = document.getElementById('btn-upgrade');
+            const btnSell = document.getElementById('btn-sell');
+            const btnClearObs = document.getElementById('btn-clear-obstacle');
+
+            if (ent.kind === 'obstacle') {
+                const c = previewCanvas.getContext('2d');
+                c.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
+                c.save();
+                c.translate(previewCanvas.width / 2, previewCanvas.height / 2 + 4);
+                c.scale(0.68, 0.68);
+                drawSingleObstacle(c, ent);
+                c.restore();
+
+                const obsName = (t('obstacleNames') && t('obstacleNames')[ent.type]) || t('obstacleTitle');
+                document.getElementById('sel-name').textContent = obsName;
+                document.getElementById('sel-level').textContent = t('obstacleLevel');
+                document.getElementById('sel-special').textContent = t('obstacleDesc');
+                document.getElementById('priority-row').classList.add('hidden');
+                statsGrid.classList.add('hidden');
+                btnUpgrade.classList.add('hidden');
+                btnSell.classList.add('hidden');
+                btnClearObs.classList.remove('hidden');
+                btnClearObs.disabled = state.money < OBSTACLE_CLEAR_COST;
+                document.getElementById('lbl-clear-obstacle-btn').textContent = t('clearObstacleBtn')(OBSTACLE_CLEAR_COST);
+                return;
+            }
+
+            statsGrid.classList.remove('hidden');
+            btnUpgrade.classList.remove('hidden');
+            btnSell.classList.remove('hidden');
+            btnClearObs.classList.add('hidden');
+
             const isMax = ent.level >= ent.maxLevel;
             const upgradeCost = Math.round(ent.baseCost * 0.72 * ent.level);
             const sellValue = Math.round(ent.totalInvested * 0.7);
@@ -2592,7 +2638,6 @@
                 }
             }
 
-            const btnUpgrade = document.getElementById('btn-upgrade');
             if (isMax) {
                 btnUpgrade.disabled = true;
                 btnUpgrade.innerHTML = `<span>${t('maxLevelBtn')}</span><span class="text-[11px]">---</span>`;
@@ -2660,6 +2705,25 @@
             updateHUD();
         }
 
+        function clearSelectedObstacle() {
+            const ent = state.selectedEntity;
+            if (!ent || ent.kind !== 'obstacle') return;
+            if (state.money < OBSTACLE_CLEAR_COST) {
+                showToast(t('toasts').needGold(OBSTACLE_CLEAR_COST));
+                return;
+            }
+            state.money -= OBSTACLE_CLEAR_COST;
+            state.obstacles = state.obstacles.filter(o => o !== ent);
+            const obsName = (t('obstacleNames') && t('obstacleNames')[ent.type]) || t('obstacleTitle');
+            sfx.play('boom');
+            spawnParticles(ent.x, ent.y, '#78350f', 14, 95);
+            spawnParticles(ent.x, ent.y, '#22c55e', 10, 80);
+            addFloatingText(ent.x, ent.y - 10, `-🪙${OBSTACLE_CLEAR_COST}`, '#fca5a5');
+            showToast(t('toasts').obstacleCleared(obsName, OBSTACLE_CLEAR_COST));
+            deselectEntity();
+            updateHUD();
+        }
+
         // ==========================================
         // 11. WAVES, BOSSES & ZOMBIE SPAWNING
         // ==========================================
@@ -2667,119 +2731,126 @@
             return waveNum > 0 && waveNum % 7 === 0;
         }
 
-        function getWavePreviewText(nextWaveNum) {
-            const maxWaves = getCurrentMap().maxWaves || 42;
-            if (nextWaveNum > maxWaves) return t('allWavesCleared');
+        function getWavePreviewText(waveNum) {
             const wd = t('waveDesc');
-            if (isBossWaveNumber(nextWaveNum)) return wd.boss;
-            if (nextWaveNum % 5 === 0) return wd.fast;
-            if (nextWaveNum % 4 === 0) return wd.tank;
-            if (nextWaveNum % 3 === 0) return wd.swarm;
+            if (isBossWaveNumber(waveNum)) return wd.boss;
+            if (waveNum % 5 === 0) return wd.tank;
+            if (waveNum % 4 === 0) return wd.swarm;
+            if (waveNum % 3 === 0) return wd.fast;
             return wd.normal;
+        }
+
+        function generateWaveQueue(waveNum) {
+            const diff = getCurrentDiff();
+            const queue = [];
+
+            if (isBossWaveNumber(waveNum)) {
+                const bossNumber = Math.floor(waveNum / 7);
+                const bossHp = Math.round((1800 + bossNumber * 1450 + Math.pow(bossNumber, 1.85) * 480) * diff.hpMult);
+                const bossReward = Math.round((140 + bossNumber * 45) * diff.rewardMult);
+                queue.push({
+                    type: 'boss',
+                    hp: bossHp,
+                    speed: 34 + Math.min(18, bossNumber * 1.5),
+                    reward: bossReward,
+                    delay: 1.0
+                });
+                return queue;
+            }
+
+            const baseCount = 7 + Math.floor(waveNum * 1.45);
+            const hpScale = (1 + (waveNum - 1) * 0.24 + Math.pow(waveNum, 1.35) * 0.04) * diff.hpMult;
+
+            for (let i = 0; i < baseCount; i++) {
+                let type = 'normal';
+                let hp = Math.round(52 * hpScale);
+                let speed = 56 + Math.min(28, waveNum * 0.6);
+                let reward = Math.max(4, Math.round((8 + Math.floor(waveNum * 0.35)) * diff.rewardMult));
+                let delay = Math.max(0.24, 0.78 - waveNum * 0.012);
+
+                if (waveNum >= 3 && i % 4 === 2) {
+                    type = 'fast';
+                    hp = Math.round(36 * hpScale);
+                    speed = 92 + Math.min(36, waveNum * 0.75);
+                    reward = Math.max(4, Math.round((9 + Math.floor(waveNum * 0.35)) * diff.rewardMult));
+                    delay *= 0.85;
+                } else if (waveNum >= 4 && i % 5 === 3) {
+                    type = 'swarm';
+                    hp = Math.round(24 * hpScale);
+                    speed = 76 + Math.min(30, waveNum * 0.65);
+                    reward = Math.max(3, Math.round(5 * diff.rewardMult));
+                    delay *= 0.55;
+                } else if (waveNum >= 5 && i % 6 === 5) {
+                    type = 'tank';
+                    hp = Math.round(165 * hpScale);
+                    speed = 38 + Math.min(16, waveNum * 0.35);
+                    reward = Math.max(8, Math.round((16 + Math.floor(waveNum * 0.5)) * diff.rewardMult));
+                    delay *= 1.35;
+                }
+
+                queue.push({ type, hp, speed, reward, delay });
+            }
+
+            return queue;
+        }
+
+        function spawnZombieFromSpec(spec) {
+            const startWp = getCurrentMap().waypoints[0];
+            state.zombies.push({
+                type: spec.type,
+                x: startWp.x,
+                y: startWp.y,
+                hp: spec.hp,
+                maxHp: spec.hp,
+                baseSpeed: spec.speed,
+                reward: spec.reward,
+                waypointIndex: 1,
+                distanceTraveled: 0,
+                wobble: Math.random() * Math.PI * 2,
+                hitFlash: 0,
+                slowFactor: 0,
+                slowTimer: 0,
+                burnDps: 0,
+                burnTimer: 0
+            });
         }
 
         function startNextWave() {
             const maxWaves = getCurrentMap().maxWaves || 42;
-            if (state.waveActive || state.gameOver || state.victory || !state.matchStarted || state.wave >= maxWaves) return;
+            if (state.waveActive || state.gameOver || state.victory || !state.matchStarted) return;
+            if (state.wave >= maxWaves) return;
 
             state.wave++;
             state.waveActive = true;
             state.autoWaveTimer = 0;
-            state.spawnQueue = [];
+            state.spawnQueue = generateWaveQueue(state.wave);
             state.spawnTimer = 0.2;
 
-            const diff = getCurrentDiff();
-            const isBossWave = isBossWaveNumber(state.wave);
-            const scale = Math.pow(1.20, state.wave - 1) * diff.hpMult;
-
-            if (isBossWave) {
+            if (isBossWaveNumber(state.wave)) {
                 const bossNumber = Math.floor(state.wave / 7);
-                const bossHp = Math.round(2300 * Math.pow(1.62, bossNumber - 1) * diff.hpMult);
-                state.spawnQueue.push({
-                    type: 'boss',
-                    hp: bossHp,
-                    speed: 36 + Math.min(8, bossNumber),
-                    reward: Math.round((150 + state.wave * 10) * diff.rewardMult),
-                    delay: 0.5
-                });
-
                 sfx.play('boss_alarm');
                 const banner = document.getElementById('boss-banner');
                 document.getElementById('boss-banner-title').textContent = t('bossBannerTitle')(bossNumber, state.wave, maxWaves);
                 banner.classList.remove('hidden');
-                setTimeout(() => banner.classList.add('hidden'), 3200);
-            } else {
-                const count = 8 + state.wave * 3;
-                for (let i = 0; i < count; i++) {
-                    let type = 'normal';
-                    let hp = Math.round(45 * scale);
-                    let speed = 56 + Math.min(35, state.wave * 1.1);
-                    let reward = Math.max(4, Math.round((6 + Math.floor(state.wave * 0.45)) * diff.rewardMult));
-                    let delay = Math.max(0.24, 0.78 - state.wave * 0.02);
-
-                    if (state.wave >= 2 && i % 4 === 3) {
-                        type = 'fast';
-                        hp = Math.round(30 * scale);
-                        speed = 98 + Math.min(45, state.wave * 1.4);
-                        reward = Math.max(4, Math.round((6 + Math.floor(state.wave * 0.45)) * diff.rewardMult));
-                        delay = 0.36;
-                    } else if (state.wave >= 3 && i % 5 === 4) {
-                        type = 'tank';
-                        hp = Math.round(145 * scale);
-                        speed = 36 + Math.min(18, state.wave * 0.6);
-                        reward = Math.max(8, Math.round((13 + Math.floor(state.wave * 0.85)) * diff.rewardMult));
-                        delay = 0.92;
-                    } else if (state.wave >= 4 && i % 6 === 5) {
-                        type = 'swarm';
-                        hp = Math.round(20 * scale);
-                        speed = 82 + Math.min(30, state.wave * 1.0);
-                        reward = Math.max(3, Math.round(5 * diff.rewardMult));
-                        delay = 0.20;
-                    }
-
-                    state.spawnQueue.push({ type, hp, speed, reward, delay });
-                }
+                setTimeout(() => banner.classList.add('hidden'), 3600);
             }
 
             updateHUD();
         }
 
-        function spawnZombieFromSpec(spec) {
-            const start = getCurrentMap().waypoints[0];
-            state.zombies.push({
-                type: spec.type,
-                x: start.x,
-                y: start.y,
-                waypointIndex: 1,
-                distanceTraveled: 0,
-                hp: spec.hp,
-                maxHp: spec.hp,
-                baseSpeed: spec.speed,
-                reward: spec.reward,
-                slowTimer: 0,
-                slowFactor: 0,
-                burnTimer: 0,
-                burnDps: 0,
-                wobble: Math.random() * Math.PI * 2,
-                hitFlash: 0
-            });
-        }
-
-        // ==========================================
-        // 12. COMBAT, PARTICLES & FLOATING TEXTS
-        // ==========================================
-        function spawnParticles(x, y, color, count = 8, speed = 90) {
+        function spawnParticles(x, y, color, count = 8, maxSpeed = 100) {
             for (let i = 0; i < count; i++) {
-                const angle = Math.random() * Math.PI * 2;
-                const spd = (0.3 + Math.random() * 0.7) * speed;
+                const ang = Math.random() * Math.PI * 2;
+                const spd = 20 + Math.random() * maxSpeed;
                 state.particles.push({
-                    x, y,
-                    vx: Math.cos(angle) * spd,
-                    vy: Math.sin(angle) * spd,
-                    radius: 2.5 + Math.random() * 3.5,
+                    x,
+                    y,
+                    vx: Math.cos(ang) * spd,
+                    vy: Math.sin(ang) * spd,
+                    radius: 2 + Math.random() * 3,
                     color,
                     alpha: 1,
-                    life: 0.28 + Math.random() * 0.25
+                    life: 0.35 + Math.random() * 0.25
                 });
             }
         }
@@ -3161,8 +3232,9 @@
         // ==========================================
         function drawMapBackground() {
             const map = getCurrentMap();
+            const wps = map.waypoints;
 
-            // Rich base terrain + subtle checkerboard tiles + organic grass patches
+            // Rich base terrain + subtle checkerboard tiles
             ctx.fillStyle = map.grassBase;
             ctx.fillRect(0, 0, VIRTUAL_W, VIRTUAL_H);
 
@@ -3175,9 +3247,12 @@
                 }
             }
 
-            // Pond / Oasis / Frozen Lake with layered shoreline
+            // Pond / Oasis / Frozen Lake with layered shoreline & gentle water ripples
             if (map.pond) {
                 const p = map.pond;
+                const timeSec = performance.now() / 1000;
+                const ripplePulse = Math.sin(timeSec * 2.1);
+
                 ctx.fillStyle = 'rgba(0,0,0,0.16)';
                 ctx.beginPath(); ctx.ellipse(p.x + 3, p.y + 5, p.rx + 7, p.ry + 7, 0, 0, Math.PI * 2); ctx.fill();
 
@@ -3189,35 +3264,78 @@
 
                 if (p.deepColor) {
                     ctx.fillStyle = p.deepColor;
-                    ctx.beginPath(); ctx.ellipse(p.x + 6, p.y + 4, p.rx * 0.62, p.ry * 0.58, 0, 0, Math.PI * 2); ctx.fill();
+                    ctx.beginPath();
+                    ctx.ellipse(
+                        p.x + 6 + Math.cos(timeSec * 1.4) * 1.5,
+                        p.y + 4 + Math.sin(timeSec * 1.6) * 1.2,
+                        p.rx * 0.62 + ripplePulse * 1.8,
+                        p.ry * 0.58 + ripplePulse * 1.2,
+                        0, 0, Math.PI * 2
+                    );
+                    ctx.fill();
                 }
 
-                ctx.strokeStyle = 'rgba(255,255,255,0.55)';
+                // Animated expanding water ring
+                const ringPhase = (timeSec * 0.45) % 1;
+                ctx.strokeStyle = `rgba(255, 255, 255, ${(1 - ringPhase) * 0.42})`;
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.ellipse(
+                    p.x + 4,
+                    p.y + 2,
+                    p.rx * (0.22 + ringPhase * 0.58),
+                    p.ry * (0.22 + ringPhase * 0.58),
+                    0, 0, Math.PI * 2
+                );
+                ctx.stroke();
+
+                // Animated water shimmer arcs
+                ctx.strokeStyle = 'rgba(255,255,255,0.6)';
                 ctx.lineWidth = 2.5;
-                ctx.beginPath(); ctx.ellipse(p.x - 12, p.y - 9, p.rx * 0.42, p.ry * 0.32, -0.2, 0.2, 2.2); ctx.stroke();
+                ctx.beginPath();
+                ctx.ellipse(
+                    p.x - 12 + Math.sin(timeSec * 1.8) * 2,
+                    p.y - 9 + Math.cos(timeSec * 1.5) * 1.2,
+                    p.rx * 0.42,
+                    p.ry * 0.32,
+                    -0.2,
+                    0.2 + ripplePulse * 0.08,
+                    2.2 + ripplePulse * 0.08
+                );
+                ctx.stroke();
             }
 
-            // River Stream
+            // Animated River Stream
             if (map.river) {
                 const r = map.river;
+                const timeSec = performance.now() / 1000;
+                const flowOffset = (timeSec * 36) % 52;
+
                 ctx.fillStyle = '#0c4a6e';
                 ctx.fillRect(r.x - 25, 0, 50, VIRTUAL_H);
                 ctx.fillStyle = r.waterColor;
                 ctx.fillRect(r.x - 21, 0, 42, VIRTUAL_H);
                 if (r.deepColor) {
                     ctx.fillStyle = r.deepColor;
-                    ctx.fillRect(r.x - 10, 0, 20, VIRTUAL_H);
+                    ctx.fillRect(r.x - 10 + Math.sin(timeSec * 2.2) * 1.5, 0, 20, VIRTUAL_H);
                 }
-                ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+                ctx.strokeStyle = 'rgba(255,255,255,0.58)';
                 ctx.lineWidth = 2;
-                for (let wy = 20; wy < VIRTUAL_H; wy += 52) {
-                    ctx.beginPath(); ctx.moveTo(r.x - 8, wy); ctx.lineTo(r.x - 8, wy + 20); ctx.stroke();
-                    ctx.beginPath(); ctx.moveTo(r.x + 8, wy + 16); ctx.lineTo(r.x + 8, wy + 36); ctx.stroke();
+                for (let wy = -52 + flowOffset; wy < VIRTUAL_H + 52; wy += 52) {
+                    const sway = Math.sin(timeSec * 3 + wy * 0.05) * 1.8;
+                    ctx.beginPath();
+                    ctx.moveTo(r.x - 9 + sway, wy);
+                    ctx.quadraticCurveTo(r.x - 6 - sway, wy + 10, r.x - 9 + sway, wy + 20);
+                    ctx.stroke();
+
+                    ctx.beginPath();
+                    ctx.moveTo(r.x + 8 - sway, wy + 22);
+                    ctx.quadraticCurveTo(r.x + 11 + sway, wy + 32, r.x + 8 - sway, wy + 42);
+                    ctx.stroke();
                 }
             }
 
             // Road outline, surface, inner highlight & dashed centerline
-            const wps = map.waypoints;
             ctx.lineCap = 'round';
             ctx.lineJoin = 'round';
 
@@ -3259,7 +3377,6 @@
                 ctx.fill();
                 ctx.stroke();
 
-                // Bridge planks
                 ctx.strokeStyle = 'rgba(28, 25, 23, 0.45)';
                 ctx.lineWidth = 2;
                 for (let px = r.x - 24; px <= r.x + 24; px += 12) {
@@ -3269,93 +3386,34 @@
                     ctx.stroke();
                 }
 
-                // Top & bottom bridge guardrails
                 ctx.fillStyle = '#451a03';
                 ctx.fillRect(r.x - 36, r.bridgeY - 34, 72, 6);
                 ctx.fillRect(r.x - 36, r.bridgeY + 28, 72, 6);
                 ctx.restore();
             }
 
-            // Detailed Environmental Decorations
-            for (const dec of map.decorations) {
+            // Detailed Environmental Obstacles (can be cleared for a small gold fee)
+            for (const dec of state.obstacles) {
+                const isSelected = state.selectedEntity === dec;
+                const isHovered = state.hoveredEntity === dec;
                 ctx.save();
                 ctx.translate(dec.x, dec.y);
-                ctx.scale(dec.s, dec.s);
-                if (dec.type === 'tree') {
-                    ctx.fillStyle = 'rgba(0,0,0,0.24)';
-                    ctx.beginPath(); ctx.ellipse(4, 18, 23, 10, 0, 0, Math.PI * 2); ctx.fill();
-                    ctx.fillStyle = '#78350f';
-                    ctx.strokeStyle = '#1c1917';
-                    ctx.lineWidth = 2;
-                    ctx.fillRect(-5, 0, 10, 18);
-                    ctx.strokeRect(-5, 0, 10, 18);
-                    ctx.fillStyle = '#15803d';
-                    ctx.strokeStyle = '#14532d';
+
+                if (isSelected || isHovered) {
+                    ctx.save();
+                    ctx.strokeStyle = isSelected ? '#facc15' : 'rgba(250, 204, 21, 0.75)';
+                    ctx.fillStyle = 'rgba(250, 204, 21, 0.14)';
                     ctx.lineWidth = 2.5;
-                    ctx.beginPath(); ctx.arc(0, -8, 22, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
-                    ctx.fillStyle = '#22c55e';
-                    ctx.beginPath(); ctx.arc(-6, -13, 13, 0, Math.PI * 2); ctx.fill();
-                    ctx.fillStyle = '#4ade80';
-                    ctx.beginPath(); ctx.arc(-9, -16, 6, 0, Math.PI * 2); ctx.fill();
-                } else if (dec.type === 'bush') {
-                    ctx.fillStyle = 'rgba(0,0,0,0.2)';
-                    ctx.beginPath(); ctx.ellipse(2, 9, 17, 7, 0, 0, Math.PI * 2); ctx.fill();
-                    ctx.fillStyle = '#16a34a';
-                    ctx.strokeStyle = '#14532d';
-                    ctx.lineWidth = 2;
-                    ctx.beginPath(); ctx.arc(-6, 2, 10, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
-                    ctx.beginPath(); ctx.arc(7, 3, 9, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
-                    ctx.beginPath(); ctx.arc(0, -3, 11, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
-                    // Tiny red berries
-                    ctx.fillStyle = '#ef4444';
-                    ctx.beginPath(); ctx.arc(-4, -2, 2.2, 0, Math.PI * 2); ctx.fill();
-                    ctx.beginPath(); ctx.arc(5, 1, 2.2, 0, Math.PI * 2); ctx.fill();
-                } else if (dec.type === 'cactus') {
-                    ctx.fillStyle = 'rgba(0,0,0,0.2)';
-                    ctx.beginPath(); ctx.ellipse(3, 15, 14, 6, 0, 0, Math.PI * 2); ctx.fill();
-                    ctx.fillStyle = '#15803d';
-                    ctx.strokeStyle = '#14532d';
-                    ctx.lineWidth = 2.5;
-                    ctx.beginPath(); ctx.roundRect(-6, -22, 12, 36, 6); ctx.fill(); ctx.stroke();
-                    ctx.beginPath(); ctx.roundRect(-16, -12, 10, 7, 3); ctx.fill(); ctx.stroke();
-                    ctx.beginPath(); ctx.roundRect(6, -16, 10, 7, 3); ctx.fill(); ctx.stroke();
-                    ctx.fillStyle = '#f43f5e';
-                    ctx.beginPath(); ctx.arc(0, -24, 3.5, 0, Math.PI * 2); ctx.fill();
-                } else if (dec.type === 'mesa') {
-                    ctx.fillStyle = 'rgba(0,0,0,0.22)';
-                    ctx.beginPath(); ctx.ellipse(3, 12, 24, 9, 0, 0, Math.PI * 2); ctx.fill();
-                    ctx.fillStyle = '#c2410c';
-                    ctx.strokeStyle = '#431407';
-                    ctx.lineWidth = 2.5;
+                    ctx.setLineDash([5, 4]);
                     ctx.beginPath();
-                    ctx.moveTo(-22, 10); ctx.lineTo(-14, -12); ctx.lineTo(14, -12); ctx.lineTo(22, 10);
-                    ctx.closePath(); ctx.fill(); ctx.stroke();
-                    ctx.fillStyle = '#ea580c';
-                    ctx.fillRect(-12, -10, 24, 5);
-                } else if (dec.type === 'pine') {
-                    ctx.fillStyle = 'rgba(0,0,0,0.22)';
-                    ctx.beginPath(); ctx.ellipse(3, 20, 19, 8, 0, 0, Math.PI * 2); ctx.fill();
-                    ctx.fillStyle = '#78350f';
-                    ctx.fillRect(-4, 8, 8, 12);
-                    ctx.fillStyle = '#0f766e';
-                    ctx.strokeStyle = '#134e4a';
-                    ctx.lineWidth = 2;
-                    ctx.beginPath(); ctx.moveTo(0, -14); ctx.lineTo(-21, 11); ctx.lineTo(21, 11); ctx.closePath(); ctx.fill(); ctx.stroke();
-                    ctx.beginPath(); ctx.moveTo(0, -28); ctx.lineTo(-16, -4); ctx.lineTo(16, -4); ctx.closePath(); ctx.fill(); ctx.stroke();
-                    ctx.fillStyle = '#f8fafc';
-                    ctx.beginPath(); ctx.moveTo(0, -28); ctx.lineTo(-8, -14); ctx.lineTo(8, -14); ctx.closePath(); ctx.fill();
-                } else if (dec.type === 'rock') {
-                    ctx.fillStyle = 'rgba(0,0,0,0.2)';
-                    ctx.beginPath(); ctx.ellipse(2, 10, 18, 7, 0, 0, Math.PI * 2); ctx.fill();
-                    ctx.fillStyle = '#78716c';
-                    ctx.strokeStyle = '#292524';
-                    ctx.lineWidth = 2.5;
-                    ctx.beginPath();
-                    ctx.moveTo(-16, 8); ctx.lineTo(-10, -8); ctx.lineTo(6, -11); ctx.lineTo(18, 4); ctx.lineTo(12, 11);
-                    ctx.closePath(); ctx.fill(); ctx.stroke();
-                    ctx.fillStyle = '#a8a29e';
-                    ctx.beginPath(); ctx.arc(-4, -3, 5, 0, Math.PI * 2); ctx.fill();
+                    ctx.arc(0, 0, getObstacleRadius(dec) + 4, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.stroke();
+                    ctx.restore();
                 }
+
+                ctx.scale(dec.s, dec.s);
+                drawSingleObstacle(ctx, dec);
                 ctx.restore();
             }
 
@@ -3364,6 +3422,120 @@
             const endPt = wps[wps.length - 1];
             drawFlagMarker(startPt.x + 26, startPt.y - 26, '#16a34a', t('startFlag'));
             drawFlagMarker(endPt.x - 26, endPt.y - 26, '#dc2626', t('goalFlag'));
+        }
+
+        function drawSingleObstacle(c, dec) {
+            // Ground shadow
+            c.fillStyle = 'rgba(0, 0, 0, 0.24)';
+            c.beginPath();
+            c.ellipse(3, 14, 18, 7, 0, 0, Math.PI * 2);
+            c.fill();
+
+            if (dec.type === 'tree') {
+                c.fillStyle = '#78350f';
+                c.strokeStyle = '#1c1917';
+                c.lineWidth = 2;
+                c.fillRect(-4, 0, 8, 16);
+                c.strokeRect(-4, 0, 8, 16);
+
+                c.fillStyle = '#15803d';
+                c.beginPath(); c.arc(0, -8, 16, 0, Math.PI * 2); c.fill(); c.stroke();
+                c.fillStyle = '#22c55e';
+                c.beginPath(); c.arc(-7, -3, 11, 0, Math.PI * 2); c.fill(); c.stroke();
+                c.beginPath(); c.arc(7, -3, 11, 0, Math.PI * 2); c.fill(); c.stroke();
+            } else if (dec.type === 'bush') {
+                c.fillStyle = '#16a34a';
+                c.strokeStyle = '#1c1917';
+                c.lineWidth = 2;
+                c.beginPath(); c.arc(-6, 4, 10, 0, Math.PI * 2); c.fill(); c.stroke();
+                c.beginPath(); c.arc(6, 4, 10, 0, Math.PI * 2); c.fill(); c.stroke();
+                c.fillStyle = '#22c55e';
+                c.beginPath(); c.arc(0, -1, 11, 0, Math.PI * 2); c.fill(); c.stroke();
+
+                c.fillStyle = '#ef4444';
+                c.beginPath();
+                c.arc(-4, 1, 2.2, 0, Math.PI * 2);
+                c.arc(5, 3, 2.2, 0, Math.PI * 2);
+                c.arc(1, -5, 2.2, 0, Math.PI * 2);
+                c.fill();
+            } else if (dec.type === 'rock') {
+                c.fillStyle = '#78716c';
+                c.strokeStyle = '#1c1917';
+                c.lineWidth = 2.2;
+                c.beginPath();
+                c.moveTo(-15, 11);
+                c.lineTo(-12, -4);
+                c.lineTo(0, -11);
+                c.lineTo(13, -3);
+                c.lineTo(15, 11);
+                c.closePath();
+                c.fill();
+                c.stroke();
+
+                c.fillStyle = '#a8a29e';
+                c.beginPath();
+                c.moveTo(-9, -2);
+                c.lineTo(0, -8);
+                c.lineTo(7, -2);
+                c.lineTo(0, 2);
+                c.closePath();
+                c.fill();
+            } else if (dec.type === 'cactus') {
+                c.fillStyle = '#16a34a';
+                c.strokeStyle = '#1c1917';
+                c.lineWidth = 2;
+                c.beginPath(); c.roundRect(-5, -16, 10, 30, 5); c.fill(); c.stroke();
+                c.beginPath(); c.roundRect(-14, -7, 9, 6, 3); c.fill(); c.stroke();
+                c.beginPath(); c.roundRect(-14, -13, 6, 10, 3); c.fill(); c.stroke();
+                c.beginPath(); c.roundRect(5, -3, 9, 6, 3); c.fill(); c.stroke();
+                c.beginPath(); c.roundRect(8, -10, 6, 11, 3); c.fill(); c.stroke();
+            } else if (dec.type === 'mesa') {
+                c.fillStyle = '#b45309';
+                c.strokeStyle = '#1c1917';
+                c.lineWidth = 2.2;
+                c.beginPath();
+                c.moveTo(-18, 12);
+                c.lineTo(-11, -9);
+                c.lineTo(11, -9);
+                c.lineTo(18, 12);
+                c.closePath();
+                c.fill();
+                c.stroke();
+
+                c.fillStyle = '#d97706';
+                c.fillRect(-10, -8, 20, 4);
+            } else if (dec.type === 'pine') {
+                c.fillStyle = '#78350f';
+                c.strokeStyle = '#1c1917';
+                c.lineWidth = 2;
+                c.fillRect(-4, 4, 8, 12);
+                c.strokeRect(-4, 4, 8, 12);
+
+                const tiers = [
+                    { y: 6, w: 17, h: 14 },
+                    { y: -3, w: 14, h: 13 },
+                    { y: -11, w: 10, h: 12 }
+                ];
+                tiers.forEach(tier => {
+                    c.fillStyle = '#0f766e';
+                    c.beginPath();
+                    c.moveTo(-tier.w, tier.y);
+                    c.lineTo(0, tier.y - tier.h);
+                    c.lineTo(tier.w, tier.y);
+                    c.closePath();
+                    c.fill();
+                    c.stroke();
+
+                    // Snow cap
+                    c.fillStyle = '#f8fafc';
+                    c.beginPath();
+                    c.moveTo(-tier.w * 0.45, tier.y - tier.h * 0.55);
+                    c.lineTo(0, tier.y - tier.h);
+                    c.lineTo(tier.w * 0.45, tier.y - tier.h * 0.55);
+                    c.closePath();
+                    c.fill();
+                });
+            }
         }
 
         function drawFlagMarker(x, y, flagColor, labelText) {
@@ -3859,10 +4031,14 @@
 
             updateAbilitiesUI();
             if (state.selectedEntity) {
-                const isMax = state.selectedEntity.level >= state.selectedEntity.maxLevel;
-                if (!isMax) {
-                    const upgradeCost = Math.round(state.selectedEntity.baseCost * 0.72 * state.selectedEntity.level);
-                    document.getElementById('btn-upgrade').disabled = state.money < upgradeCost;
+                if (state.selectedEntity.kind === 'obstacle') {
+                    document.getElementById('btn-clear-obstacle').disabled = state.money < OBSTACLE_CLEAR_COST;
+                } else {
+                    const isMax = state.selectedEntity.level >= state.selectedEntity.maxLevel;
+                    if (!isMax) {
+                        const upgradeCost = Math.round(state.selectedEntity.baseCost * 0.72 * state.selectedEntity.level);
+                        document.getElementById('btn-upgrade').disabled = state.money < upgradeCost;
+                    }
                 }
             }
         }
@@ -3904,6 +4080,14 @@
 
             state.tanks = [];
             state.buildings = [];
+            state.obstacles = getCurrentMap().decorations.map((dec, idx) => ({
+                kind: 'obstacle',
+                id: idx,
+                type: dec.type,
+                x: dec.x,
+                y: dec.y,
+                s: dec.s || 1
+            }));
             state.roadMines = [];
             state.zombies = [];
             state.bullets = [];
@@ -3995,6 +4179,10 @@
                     showToast(t('toasts').cantBuildOnRoad);
                     return false;
                 }
+                if (isPointOnObstacle(pt.x, pt.y, 10)) {
+                    showToast(t('toasts').cantBuildOnObstacle);
+                    return false;
+                }
                 if (!isValidBuildSpot(pt.x, pt.y)) {
                     showToast(t('toasts').tooCloseBuilding);
                     return false;
@@ -4017,11 +4205,9 @@
                     range: tCfg.range,
                     damage: tCfg.damage,
                     fireRate: tCfg.fireRate,
-                    color: tCfg.color,
-                    turretColor: tCfg.turretColor,
                     bulletColor: tCfg.bulletColor,
                     bulletSpeed: tCfg.bulletSpeed,
-                    isTack: tCfg.isTack || false,
+                    isTack: !!tCfg.isTack,
                     multiShot: tCfg.multiShot || 0,
                     splashRadius: tCfg.splashRadius || 0,
                     slowFactor: tCfg.slowFactor || 0,
@@ -4030,12 +4216,12 @@
                     burnDuration: tCfg.burnDuration || 0,
                     priority: 'first',
                     angle: 0,
-                    cooldown: 0,
-                    recoil: 0
+                    recoil: 0,
+                    cooldown: 0
                 };
                 state.tanks.push(newTank);
                 sfx.play('build');
-                spawnParticles(pt.x, pt.y, '#22c55e', 14, 90);
+                spawnParticles(pt.x, pt.y, '#4ade80', 14, 90);
                 showToast(t('toasts').builtName(trTank.name));
                 cancelPlacement();
                 updateHUD();
@@ -4047,6 +4233,10 @@
                 const trBld = t('buildings')[state.placingBuildingType];
                 if (isPointOnRoad(pt.x, pt.y)) {
                     showToast(t('toasts').cantBuildOnRoad);
+                    return false;
+                }
+                if (isPointOnObstacle(pt.x, pt.y, 10)) {
+                    showToast(t('toasts').cantBuildOnObstacle);
                     return false;
                 }
                 if (!isValidBuildSpot(pt.x, pt.y)) {
@@ -4107,6 +4297,15 @@
                     closestEnt = b;
                 }
             }
+            if (!closestEnt) {
+                for (const obs of state.obstacles) {
+                    const d = Math.hypot(pt.x - obs.x, pt.y - obs.y);
+                    if (d <= Math.max(hitRadius, getObstacleRadius(obs) + 4)) {
+                        closestEnt = obs;
+                        break;
+                    }
+                }
+            }
 
             if (closestEnt) {
                 // Tapping an already selected tower toggles (deselects) it cleanly on mobile!
@@ -4137,6 +4336,14 @@
                 for (const b of state.buildings) {
                     if (Math.hypot(pt.x - b.x, pt.y - b.y) <= 24) {
                         hovered = b;
+                        break;
+                    }
+                }
+            }
+            if (!hovered) {
+                for (const obs of state.obstacles) {
+                    if (Math.hypot(pt.x - obs.x, pt.y - obs.y) <= getObstacleRadius(obs) + 4) {
+                        hovered = obs;
                         break;
                     }
                 }
@@ -4234,6 +4441,7 @@
         document.getElementById('btn-close-upgrade').addEventListener('click', deselectEntity);
         document.getElementById('btn-upgrade').addEventListener('click', upgradeSelectedEntity);
         document.getElementById('btn-sell').addEventListener('click', sellSelectedEntity);
+        document.getElementById('btn-clear-obstacle').addEventListener('click', clearSelectedObstacle);
         document.getElementById('btn-cycle-priority').addEventListener('click', () => {
             const ent = state.selectedEntity;
             if (!ent || ent.kind !== 'tank') return;
