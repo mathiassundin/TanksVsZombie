@@ -1263,9 +1263,9 @@
                 fireRate: 1.15,
                 slowFactor: 0.45,
                 slowDuration: 2.3,
-                color: '#0284c7',
-                turretColor: '#0369a1',
-                bulletColor: '#7dd3fc',
+                color: '#06b6d4',
+                turretColor: '#0e7490',
+                bulletColor: '#a5f3fc',
                 bulletSpeed: 400,
                 maxLevel: 5
             },
@@ -1277,9 +1277,9 @@
                 range: 125,
                 damage: 12,
                 fireRate: 3.1,
-                color: '#2563eb',
-                turretColor: '#1d4ed8',
-                bulletColor: '#38bdf8',
+                color: '#4f46e5',
+                turretColor: '#3730a3',
+                bulletColor: '#818cf8',
                 bulletSpeed: 540,
                 maxLevel: 5
             },
@@ -1292,9 +1292,9 @@
                 damage: 18,
                 fireRate: 1.35,
                 isTack: true,
-                color: '#db2777',
+                color: '#ec4899',
                 turretColor: '#be185d',
-                bulletColor: '#f472b6',
+                bulletColor: '#f9a8d4',
                 bulletSpeed: 380,
                 maxLevel: 5
             },
@@ -1321,9 +1321,9 @@
                 damage: 21,
                 fireRate: 1.05,
                 multiShot: 3,
-                color: '#7c3aed',
+                color: '#8b5cf6',
                 turretColor: '#6d28d9',
-                bulletColor: '#c084fc',
+                bulletColor: '#ddd6fe',
                 bulletSpeed: 460,
                 maxLevel: 5
             },
@@ -1336,9 +1336,9 @@
                 damage: 58,
                 fireRate: 0.65,
                 splashRadius: 68,
-                color: '#dc2626',
-                turretColor: '#b91c1c',
-                bulletColor: '#fb923c',
+                color: '#b91c1c',
+                turretColor: '#7f1d1d',
+                bulletColor: '#fca5a5',
                 bulletSpeed: 330,
                 maxLevel: 5
             },
@@ -1352,7 +1352,7 @@
                 fireRate: 4.5,
                 burnDamage: 12,
                 burnDuration: 2.5,
-                color: '#ea580c',
+                color: '#f97316',
                 turretColor: '#c2410c',
                 bulletColor: '#fde047',
                 bulletSpeed: 350,
@@ -3844,8 +3844,13 @@
                             </div>
                             <div class="text-[10px] font-semibold text-stone-600 leading-tight mt-0.5">${tLoc.desc}</div>
                         </div>
-                        <div class="mt-1.5 bg-purple-700 text-white text-[10px] font-extrabold px-2 py-1 rounded-lg text-center truncate">
-                            ${t('techTreeBtnLabel')}
+                        <div class="mt-1.5 space-y-1">
+                            <div class="bg-purple-700 text-white text-[10px] font-extrabold px-2 py-1 rounded-lg text-center truncate">
+                                ${t('techTreeBtnLabel')}
+                            </div>
+                            <div class="text-[10px] font-extrabold text-stone-700 text-center truncate">
+                                ${t('buildCostShort')(info.cost)}
+                            </div>
                         </div>
                     `;
                 } else if (!isUnlocked) {
@@ -3857,8 +3862,13 @@
                             </div>
                             <div class="text-[10px] font-semibold text-stone-600 leading-tight mt-0.5">${tLoc.desc}</div>
                         </div>
-                        <div class="mt-1.5 ${canAfford ? 'bg-amber-300 text-stone-950' : 'bg-stone-200 text-stone-600'} border border-stone-800 text-[10px] font-extrabold px-2 py-1 rounded-lg text-center truncate">
-                            🔓 ${t('unlockCostShort')(info.unlockCost)}
+                        <div class="mt-1.5 space-y-1">
+                            <div class="${canAfford ? 'bg-amber-300 text-stone-950' : 'bg-stone-200 text-stone-600'} border border-stone-800 text-[10px] font-extrabold px-2 py-1 rounded-lg text-center truncate">
+                                🔓 ${t('unlockCostShort')(info.unlockCost)}
+                            </div>
+                            <div class="text-[10px] font-extrabold text-stone-700 text-center truncate">
+                                ${t('buildCostShort')(info.cost)}
+                            </div>
                         </div>
                     `;
                 } else if (isSelected) {
