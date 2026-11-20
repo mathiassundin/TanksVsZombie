@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧟</text></svg>">
-    <title>Tanks Vs. Zombie</title>
+    <title>Zombie Vs. Zombie</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -80,7 +80,15 @@
         }
         #canvas-container {
             aspect-ratio: 960 / 560;
+            max-width: min(100%, calc((100dvh - 155px) * (960 / 560)));
+            max-height: calc(100dvh - 155px);
             touch-action: none;
+        }
+        @media (max-width: 1023px) {
+            #canvas-container {
+                max-width: 100%;
+                max-height: none;
+            }
         }
         #gameCanvas {
             touch-action: none;
@@ -167,126 +175,136 @@
     </header>
 
     <!-- Main Game Container -->
-    <main id="main-game-area" tabindex="-1" class="flex-1 max-w-7xl w-full mx-auto p-2 sm:p-3 flex flex-col lg:flex-row gap-3 items-start justify-center">
+    <main id="main-game-area" tabindex="-1" class="flex-1 max-w-7xl w-full mx-auto p-2 sm:p-3 flex flex-col lg:flex-row gap-3 items-center lg:items-start justify-center">
 
-        <!-- Left / Top: Game Map Canvas Wrapper -->
-        <div class="relative w-full lg:flex-1 bg-emerald-900 rounded-2xl cartoon-panel overflow-hidden flex items-center justify-center" id="canvas-container">
-            <canvas id="gameCanvas" role="img" aria-label="Spelkarta för Tank Vs. Zombie" class="w-full h-full block cursor-crosshair"></canvas>
+        <!-- Left / Top: Game Map Canvas + Upgrade Panel Below Map -->
+        <div class="w-full lg:flex-1 flex flex-col items-center gap-2.5 min-w-0">
+            <div class="relative w-full bg-emerald-900 rounded-2xl cartoon-panel overflow-hidden flex items-center justify-center" id="canvas-container">
+                <canvas id="gameCanvas" role="img" aria-label="Spelkarta för Tank Vs. Zombie" class="w-full h-full block cursor-crosshair"></canvas>
 
-            <!-- Top Boss Health Bar Overlay -->
-            <div id="boss-hud" role="region" aria-live="polite" class="hidden absolute top-3 left-1/2 -translate-x-1/2 w-[90%] max-w-md bg-stone-900/95 border-3 border-red-500 rounded-2xl px-4 py-2 shadow-xl z-20 pointer-events-none">
-                <div class="flex items-center justify-between text-xs sm:text-sm font-extrabold text-red-300 mb-1">
-                    <span id="lbl-boss-hud" class="flex items-center gap-1.5">👑 MEGA ZOMBIE-BOSS</span>
-                    <span id="boss-hp-text" class="text-white">5230 / 5230</span>
+                <!-- Top Boss Health Bar Overlay -->
+                <div id="boss-hud" role="region" aria-live="polite" class="hidden absolute top-3 left-1/2 -translate-x-1/2 w-[90%] max-w-md bg-stone-900/95 border-3 border-red-500 rounded-2xl px-4 py-2 shadow-xl z-20 pointer-events-none">
+                    <div class="flex items-center justify-between text-xs sm:text-sm font-extrabold text-red-300 mb-1">
+                        <span id="lbl-boss-hud" class="flex items-center gap-1.5">👑 MEGA ZOMBIE-BOSS</span>
+                        <span id="boss-hp-text" class="text-white">5230 / 5230</span>
+                    </div>
+                    <div class="w-full h-3.5 bg-stone-800 rounded-full overflow-hidden border border-stone-600">
+                        <div id="boss-hp-fill" class="h-full bg-gradient-to-r from-red-600 via-orange-500 to-yellow-400 transition-all duration-100" style="width: 100%;"></div>
+                    </div>
                 </div>
-                <div class="w-full h-3.5 bg-stone-800 rounded-full overflow-hidden border border-stone-600">
-                    <div id="boss-hp-fill" class="h-full bg-gradient-to-r from-red-600 via-orange-500 to-yellow-400 transition-all duration-100" style="width: 100%;"></div>
+
+                <!-- Next Wave Preview Pill -->
+                <div id="wave-preview-pill" class="absolute top-3 right-3 bg-stone-900/95 text-amber-100 border-2 border-amber-400 rounded-xl px-3 py-1.5 text-[11px] font-bold shadow-lg z-20 pointer-events-none hidden sm:block">
+                    <span class="text-amber-300 font-extrabold" id="lbl-next-wave">Nästa våg:</span> <span id="wave-preview-text">Vanliga Zombier</span>
+                </div>
+
+                <!-- Boss Wave Warning Banner -->
+                <div id="boss-banner" role="alert" class="hidden absolute top-14 left-1/2 -translate-x-1/2 bg-red-950/95 text-amber-200 border-3 border-red-500 rounded-2xl px-5 py-2.5 text-center shadow-2xl z-30 pointer-events-none">
+                    <div class="cartoon-font text-base sm:text-lg font-bold text-red-300" id="boss-banner-title">⚠️ BOSS-NIVÅ! VÅG 7 ⚠️</div>
+                    <div class="text-xs sm:text-sm font-extrabold text-white mt-0.5" id="boss-banner-sub">
+                        Endast den gigantiska Zombie-Bossen anfaller!
+                    </div>
+                </div>
+
+                <!-- Toast Notification -->
+                <div id="toast-msg" role="status" aria-live="polite" aria-atomic="true" class="hidden absolute top-16 left-1/2 -translate-x-1/2 bg-stone-900/95 text-amber-200 border-2 border-amber-400 font-bold text-xs sm:text-sm px-4 py-2 rounded-full shadow-lg z-30 pointer-events-none whitespace-nowrap">
+                </div>
+
+                <!-- Placement Cancel Pill -->
+                <button id="placement-cancel-hint" class="hidden absolute top-3 left-3 bg-red-700 hover:bg-red-600 text-white border-2 border-stone-950 font-extrabold text-xs sm:text-sm px-4 py-2.5 rounded-full shadow-xl z-20 cursor-pointer min-h-[44px] flex items-center gap-1.5">
+                    ✖ Avbryt läge (ESC)
+                </button>
+
+                <!-- Touch Confirm Placement Floating Bar -->
+                <div id="touch-confirm-bar" role="region" aria-label="Bekräfta placering" class="hidden absolute bottom-3 left-3 right-3 sm:left-1/2 sm:right-auto sm:-translate-x-1/2 sm:w-auto sm:min-w-[320px] bg-stone-900/95 border-3 border-amber-400 rounded-2xl p-2.5 shadow-2xl z-30 flex items-center justify-between gap-2">
+                    <div class="text-left pl-1 min-w-0">
+                        <div class="text-xs font-extrabold text-amber-300 truncate" id="touch-confirm-title">Standardvagn</div>
+                        <div class="text-[11px] font-bold text-stone-200 truncate" id="touch-confirm-sub">Dra för att justera eller bekräfta</div>
+                    </div>
+                    <div class="flex items-center gap-2 shrink-0">
+                        <button id="btn-touch-cancel" type="button" class="cartoon-btn bg-rose-700 hover:bg-rose-600 text-white font-extrabold text-xs px-3 py-2.5 rounded-xl cursor-pointer min-h-[44px]">
+                            ✖ <span id="lbl-touch-cancel">Avbryt</span>
+                        </button>
+                        <button id="btn-touch-confirm" type="button" class="cartoon-btn bg-lime-400 hover:bg-lime-300 text-stone-950 font-extrabold text-xs sm:text-sm px-4 py-2.5 rounded-xl cursor-pointer min-h-[44px]">
+                            ✅ <span id="lbl-touch-confirm">Placera</span>
+                        </button>
+                    </div>
                 </div>
             </div>
 
-            <!-- Next Wave Preview Pill -->
-            <div id="wave-preview-pill" class="absolute top-3 right-3 bg-stone-900/95 text-amber-100 border-2 border-amber-400 rounded-xl px-3 py-1.5 text-[11px] font-bold shadow-lg z-20 pointer-events-none hidden sm:block">
-                <span class="text-amber-300 font-extrabold" id="lbl-next-wave">Nästa våg:</span> <span id="wave-preview-text">Vanliga Zombier</span>
-            </div>
+            <!-- Upgrade / Sell / Clear Obstacle Panel (Docked below canvas on desktop & bottom sheet on mobile) -->
+            <div id="upgrade-panel" role="region" aria-label="Tornuppgradering" class="hidden fixed bottom-0 inset-x-0 rounded-t-3xl border-t-4 border-x-0 border-b-0 sm:static sm:w-full sm:rounded-2xl sm:border-3 bg-amber-50 border-stone-900 p-3.5 sm:p-3 cartoon-panel z-40 sm:z-10">
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-2.5">
+                    <!-- Left: Identity + Stats -->
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center justify-between gap-2 pb-2 border-b-2 border-stone-300">
+                            <div class="flex items-center gap-2 min-w-0">
+                                <canvas id="selected-tank-preview" aria-hidden="true" width="44" height="44" class="bg-emerald-100 rounded-xl border-2 border-stone-800 shrink-0"></canvas>
+                                <div class="min-w-0">
+                                    <div class="font-extrabold text-sm sm:text-base text-stone-950 leading-tight truncate" id="sel-name">Standardvagn</div>
+                                    <div class="text-xs font-bold text-amber-900" id="sel-level">Nivå 1 / 5</div>
+                                </div>
+                            </div>
+                            <button id="btn-close-upgrade" type="button" aria-label="Avmarkera och stäng panel" class="px-3.5 sm:px-2.5 h-11 sm:h-9 rounded-xl bg-rose-100 sm:bg-stone-200 hover:bg-rose-200 sm:hover:bg-stone-300 active:bg-rose-300 sm:active:bg-stone-400 border-2 border-stone-900 sm:border-stone-800 text-rose-950 sm:text-stone-950 font-extrabold text-sm sm:text-xs flex items-center justify-center gap-1.5 cursor-pointer shrink-0 shadow-sm">
+                                <span aria-hidden="true">✖</span> <span id="lbl-deselect-btn">Avmarkera</span>
+                            </button>
+                        </div>
 
-            <!-- Boss Wave Warning Banner -->
-            <div id="boss-banner" role="alert" class="hidden absolute top-14 left-1/2 -translate-x-1/2 bg-red-950/95 text-amber-200 border-3 border-red-500 rounded-2xl px-5 py-2.5 text-center shadow-2xl z-30 pointer-events-none">
-                <div class="cartoon-font text-base sm:text-lg font-bold text-red-300" id="boss-banner-title">⚠️ BOSS-NIVÅ! VÅG 7 ⚠️</div>
-                <div class="text-xs sm:text-sm font-extrabold text-white mt-0.5" id="boss-banner-sub">
-                    Endast den gigantiska Zombie-Bossen anfaller!
-                </div>
-            </div>
+                        <div id="sel-stats-grid" class="grid grid-cols-3 gap-1.5 my-2 text-center">
+                            <div class="bg-white border-2 border-stone-400 rounded-xl p-1.5">
+                                <div class="text-[10px] font-bold text-stone-700 uppercase" id="lbl-stat-1">Skada</div>
+                                <div class="text-xs font-extrabold text-stone-950 leading-tight" id="sel-dmg">25</div>
+                                <div class="text-[9px] font-bold text-sky-800 leading-tight" id="sel-dmg-bonus"></div>
+                                <div class="text-[10px] font-black text-emerald-800 leading-tight mt-0.5" id="sel-dmg-next">+9</div>
+                            </div>
+                            <div class="bg-white border-2 border-stone-400 rounded-xl p-1.5">
+                                <div class="text-[10px] font-bold text-stone-700 uppercase" id="lbl-stat-2">Räckvidd</div>
+                                <div class="text-xs font-extrabold text-stone-950 leading-tight" id="sel-rng">140</div>
+                                <div class="text-[9px] font-bold text-sky-800 leading-tight" id="sel-rng-bonus"></div>
+                                <div class="text-[10px] font-black text-emerald-800 leading-tight mt-0.5" id="sel-rng-next">+11</div>
+                            </div>
+                            <div class="bg-white border-2 border-stone-400 rounded-xl p-1.5">
+                                <div class="text-[10px] font-bold text-stone-700 uppercase" id="lbl-stat-3">Eldhastighet</div>
+                                <div class="text-xs font-extrabold text-stone-950 leading-tight" id="sel-spd">1.2/s</div>
+                                <div class="text-[9px] font-bold text-emerald-800 leading-tight" id="sel-spd-bonus"></div>
+                                <div class="text-[10px] font-black text-emerald-800 leading-tight mt-0.5" id="sel-spd-next">+0.15/s</div>
+                            </div>
+                        </div>
 
-            <!-- Toast Notification -->
-            <div id="toast-msg" role="status" aria-live="polite" aria-atomic="true" class="hidden absolute top-16 left-1/2 -translate-x-1/2 bg-stone-900/95 text-amber-200 border-2 border-amber-400 font-bold text-xs sm:text-sm px-4 py-2 rounded-full shadow-lg z-30 pointer-events-none whitespace-nowrap">
-            </div>
+                        <p class="text-[11px] font-semibold text-stone-800 bg-amber-100 rounded-lg px-2 py-1 border border-amber-400" id="sel-special">
+                            Balanserad kanon med bra räckvidd.
+                        </p>
+                    </div>
 
-            <!-- Placement Cancel Pill -->
-            <button id="placement-cancel-hint" class="hidden absolute top-3 left-3 bg-red-700 hover:bg-red-600 text-white border-2 border-stone-950 font-extrabold text-xs sm:text-sm px-4 py-2.5 rounded-full shadow-xl z-20 cursor-pointer min-h-[44px] flex items-center gap-1.5">
-                ✖ Avbryt läge (ESC)
-            </button>
+                    <!-- Right: Target Priority + Upgrade/Sell Actions -->
+                    <div class="md:w-64 shrink-0 flex flex-col justify-between gap-2">
+                        <div id="priority-row" class="flex items-center justify-between gap-1.5 bg-stone-100 border border-stone-400 rounded-xl px-2 py-1.5">
+                            <span class="text-[11px] font-extrabold text-stone-800" id="lbl-goal">🎯 Mål:</span>
+                            <button id="btn-cycle-priority" class="bg-amber-200 hover:bg-amber-300 border border-stone-800 rounded-lg px-2.5 py-1 text-xs font-extrabold text-stone-950 cursor-pointer">
+                                Först på vägen
+                            </button>
+                        </div>
 
-            <!-- Touch Confirm Placement Floating Bar -->
-            <div id="touch-confirm-bar" role="region" aria-label="Bekräfta placering" class="hidden absolute bottom-3 left-3 right-3 sm:left-1/2 sm:right-auto sm:-translate-x-1/2 sm:w-auto sm:min-w-[320px] bg-stone-900/95 border-3 border-amber-400 rounded-2xl p-2.5 shadow-2xl z-30 flex items-center justify-between gap-2">
-                <div class="text-left pl-1 min-w-0">
-                    <div class="text-xs font-extrabold text-amber-300 truncate" id="touch-confirm-title">Standardvagn</div>
-                    <div class="text-[11px] font-bold text-stone-200 truncate" id="touch-confirm-sub">Dra för att justera eller bekräfta</div>
-                </div>
-                <div class="flex items-center gap-2 shrink-0">
-                    <button id="btn-touch-cancel" type="button" class="cartoon-btn bg-rose-700 hover:bg-rose-600 text-white font-extrabold text-xs px-3 py-2.5 rounded-xl cursor-pointer min-h-[44px]">
-                        ✖ <span id="lbl-touch-cancel">Avbryt</span>
-                    </button>
-                    <button id="btn-touch-confirm" type="button" class="cartoon-btn bg-lime-400 hover:bg-lime-300 text-stone-950 font-extrabold text-xs sm:text-sm px-4 py-2.5 rounded-xl cursor-pointer min-h-[44px]">
-                        ✅ <span id="lbl-touch-confirm">Placera</span>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Upgrade / Sell / Clear Obstacle Floating Card -->
-            <div id="upgrade-panel" role="region" aria-label="Tornuppgradering" class="hidden fixed bottom-0 inset-x-0 rounded-t-3xl border-t-4 border-x-0 border-b-0 sm:absolute sm:bottom-3 sm:right-3 sm:left-auto sm:w-80 sm:rounded-2xl sm:border-3 bg-amber-50 border-stone-900 p-3.5 sm:p-3 shadow-2xl z-40 sm:z-20">
-                <div class="flex items-center justify-between gap-2 pb-2 border-b-2 border-stone-300">
-                    <div class="flex items-center gap-2 min-w-0">
-                        <canvas id="selected-tank-preview" aria-hidden="true" width="44" height="44" class="bg-emerald-100 rounded-xl border-2 border-stone-800 shrink-0"></canvas>
-                        <div class="min-w-0">
-                            <div class="font-extrabold text-sm sm:text-base text-stone-950 leading-tight truncate" id="sel-name">Standardvagn</div>
-                            <div class="text-xs font-bold text-amber-900" id="sel-level">Nivå 1 / 5</div>
+                        <div id="tower-actions-row" class="grid grid-cols-2 gap-2">
+                            <button id="btn-upgrade" class="cartoon-btn bg-emerald-400 hover:bg-emerald-300 text-stone-950 font-extrabold text-xs py-2 px-2 rounded-xl flex flex-col items-center justify-center cursor-pointer min-h-[46px]">
+                                <span id="lbl-upgrade-btn">⬆️ Uppgradera</span>
+                                <span class="text-[11px] font-black" id="sel-upgrade-cost">🪙 65 (U)</span>
+                            </button>
+                            <button id="btn-sell" class="cartoon-btn bg-rose-700 hover:bg-rose-600 text-white font-extrabold text-xs py-2 px-2 rounded-xl flex flex-col items-center justify-center cursor-pointer min-h-[46px]">
+                                <span id="lbl-sell-btn">💰 Sälj (70%)</span>
+                                <span class="text-[11px] font-black" id="sel-sell-value">+🪙 56</span>
+                            </button>
+                            <button id="btn-clear-obstacle" class="hidden col-span-2 cartoon-btn bg-amber-400 hover:bg-amber-300 text-stone-950 font-extrabold text-xs sm:text-sm py-2.5 px-3 rounded-xl flex items-center justify-center gap-2 cursor-pointer min-h-[46px]">
+                                <span id="lbl-clear-obstacle-btn">🪓 Riv & rensa ytan (🪙 15)</span>
+                            </button>
                         </div>
                     </div>
-                    <button id="btn-close-upgrade" type="button" aria-label="Avmarkera och stäng panel" class="px-3.5 sm:px-2.5 h-11 sm:h-10 rounded-xl bg-rose-100 sm:bg-stone-200 hover:bg-rose-200 sm:hover:bg-stone-300 active:bg-rose-300 sm:active:bg-stone-400 border-2 border-stone-900 sm:border-stone-800 text-rose-950 sm:text-stone-950 font-extrabold text-sm sm:text-xs flex items-center justify-center gap-1.5 cursor-pointer shrink-0 shadow-sm">
-                        <span aria-hidden="true">✖</span> <span id="lbl-deselect-btn">Avmarkera</span>
-                    </button>
-                </div>
-
-                <div id="sel-stats-grid" class="grid grid-cols-3 gap-1.5 my-2 text-center">
-                    <div class="bg-white border-2 border-stone-400 rounded-xl p-1.5">
-                        <div class="text-[10px] font-bold text-stone-700 uppercase" id="lbl-stat-1">Skada</div>
-                        <div class="text-xs font-extrabold text-stone-950 leading-tight" id="sel-dmg">25</div>
-                        <div class="text-[9px] font-bold text-sky-800 leading-tight" id="sel-dmg-bonus"></div>
-                        <div class="text-[10px] font-black text-emerald-800 leading-tight mt-0.5" id="sel-dmg-next">+9</div>
-                    </div>
-                    <div class="bg-white border-2 border-stone-400 rounded-xl p-1.5">
-                        <div class="text-[10px] font-bold text-stone-700 uppercase" id="lbl-stat-2">Räckvidd</div>
-                        <div class="text-xs font-extrabold text-stone-950 leading-tight" id="sel-rng">140</div>
-                        <div class="text-[9px] font-bold text-sky-800 leading-tight" id="sel-rng-bonus"></div>
-                        <div class="text-[10px] font-black text-emerald-800 leading-tight mt-0.5" id="sel-rng-next">+11</div>
-                    </div>
-                    <div class="bg-white border-2 border-stone-400 rounded-xl p-1.5">
-                        <div class="text-[10px] font-bold text-stone-700 uppercase" id="lbl-stat-3">Eldhastighet</div>
-                        <div class="text-xs font-extrabold text-stone-950 leading-tight" id="sel-spd">1.2/s</div>
-                        <div class="text-[9px] font-bold text-emerald-800 leading-tight" id="sel-spd-bonus"></div>
-                        <div class="text-[10px] font-black text-emerald-800 leading-tight mt-0.5" id="sel-spd-next">+0.15/s</div>
-                    </div>
-                </div>
-
-                <div id="priority-row" class="flex items-center justify-between gap-1.5 mb-2 bg-stone-100 border border-stone-400 rounded-xl px-2 py-1">
-                    <span class="text-[11px] font-extrabold text-stone-800" id="lbl-goal">🎯 Mål:</span>
-                    <button id="btn-cycle-priority" class="bg-amber-200 hover:bg-amber-300 border border-stone-800 rounded-lg px-2.5 py-1 text-xs font-extrabold text-stone-950 cursor-pointer">
-                        Först på vägen
-                    </button>
-                </div>
-
-                <p class="text-[11px] font-semibold text-stone-800 bg-amber-100 rounded-lg px-2 py-1 mb-2.5 border border-amber-400" id="sel-special">
-                    Balanserad kanon med bra räckvidd.
-                </p>
-
-                <div id="tower-actions-row" class="grid grid-cols-2 gap-2">
-                    <button id="btn-upgrade" class="cartoon-btn bg-emerald-400 hover:bg-emerald-300 text-stone-950 font-extrabold text-xs py-2 px-2 rounded-xl flex flex-col items-center justify-center cursor-pointer min-h-[44px]">
-                        <span id="lbl-upgrade-btn">⬆️ Uppgradera</span>
-                        <span class="text-[11px] font-black" id="sel-upgrade-cost">🪙 65 (U)</span>
-                    </button>
-                    <button id="btn-sell" class="cartoon-btn bg-rose-700 hover:bg-rose-600 text-white font-extrabold text-xs py-2 px-2 rounded-xl flex flex-col items-center justify-center cursor-pointer min-h-[44px]">
-                        <span id="lbl-sell-btn">💰 Sälj (70%)</span>
-                        <span class="text-[11px] font-black" id="sel-sell-value">+🪙 56</span>
-                    </button>
-                    <button id="btn-clear-obstacle" class="hidden col-span-2 cartoon-btn bg-amber-400 hover:bg-amber-300 text-stone-950 font-extrabold text-xs sm:text-sm py-2.5 px-3 rounded-xl flex items-center justify-center gap-2 cursor-pointer min-h-[46px]">
-                        <span id="lbl-clear-obstacle-btn">🪓 Riv & rensa ytan (🪙 15)</span>
-                    </button>
                 </div>
             </div>
         </div>
 
         <!-- Right / Bottom: Shop, Tactical Abilities & Quick Guide -->
-        <aside id="shop-aside" aria-label="Butik och Taktiska Förmågor" class="w-full lg:w-96 bg-amber-100 rounded-2xl cartoon-panel p-3 flex flex-col gap-3 shrink-0">
+        <aside id="shop-aside" aria-label="Butik och Taktiska Förmågor" class="w-full lg:w-96 lg:max-h-[calc(100dvh-84px)] lg:overflow-y-auto bg-amber-100 rounded-2xl cartoon-panel p-3 flex flex-col gap-3 shrink-0">
             <!-- Tactical Abilities -->
             <div>
                 <div class="flex items-center justify-between mb-1.5">
@@ -534,6 +552,8 @@
 
         const I18N = {
             sv: {
+                flagStart: 'START',
+                flagGoal: 'MÅL',
                 menuTech: 'Meny & Tech',
                 wavePrefix: 'Våg',
                 waveMiddle: 'av',
@@ -660,6 +680,8 @@
                 }
             },
             en: {
+                flagStart: 'START',
+                flagGoal: 'FINISH',
                 menuTech: 'Menu & Tech',
                 wavePrefix: 'Wave',
                 waveMiddle: 'of',
@@ -1885,47 +1907,59 @@
 
                 c.fillStyle = '#ef4444';
                 c.beginPath();
-                c.arc(-5, -2, 2.3, 0, Math.PI * 2);
-                c.arc(5, 1, 2.3, 0, Math.PI * 2);
-                c.arc(0, -7, 2.3, 0, Math.PI * 2);
+                c.arc(-4, -2, 2, 0, Math.PI * 2);
+                c.arc(5, 1, 2, 0, Math.PI * 2);
+                c.arc(1, -6, 2, 0, Math.PI * 2);
                 c.fill();
-            } else if (dec.kind === 'rock' || dec.kind === 'desert_rock') {
-                c.fillStyle = dec.kind === 'desert_rock' ? '#b45309' : '#78716c';
+            } else if (dec.kind === 'rock') {
+                c.fillStyle = '#78716c';
                 c.strokeStyle = '#1c1917';
                 c.lineWidth = 2.2;
                 c.beginPath();
-                c.moveTo(-dec.r * 0.8, 6);
-                c.lineTo(-dec.r * 0.5, -dec.r * 0.65);
-                c.lineTo(dec.r * 0.25, -dec.r * 0.75);
-                c.lineTo(dec.r * 0.85, 4);
+                c.moveTo(-dec.r * 0.85, 6);
+                c.lineTo(-dec.r * 0.55, -dec.r * 0.65);
+                c.lineTo(dec.r * 0.25, -dec.r * 0.78);
+                c.lineTo(dec.r * 0.85, 2);
+                c.lineTo(dec.r * 0.45, 9);
                 c.closePath();
                 c.fill();
                 c.stroke();
 
-                c.fillStyle = dec.kind === 'desert_rock' ? '#d97706' : '#a8a29e';
+                c.fillStyle = '#a8a29e';
                 c.beginPath();
-                c.moveTo(-dec.r * 0.4, -dec.r * 0.45);
-                c.lineTo(dec.r * 0.15, -dec.r * 0.55);
-                c.lineTo(dec.r * 0.35, -2);
-                c.lineTo(-dec.r * 0.2, 0);
-                c.closePath();
+                c.arc(-2, -3, dec.r * 0.32, 0, Math.PI * 2);
                 c.fill();
             } else if (dec.kind === 'cactus') {
-                c.fillStyle = '#16a34a';
+                c.fillStyle = '#15803d';
                 c.strokeStyle = '#1c1917';
                 c.lineWidth = 2.2;
                 c.beginPath();
-                c.roundRect(-5, -dec.r * 0.9, 10, dec.r * 1.45, 5);
+                c.roundRect(-5, -18, 10, 28, 5);
                 c.fill();
                 c.stroke();
 
                 c.beginPath();
-                c.roundRect(-13, -dec.r * 0.45, 9, 6, 3);
-                c.roundRect(-13, -dec.r * 0.75, 5, 11, 2.5);
-                c.roundRect(4, -dec.r * 0.3, 9, 6, 3);
-                c.roundRect(8, -dec.r * 0.65, 5, 11, 2.5);
+                c.roundRect(-14, -10, 9, 6, 3);
+                c.roundRect(-14, -15, 5, 10, 2.5);
+                c.roundRect(5, -6, 9, 6, 3);
+                c.roundRect(9, -12, 5, 11, 2.5);
                 c.fill();
                 c.stroke();
+            } else if (dec.kind === 'desert_rock') {
+                c.fillStyle = '#b45309';
+                c.strokeStyle = '#1c1917';
+                c.lineWidth = 2.2;
+                c.beginPath();
+                c.moveTo(-dec.r * 0.9, 7);
+                c.lineTo(-dec.r * 0.45, -dec.r * 0.75);
+                c.lineTo(dec.r * 0.45, -dec.r * 0.75);
+                c.lineTo(dec.r * 0.9, 7);
+                c.closePath();
+                c.fill();
+                c.stroke();
+
+                c.fillStyle = '#d97706';
+                c.fillRect(-dec.r * 0.35, -dec.r * 0.45, dec.r * 0.7, 4);
             } else if (dec.kind === 'snow_pine') {
                 c.fillStyle = '#78350f';
                 c.strokeStyle = '#1c1917';
@@ -1933,23 +1967,94 @@
                 c.fillRect(-3.5, 2, 7, 11);
                 c.strokeRect(-3.5, 2, 7, 11);
 
-                c.fillStyle = '#166534';
+                c.fillStyle = '#0f766e';
                 c.beginPath();
-                c.moveTo(0, -dec.r * 1.05);
-                c.lineTo(-dec.r * 0.8, 4);
-                c.lineTo(dec.r * 0.8, 4);
+                c.moveTo(0, -22);
+                c.lineTo(-15, 4);
+                c.lineTo(15, 4);
                 c.closePath();
                 c.fill();
                 c.stroke();
 
                 c.fillStyle = '#f8fafc';
                 c.beginPath();
-                c.moveTo(0, -dec.r * 1.05);
-                c.lineTo(-dec.r * 0.42, -dec.r * 0.25);
-                c.lineTo(0, -dec.r * 0.38);
-                c.lineTo(dec.r * 0.42, -dec.r * 0.25);
+                c.moveTo(0, -22);
+                c.lineTo(-7, -9);
+                c.lineTo(0, -11);
+                c.lineTo(7, -9);
                 c.closePath();
                 c.fill();
+            }
+
+            c.restore();
+        }
+
+        function drawFlag(c, x, y, pennantColor, labelText, timeSec, phaseOffset = 0) {
+            c.save();
+            c.translate(x, y);
+
+            // Base shadow
+            c.fillStyle = 'rgba(0,0,0,0.28)';
+            c.beginPath();
+            c.ellipse(0, 4, 11, 5, 0, 0, Math.PI * 2);
+            c.fill();
+
+            // Flagpole
+            c.strokeStyle = '#1c1917';
+            c.lineWidth = 4;
+            c.beginPath();
+            c.moveTo(0, 3);
+            c.lineTo(0, -36);
+            c.stroke();
+
+            c.strokeStyle = '#e7e5e4';
+            c.lineWidth = 2;
+            c.beginPath();
+            c.moveTo(0, 2);
+            c.lineTo(0, -35);
+            c.stroke();
+
+            // Waving pennant
+            const wave1 = Math.sin(timeSec * 5.2 + phaseOffset) * 3.2;
+            const wave2 = Math.cos(timeSec * 6.4 + phaseOffset) * 2.5;
+            c.fillStyle = pennantColor;
+            c.strokeStyle = '#1c1917';
+            c.lineWidth = 2.2;
+            c.beginPath();
+            c.moveTo(1, -35);
+            c.quadraticCurveTo(15, -37 + wave1, 28, -28 + wave2);
+            c.quadraticCurveTo(15, -21 + wave1 * 0.7, 1, -20);
+            c.closePath();
+            c.fill();
+            c.stroke();
+
+            // Golden finial ball atop flagpole
+            c.fillStyle = '#facc15';
+            c.beginPath();
+            c.arc(0, -37.5, 3.6, 0, Math.PI * 2);
+            c.fill();
+            c.stroke();
+
+            // Crisp label badge (START / MÅL)
+            if (labelText) {
+                c.font = '800 10px Nunito, sans-serif';
+                c.textAlign = 'center';
+                c.textBaseline = 'middle';
+                const textW = c.measureText(labelText).width;
+                const badgeW = textW + 10;
+                const badgeH = 15;
+                const badgeY = 12;
+
+                c.fillStyle = '#1c1917';
+                c.strokeStyle = '#ffffff';
+                c.lineWidth = 1.5;
+                c.beginPath();
+                c.roundRect(-badgeW / 2, badgeY - badgeH / 2, badgeW, badgeH, 5);
+                c.fill();
+                c.stroke();
+
+                c.fillStyle = '#fef08a';
+                c.fillText(labelText, 0, badgeY + 0.5);
             }
 
             c.restore();
@@ -2184,10 +2289,11 @@
             }
 
             // Start & End Waving Flags
+            const tr = t();
             const startWp = wps[0];
             const endWp = wps[wps.length - 1];
-            drawFlag(ctx, startWp.x + 18, startWp.y - 26, '#ef4444', timeSec, 0);
-            drawFlag(ctx, endWp.x - 22, endWp.y - 26, '#22c55e', timeSec, 1.8);
+            drawFlag(ctx, startWp.x + 22, startWp.y - 26, '#ef4444', tr.flagStart, timeSec, 0);
+            drawFlag(ctx, endWp.x - 24, endWp.y - 26, '#22c55e', tr.flagGoal, timeSec, 1.8);
         }
 
         function drawTankEntity(c, tank, scale = 1, isGhost = false) {
@@ -3515,7 +3621,7 @@
             const previewCanvas = document.getElementById('selected-tank-preview');
             const pCtx = previewCanvas.getContext('2d');
             pCtx.clearRect(0, 0, 44, 44);
-
+            let showPanel = false;
             const btnUpgrade = document.getElementById('btn-upgrade');
             const btnSell = document.getElementById('btn-sell');
             const btnClearObs = document.getElementById('btn-clear-obstacle');
@@ -3555,14 +3661,12 @@
                 btnClearObs.classList.remove('hidden');
                 document.getElementById('lbl-clear-obstacle-btn').textContent = tr.clearObstacleBtn(OBSTACLE_CLEAR_COST);
                 btnClearObs.disabled = state.money < OBSTACLE_CLEAR_COST;
-                return;
-            }
+                showPanel = true;
+            } else if (state.selectedTower) {
+                btnUpgrade.classList.remove('hidden');
+                btnSell.classList.remove('hidden');
+                btnClearObs.classList.add('hidden');
 
-            btnUpgrade.classList.remove('hidden');
-            btnSell.classList.remove('hidden');
-            btnClearObs.classList.add('hidden');
-
-            if (state.selectedTower) {
                 const tk = state.selectedTower;
                 const def = TANK_DEFS.find(d => d.id === tk.id);
                 const loc = def[currentLang];
@@ -3614,10 +3718,12 @@
 
                 document.getElementById('lbl-sell-btn').textContent = tr.sellBtn;
                 document.getElementById('sel-sell-value').textContent = `+🪙 ${getSellValue(tk)}`;
-                return;
-            }
+                showPanel = true;
+            } else if (state.selectedBuilding) {
+                btnUpgrade.classList.remove('hidden');
+                btnSell.classList.remove('hidden');
+                btnClearObs.classList.add('hidden');
 
-            if (state.selectedBuilding) {
                 const b = state.selectedBuilding;
                 const bDef = BUILDING_DEFS.find(d => d.id === b.id);
                 const loc = bDef[currentLang];
@@ -3681,10 +3787,13 @@
 
                 document.getElementById('lbl-sell-btn').textContent = tr.sellBtn;
                 document.getElementById('sel-sell-value').textContent = `+🪙 ${getSellValue(b)}`;
-                return;
+                showPanel = true;
             }
 
-            panel.classList.add('hidden');
+            if (!showPanel) {
+                panel.classList.add('hidden');
+            }
+            requestAnimationFrame(resizeCanvas);
         }
 
         function renderTechTreeGrid() {
