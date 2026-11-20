@@ -81,6 +81,11 @@
         /* Keep game board at natural 960:560 aspect ratio so it never squishes */
         #canvas-container {
             aspect-ratio: 960 / 560;
+            touch-action: none;
+        }
+        #gameCanvas {
+            touch-action: none;
+            -webkit-tap-highlight-color: transparent;
         }
         .sr-only {
             position: absolute;
@@ -195,22 +200,38 @@
             </div>
 
             <!-- Placement Cancel Pill -->
-            <button id="placement-cancel-hint" class="hidden absolute top-3 left-3 bg-red-700 hover:bg-red-600 text-white border-2 border-stone-950 font-extrabold text-xs px-3.5 py-2 rounded-full shadow-lg z-20 cursor-pointer min-h-[36px]">
+            <button id="placement-cancel-hint" class="hidden absolute top-3 left-3 bg-red-700 hover:bg-red-600 text-white border-2 border-stone-950 font-extrabold text-xs sm:text-sm px-4 py-2.5 rounded-full shadow-xl z-20 cursor-pointer min-h-[44px] flex items-center gap-1.5">
                 ✖ Avbryt läge (ESC)
             </button>
 
+            <!-- Touch Confirm Placement Floating Bar (Mobile / Touch Precision) -->
+            <div id="touch-confirm-bar" role="region" aria-label="Bekräfta placering" class="hidden absolute bottom-3 left-3 right-3 sm:left-1/2 sm:right-auto sm:-translate-x-1/2 sm:w-auto sm:min-w-[320px] bg-stone-900/95 border-3 border-amber-400 rounded-2xl p-2.5 shadow-2xl z-30 flex items-center justify-between gap-2">
+                <div class="text-left pl-1 min-w-0">
+                    <div class="text-xs font-extrabold text-amber-300 truncate" id="touch-confirm-title">Standardvagn</div>
+                    <div class="text-[11px] font-bold text-stone-200 truncate" id="touch-confirm-sub">Dra för att justera eller bekräfta</div>
+                </div>
+                <div class="flex items-center gap-2 shrink-0">
+                    <button id="btn-touch-cancel" type="button" class="cartoon-btn bg-rose-700 hover:bg-rose-600 text-white font-extrabold text-xs px-3 py-2.5 rounded-xl cursor-pointer min-h-[44px]">
+                        ✖ <span id="lbl-touch-cancel">Avbryt</span>
+                    </button>
+                    <button id="btn-touch-confirm" type="button" class="cartoon-btn bg-lime-400 hover:bg-lime-300 text-stone-950 font-extrabold text-xs sm:text-sm px-4 py-2.5 rounded-xl cursor-pointer min-h-[44px]">
+                        ✅ <span id="lbl-touch-confirm">Placera</span>
+                    </button>
+                </div>
+            </div>
+
             <!-- Upgrade / Sell Floating Card -->
-            <div id="upgrade-panel" role="region" aria-label="Tornuppgradering" class="hidden absolute bottom-3 right-3 left-3 sm:left-auto sm:w-80 bg-amber-50 border-3 border-stone-900 rounded-2xl p-3 shadow-2xl z-20">
+            <div id="upgrade-panel" role="region" aria-label="Tornuppgradering" class="hidden fixed bottom-0 inset-x-0 rounded-t-3xl border-t-4 border-x-0 border-b-0 sm:absolute sm:bottom-3 sm:right-3 sm:left-auto sm:w-80 sm:rounded-2xl sm:border-3 bg-amber-50 border-stone-900 p-3.5 sm:p-3 shadow-2xl z-40 sm:z-20">
                 <div class="flex items-center justify-between gap-2 pb-2 border-b-2 border-stone-300">
-                    <div class="flex items-center gap-2">
+                    <div class="flex items-center gap-2 min-w-0">
                         <canvas id="selected-tank-preview" aria-hidden="true" width="44" height="44" class="bg-emerald-100 rounded-xl border-2 border-stone-800 shrink-0"></canvas>
-                        <div>
-                            <div class="font-extrabold text-sm sm:text-base text-stone-950 leading-tight" id="sel-name">Vanlig Tank</div>
+                        <div class="min-w-0">
+                            <div class="font-extrabold text-sm sm:text-base text-stone-950 leading-tight truncate" id="sel-name">Vanlig Tank</div>
                             <div class="text-xs font-bold text-amber-900" id="sel-level">Nivå 1 / 5</div>
                         </div>
                     </div>
-                    <button id="btn-close-upgrade" aria-label="Stäng uppgraderingspanel" class="w-8 h-8 rounded-lg bg-stone-200 hover:bg-stone-300 border-2 border-stone-800 font-extrabold text-xs flex items-center justify-center cursor-pointer">
-                        <span aria-hidden="true">✖</span>
+                    <button id="btn-close-upgrade" type="button" aria-label="Avmarkera och stäng panel" class="px-3.5 sm:px-2.5 h-11 sm:h-10 rounded-xl bg-rose-100 sm:bg-stone-200 hover:bg-rose-200 sm:hover:bg-stone-300 active:bg-rose-300 sm:active:bg-stone-400 border-2 border-stone-900 sm:border-stone-800 text-rose-950 sm:text-stone-950 font-extrabold text-sm sm:text-xs flex items-center justify-center gap-1.5 cursor-pointer shrink-0 shadow-sm">
+                        <span aria-hidden="true">✖</span> <span id="lbl-deselect-btn">Avmarkera</span>
                     </button>
                 </div>
 
@@ -554,6 +575,12 @@
                 bossBannerTitle: (b, w, max) => `⚠️ BOSS #${b}! VÅG ${w} AV ${max} ⚠️`,
                 bossBannerSub: 'Endast den gigantiska Zombie-Bossen anfaller!',
                 cancelModeEsc: '✖ Avbryt läge (ESC)',
+                deselectBtn: 'Avmarkera',
+                touchAdjustSub: 'Dra med fingret eller bekräfta',
+                touchInvalidSub: '⚠️ Ogiltig plats – flytta markören',
+                touchConfirmBtn: 'Placera',
+                touchCancelBtn: 'Avbryt',
+                tapToPreviewHint: 'Tryck på kartan för att förhandsgranska',
                 levelText: (lvl, max) => `Nivå ${lvl} / ${max}`,
                 statDmg: 'Skada',
                 statRng: 'Räckvidd',
@@ -747,6 +774,12 @@
                 bossBannerTitle: (b, w, max) => `⚠️ BOSS #${b}! WAVE ${w} OF ${max} ⚠️`,
                 bossBannerSub: 'Only the gigantic Zombie Boss is attacking!',
                 cancelModeEsc: '✖ Cancel mode (ESC)',
+                deselectBtn: 'Deselect',
+                touchAdjustSub: 'Drag finger to adjust or confirm',
+                touchInvalidSub: '⚠️ Invalid spot – move marker',
+                touchConfirmBtn: 'Place',
+                touchCancelBtn: 'Cancel',
+                tapToPreviewHint: 'Tap the map to preview placement',
                 levelText: (lvl, max) => `Level ${lvl} / ${max}`,
                 statDmg: 'Damage',
                 statRng: 'Range',
@@ -1411,6 +1444,8 @@
             placingTankType: null,
             placingBuildingType: null,
             placingAbility: null,
+            touchPreviewPos: null,
+            isDraggingPreview: false,
             selectedEntity: null,
             hoveredEntity: null,
             mousePos: { x: -100, y: -100 },
@@ -1494,6 +1529,9 @@
             document.getElementById('lbl-next-wave').textContent = t('nextWaveLabel');
             document.getElementById('boss-banner-sub').textContent = t('bossBannerSub');
             document.getElementById('placement-cancel-hint').textContent = t('cancelModeEsc');
+            document.getElementById('lbl-deselect-btn').textContent = t('deselectBtn');
+            document.getElementById('lbl-touch-confirm').textContent = t('touchConfirmBtn');
+            document.getElementById('lbl-touch-cancel').textContent = t('touchCancelBtn');
 
             // Upgrade panel
             document.getElementById('lbl-goal').textContent = t('goalLabel');
@@ -2394,8 +2432,56 @@
             state.placingTankType = null;
             state.placingBuildingType = null;
             state.placingAbility = null;
+            state.touchPreviewPos = null;
+            state.isDraggingPreview = false;
             document.getElementById('placement-cancel-hint').classList.add('hidden');
+            document.getElementById('touch-confirm-bar').classList.add('hidden');
             renderShopCards();
+        }
+
+        function updateTouchConfirmBar() {
+            const bar = document.getElementById('touch-confirm-bar');
+            const isPlacing = state.placingTankType || state.placingBuildingType || state.placingAbility;
+            if (!isPlacing || !state.touchPreviewPos) {
+                bar.classList.add('hidden');
+                return;
+            }
+
+            const pt = state.touchPreviewPos;
+            let title = '';
+            let valid = false;
+
+            if (state.placingTankType) {
+                const tCfg = TANK_TYPES[state.placingTankType];
+                title = `${t('tanks')[state.placingTankType].name} (🪙${tCfg.cost})`;
+                valid = isValidBuildSpot(pt.x, pt.y) && state.money >= tCfg.cost;
+            } else if (state.placingBuildingType) {
+                const bCfg = BUILDING_TYPES[state.placingBuildingType];
+                title = `${t('buildings')[state.placingBuildingType].name} (🪙${bCfg.cost})`;
+                valid = isValidBuildSpot(pt.x, pt.y) && state.money >= bCfg.cost;
+            } else if (state.placingAbility === 'mine') {
+                title = `${t('mineName')} (🪙${ABILITY_CONFIG.mine.useCost})`;
+                valid = isPointOnRoad(pt.x, pt.y, ROAD_HALF_WIDTH) && state.money >= ABILITY_CONFIG.mine.useCost;
+            } else if (state.placingAbility === 'airstrike') {
+                title = `${t('airstrikeName')} (🪙${ABILITY_CONFIG.airstrike.useCost})`;
+                valid = state.money >= ABILITY_CONFIG.airstrike.useCost;
+            }
+
+            document.getElementById('touch-confirm-title').textContent = title;
+            const subEl = document.getElementById('touch-confirm-sub');
+            const confirmBtn = document.getElementById('btn-touch-confirm');
+
+            if (valid) {
+                subEl.textContent = t('touchAdjustSub');
+                subEl.className = 'text-[11px] font-bold text-emerald-300 truncate';
+                confirmBtn.disabled = false;
+            } else {
+                subEl.textContent = t('touchInvalidSub');
+                subEl.className = 'text-[11px] font-bold text-rose-300 truncate';
+                confirmBtn.disabled = true;
+            }
+
+            bar.classList.remove('hidden');
         }
 
         function selectEntity(entity) {
@@ -3642,10 +3728,10 @@
                 ctx.strokeRect(-8, -32, 14, 64);
                 ctx.restore();
             }
-
-            // Placement Preview Ghost
-            const mx = state.mousePos.x;
-            const my = state.mousePos.y;
+            // Placement Preview Ghost (uses locked touchPreviewPos on mobile, or live mousePos on desktop)
+            const previewPt = state.touchPreviewPos || state.mousePos;
+            const mx = previewPt.x;
+            const my = previewPt.y;
             if (mx >= 0 && my >= 0) {
                 if (state.placingTankType) {
                     const tCfg = TANK_TYPES[state.placingTankType];
@@ -3883,56 +3969,23 @@
             const scaleX = VIRTUAL_W / rect.width;
             const scaleY = VIRTUAL_H / rect.height;
             return {
-                x: (clientX - rect.left) * scaleX,
-                y: (clientY - rect.top) * scaleY
+                x: Math.max(0, Math.min(VIRTUAL_W, (clientX - rect.left) * scaleX)),
+                y: Math.max(0, Math.min(VIRTUAL_H, (clientY - rect.top) * scaleY))
             };
         }
 
-        canvas.addEventListener('mousemove', (e) => {
-            const pt = getCanvasCoords(e.clientX, e.clientY);
-            state.mousePos = pt;
-
-            let hovered = null;
-            for (const tk of state.tanks) {
-                if (Math.hypot(pt.x - tk.x, pt.y - tk.y) <= 22) {
-                    hovered = tk;
-                    break;
-                }
-            }
-            if (!hovered) {
-                for (const b of state.buildings) {
-                    if (Math.hypot(pt.x - b.x, pt.y - b.y) <= 24) {
-                        hovered = b;
-                        break;
-                    }
-                }
-            }
-            state.hoveredEntity = hovered;
-        });
-
-        canvas.addEventListener('mouseleave', () => {
-            state.mousePos = { x: -100, y: -100 };
-            state.hoveredEntity = null;
-        });
-
-        canvas.addEventListener('contextmenu', (e) => {
-            e.preventDefault();
-            cancelPlacement();
-            deselectEntity();
-        });
-
-        canvas.addEventListener('click', (e) => {
-            if (state.gameOver || state.victory || !state.matchStarted) return;
-            const pt = getCanvasCoords(e.clientX, e.clientY);
-
+        function executePlacementAt(pt) {
             if (state.placingAbility === 'airstrike') {
                 triggerAirstrike(pt.x, pt.y);
                 cancelPlacement();
-                return;
+                return true;
             }
             if (state.placingAbility === 'mine') {
-                if (placeRoadMine(pt.x, pt.y)) cancelPlacement();
-                return;
+                if (placeRoadMine(pt.x, pt.y)) {
+                    cancelPlacement();
+                    return true;
+                }
+                return false;
             }
 
             if (state.placingTankType) {
@@ -3940,15 +3993,15 @@
                 const trTank = t('tanks')[state.placingTankType];
                 if (isPointOnRoad(pt.x, pt.y)) {
                     showToast(t('toasts').cantBuildOnRoad);
-                    return;
+                    return false;
                 }
                 if (!isValidBuildSpot(pt.x, pt.y)) {
                     showToast(t('toasts').tooCloseBuilding);
-                    return;
+                    return false;
                 }
                 if (state.money < tCfg.cost) {
                     showToast(t('toasts').needGold(tCfg.cost));
-                    return;
+                    return false;
                 }
 
                 state.money -= tCfg.cost;
@@ -3986,7 +4039,7 @@
                 showToast(t('toasts').builtName(trTank.name));
                 cancelPlacement();
                 updateHUD();
-                return;
+                return true;
             }
 
             if (state.placingBuildingType) {
@@ -3994,15 +4047,15 @@
                 const trBld = t('buildings')[state.placingBuildingType];
                 if (isPointOnRoad(pt.x, pt.y)) {
                     showToast(t('toasts').cantBuildOnRoad);
-                    return;
+                    return false;
                 }
                 if (!isValidBuildSpot(pt.x, pt.y)) {
                     showToast(t('toasts').tooCloseBuilding);
-                    return;
+                    return false;
                 }
                 if (state.money < bCfg.cost) {
                     showToast(t('toasts').needGold(bCfg.cost));
-                    return;
+                    return false;
                 }
 
                 state.money -= bCfg.cost;
@@ -4030,77 +4083,197 @@
                 cancelPlacement();
                 renderShopCards();
                 updateHUD();
-                return;
+                return true;
             }
+            return false;
+        }
 
-            // Select existing tank or building
+        function handleBoardTapOrSelect(pt, hitRadius = 24) {
+            // Find closest tank or building within touch-friendly hitRadius
+            let closestEnt = null;
+            let closestDist = hitRadius;
+
             for (const tk of state.tanks) {
-                if (Math.hypot(pt.x - tk.x, pt.y - tk.y) <= 22) {
-                    selectEntity(tk);
-                    return;
+                const d = Math.hypot(pt.x - tk.x, pt.y - tk.y);
+                if (d <= closestDist) {
+                    closestDist = d;
+                    closestEnt = tk;
                 }
             }
             for (const b of state.buildings) {
-                if (Math.hypot(pt.x - b.x, pt.y - b.y) <= 24) {
-                    selectEntity(b);
-                    return;
+                const d = Math.hypot(pt.x - b.x, pt.y - b.y);
+                if (d <= closestDist) {
+                    closestDist = d;
+                    closestEnt = b;
                 }
             }
+
+            if (closestEnt) {
+                // Tapping an already selected tower toggles (deselects) it cleanly on mobile!
+                if (state.selectedEntity === closestEnt) {
+                    deselectEntity();
+                } else {
+                    selectEntity(closestEnt);
+                }
+                return;
+            }
+
+            deselectEntity();
+        }
+
+        canvas.addEventListener('mousemove', (e) => {
+            if (state.touchPreviewPos) return;
+            const pt = getCanvasCoords(e.clientX, e.clientY);
+            state.mousePos = pt;
+
+            let hovered = null;
+            for (const tk of state.tanks) {
+                if (Math.hypot(pt.x - tk.x, pt.y - tk.y) <= 22) {
+                    hovered = tk;
+                    break;
+                }
+            }
+            if (!hovered) {
+                for (const b of state.buildings) {
+                    if (Math.hypot(pt.x - b.x, pt.y - b.y) <= 24) {
+                        hovered = b;
+                        break;
+                    }
+                }
+            }
+            state.hoveredEntity = hovered;
+        });
+
+        canvas.addEventListener('mouseleave', () => {
+            if (!state.touchPreviewPos) {
+                state.mousePos = { x: -100, y: -100 };
+            }
+            state.hoveredEntity = null;
+        });
+
+        // Touch Events for Mobile: 2-step preview + drag-to-adjust + confirm bar
+        let lastTouchTime = 0;
+
+        canvas.addEventListener('touchstart', (e) => {
+            if (state.gameOver || state.victory || !state.matchStarted) return;
+            if (e.touches.length > 0) {
+                e.preventDefault();
+                lastTouchTime = performance.now();
+                const touch = e.touches[0];
+                const pt = getCanvasCoords(touch.clientX, touch.clientY);
+                const isPlacing = state.placingTankType || state.placingBuildingType || state.placingAbility;
+
+                if (isPlacing) {
+                    // Offset slightly upward (-28 virtual px) on initial tap so user's finger doesn't hide the tower
+                    const adjustedPt = {
+                        x: pt.x,
+                        y: Math.max(26, pt.y - 28)
+                    };
+                    state.touchPreviewPos = adjustedPt;
+                    state.mousePos = adjustedPt;
+                    state.isDraggingPreview = true;
+                    updateTouchConfirmBar();
+                } else {
+                    handleBoardTapOrSelect(pt, 32);
+                }
+            }
+        }, { passive: false });
+
+        canvas.addEventListener('touchmove', (e) => {
+            if (!state.isDraggingPreview || e.touches.length === 0) return;
+            e.preventDefault();
+            const touch = e.touches[0];
+            const pt = getCanvasCoords(touch.clientX, touch.clientY);
+            const adjustedPt = {
+                x: pt.x,
+                y: Math.max(26, pt.y - 28)
+            };
+            state.touchPreviewPos = adjustedPt;
+            state.mousePos = adjustedPt;
+            updateTouchConfirmBar();
+        }, { passive: false });
+
+        canvas.addEventListener('touchend', (e) => {
+            if (state.isDraggingPreview) {
+                e.preventDefault();
+                state.isDraggingPreview = false;
+                updateTouchConfirmBar();
+            }
+        }, { passive: false });
+
+        canvas.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            cancelPlacement();
             deselectEntity();
         });
 
-        // Buttons & Shortcuts
-        document.getElementById('btn-start-wave').addEventListener('click', startNextWave);
-        document.getElementById('btn-auto-wave').addEventListener('click', () => {
-            state.autoWave = !state.autoWave;
-            if (state.autoWave && !state.waveActive && state.wave > 0) {
-                state.autoWaveTimer = 6.0;
+        canvas.addEventListener('click', (e) => {
+            // Ignore synthetic click events fired immediately after touchstart
+            if (performance.now() - lastTouchTime < 500) return;
+            if (state.gameOver || state.victory || !state.matchStarted) return;
+            const pt = getCanvasCoords(e.clientX, e.clientY);
+
+            if (state.placingTankType || state.placingBuildingType || state.placingAbility) {
+                executePlacementAt(pt);
+                return;
             }
-            updateHUD();
+
+            handleBoardTapOrSelect(pt, 24);
         });
+
+        // Touch Confirm / Cancel Bar Buttons
+        document.getElementById('btn-touch-confirm').addEventListener('click', () => {
+            if (state.touchPreviewPos) {
+                executePlacementAt(state.touchPreviewPos);
+            }
+        });
+        document.getElementById('btn-touch-cancel').addEventListener('click', cancelPlacement);
+
+        // Placement Cancel Hint & Upgrade Panel Controls
+        document.getElementById('placement-cancel-hint').addEventListener('click', cancelPlacement);
+        document.getElementById('btn-close-upgrade').addEventListener('click', deselectEntity);
+        document.getElementById('btn-upgrade').addEventListener('click', upgradeSelectedEntity);
+        document.getElementById('btn-sell').addEventListener('click', sellSelectedEntity);
+        document.getElementById('btn-cycle-priority').addEventListener('click', () => {
+            const ent = state.selectedEntity;
+            if (!ent || ent.kind !== 'tank') return;
+            const idx = TARGET_PRIORITIES.indexOf(ent.priority || 'first');
+            ent.priority = TARGET_PRIORITIES[(idx + 1) % TARGET_PRIORITIES.length];
+            updateUpgradePanel();
+        });
+
+        // Top HUD Controls
+        document.getElementById('btn-open-menu').addEventListener('click', () => {
+            cancelPlacement();
+            openStartMenu();
+        });
+
         document.getElementById('btn-speed').addEventListener('click', () => {
             state.gameSpeed = state.gameSpeed === 1 ? 2 : (state.gameSpeed === 2 ? 3 : 1);
             document.getElementById('ui-speed').textContent = state.gameSpeed + 'x';
             document.getElementById('btn-speed').setAttribute('aria-label', t('speedAria')(state.gameSpeed));
         });
+
         document.getElementById('btn-sound').addEventListener('click', () => {
             sfx.enabled = !sfx.enabled;
             const btn = document.getElementById('btn-sound');
             btn.querySelector('span').textContent = sfx.enabled ? '🔊' : '🔇';
             btn.setAttribute('aria-pressed', String(sfx.enabled));
             btn.setAttribute('aria-label', sfx.enabled ? t('soundOnAria') : t('soundOffAria'));
+            if (sfx.enabled) sfx.play('coin');
         });
 
-        document.getElementById('placement-cancel-hint').addEventListener('click', cancelPlacement);
-        document.getElementById('btn-close-upgrade').addEventListener('click', deselectEntity);
-        document.getElementById('btn-upgrade').addEventListener('click', upgradeSelectedEntity);
-        document.getElementById('btn-sell').addEventListener('click', sellSelectedEntity);
-        document.getElementById('btn-cycle-priority').addEventListener('click', () => {
-            if (!state.selectedEntity || state.selectedEntity.kind !== 'tank') return;
-            const idx = TARGET_PRIORITIES.indexOf(state.selectedEntity.priority || 'first');
-            state.selectedEntity.priority = TARGET_PRIORITIES[(idx + 1) % TARGET_PRIORITIES.length];
-            updateUpgradePanel();
+        document.getElementById('btn-auto-wave').addEventListener('click', () => {
+            state.autoWave = !state.autoWave;
+            if (state.autoWave && !state.waveActive && state.wave > 0 && state.autoWaveTimer <= 0) {
+                state.autoWaveTimer = 2.0;
+            }
+            updateHUD();
         });
 
-        document.getElementById('btn-open-menu').addEventListener('click', openStartMenu);
-        document.getElementById('btn-resume-game').addEventListener('click', () => {
-            document.getElementById('start-menu-modal').classList.add('hidden');
-        });
-        document.getElementById('btn-abort-match').addEventListener('click', abortCurrentMatch);
-        document.getElementById('btn-start-match').addEventListener('click', startNewMatch);
+        document.getElementById('btn-start-wave').addEventListener('click', startNextWave);
 
-        document.getElementById('btn-go-menu').addEventListener('click', () => {
-            document.getElementById('gameover-modal').classList.add('hidden');
-            openStartMenu();
-        });
-        document.getElementById('btn-restart').addEventListener('click', startNewMatch);
-
-        document.getElementById('btn-vic-menu').addEventListener('click', () => {
-            document.getElementById('victory-modal').classList.add('hidden');
-            openStartMenu();
-        });
-        document.getElementById('btn-vic-restart').addEventListener('click', startNewMatch);
-
+        // Start Menu: Map, Difficulty & Language Selectors
         document.querySelectorAll('.map-option').forEach(btn => {
             btn.addEventListener('click', () => {
                 if (isMenuLocked()) return;
@@ -4121,13 +4294,44 @@
             });
         });
 
-        document.querySelectorAll('[data-lang]').forEach(btn => {
-            btn.addEventListener('click', () => {
-                currentLang = btn.dataset.lang;
-                applyLanguageUI();
-            });
+        document.getElementById('btn-lang-sv').addEventListener('click', () => {
+            currentLang = 'sv';
+            applyLanguageUI();
+            syncMenuSelectionUI();
         });
 
+        document.getElementById('btn-lang-en').addEventListener('click', () => {
+            currentLang = 'en';
+            applyLanguageUI();
+            syncMenuSelectionUI();
+        });
+
+        // Start Menu: Action Buttons
+        document.getElementById('btn-start-match').addEventListener('click', () => {
+            sfx.init();
+            startNewMatch();
+        });
+
+        document.getElementById('btn-resume-game').addEventListener('click', () => {
+            document.getElementById('start-menu-modal').classList.add('hidden');
+        });
+
+        document.getElementById('btn-abort-match').addEventListener('click', abortCurrentMatch);
+
+        // Game Over & Victory Modal Buttons
+        document.getElementById('btn-go-menu').addEventListener('click', () => {
+            document.getElementById('gameover-modal').classList.add('hidden');
+            openStartMenu();
+        });
+        document.getElementById('btn-restart').addEventListener('click', startNewMatch);
+
+        document.getElementById('btn-vic-menu').addEventListener('click', () => {
+            document.getElementById('victory-modal').classList.add('hidden');
+            openStartMenu();
+        });
+        document.getElementById('btn-vic-restart').addEventListener('click', startNewMatch);
+
+        // Keyboard Shortcuts (ESC, U, S)
         window.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 cancelPlacement();
@@ -4139,9 +4343,6 @@
             }
         });
 
-        // ==========================================
-        // 17. RESPONSIVE CANVAS & ANIMATION LOOP
-        // ==========================================
         function resizeCanvas() {
             const container = document.getElementById('canvas-container');
             const rect = container.getBoundingClientRect();
