@@ -27,7 +27,7 @@ function rollWeatherForWave(waveNum) {
         w.wavesLeft -= 1;
         if (w.wavesLeft <= 0) {
             w.active = false;
-            w.cooldownWaves = 2 + Math.floor(Math.random() * 3);
+            w.cooldownWaves = 1 + Math.floor(Math.random() * 2); // 1-2 waves cooldown (was 2-5)
         }
         return;
     }
@@ -37,11 +37,13 @@ function rollWeatherForWave(waveNum) {
         return;
     }
 
-    const chance = waveNum === 1 ? 0.6 : 0.45;
-    if (Math.random() < chance) {
+    // Guarantee weather on every 4th wave, otherwise high random chance
+    const guaranteed = waveNum % 4 === 0;
+    const chance = waveNum === 1 ? 0.85 : 0.65;
+    if (guaranteed || Math.random() < chance) {
         w.active = true;
         w.type = mapType;
-        w.wavesLeft = 1 + Math.floor(Math.random() * 5); // 1 to 5 waves in a row
+        w.wavesLeft = 2 + Math.floor(Math.random() * 3); // 2-4 waves duration (was 1-5)
         w.particles = initWeatherParticles(mapType);
     }
 }

@@ -1,0 +1,124 @@
+/* Tanks Vs. Zombie - Main Stylesheet */
+
+body {
+    font-family: 'Nunito', sans-serif;
+    background-color: #064e3b;
+    user-select: none;
+    -webkit-user-select: none;
+    overflow-x: hidden;
+}
+
+h1, h2, h3, .cartoon-font {
+    font-family: 'Fredoka', sans-serif;
+}
+
+.cartoon-panel {
+    border: 3px solid #1c1917;
+    box-shadow: 0 5px 0 #1c1917;
+}
+
+.cartoon-btn {
+    border: 3px solid #1c1917;
+    box-shadow: 0 4px 0 #1c1917;
+    transition: transform 0.08s ease, box-shadow 0.08s ease, background-color 0.15s ease;
+}
+
+.cartoon-btn:active:not(:disabled) {
+    transform: translateY(3px);
+    box-shadow: 0 1px 0 #1c1917;
+}
+
+.cartoon-btn:disabled {
+    opacity: 0.52;
+    cursor: not-allowed;
+}
+
+.tank-card {
+    border: 3px solid #292524;
+    box-shadow: 0 3px 0 #292524;
+    transition: all 0.12s ease;
+}
+
+.tank-card:hover:not(.locked) {
+    transform: translateY(-2px);
+}
+
+.tank-card.selected {
+    border-color: #facc15;
+    background-color: #fef9c3;
+    box-shadow: 0 0 0 3px #1c1917, 0 4px 0 #1c1917;
+}
+
+.map-option.active, .diff-option.active {
+    border-color: #facc15;
+    background-color: #fef08a;
+    box-shadow: 0 0 0 3px #1c1917, 0 4px 0 #1c1917;
+}
+
+@keyframes pulseWarning {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.03); }
+}
+
+.boss-btn-pulse {
+    animation: pulseWarning 1.1s infinite ease-in-out;
+}
+
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: #e7e5e4;
+    border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #78716c;
+    border-radius: 9999px;
+}
+
+button:focus-visible, [role="button"]:focus-visible, [tabindex="0"]:focus-visible {
+    outline: 3px solid #1d4ed8;
+    outline-offset: 2px;
+}
+
+#canvas-container {
+    aspect-ratio: 960 / 560;
+    max-width: min(100%, calc((100dvh - 245px) * (960 / 560)));
+    max-height: calc(100dvh - 245px);
+    touch-action: none;
+}
+
+@media (max-width: 1023px) {
+    #canvas-container {
+        max-width: 100%;
+        max-height: none;
+    }
+}
+
+#gameCanvas {
+    touch-action: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
+
+/* Mobile vs Desktop Placement Controls */
+
+@media (min-width: 1024px) {
+    #touch-confirm-bar {
+        display: none !important;
+    }
+}
