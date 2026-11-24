@@ -2,16 +2,12 @@
  * Tanks Vs. Zombie - Game State & Meta Progression
  * Model
  * ========================================== */
-
 function loadMeta() {
     try {
         const raw = localStorage.getItem(SAVE_KEY);
         if (raw) {
             const parsed = JSON.parse(raw);
-            return {
-                techStars: Number(parsed.techStars) || 0,
-                techLevels: parsed.techLevels || {}
-            };
+            return { techStars: Number(parsed.techStars) || 0, techLevels: parsed.techLevels || {} };
         }
     } catch (_) {}
     return { techStars: 0, techLevels: {} };
@@ -19,18 +15,14 @@ function loadMeta() {
 
 const meta = loadMeta();
 function saveMeta() {
-    try {
-        localStorage.setItem(SAVE_KEY, JSON.stringify(meta));
-    } catch (_) {}
+    try { localStorage.setItem(SAVE_KEY, JSON.stringify(meta)); } catch (_) {}
 }
-
-function getTechLevel(id) {
-    return meta.techLevels[id] || 0;
-}
+function getTechLevel(id) { return meta.techLevels[id] || 0; }
 
 const state = {
     selectedMap: 'meadow',
     selectedDiff: 'normal',
+    gameMode: 'original',
     matchStarted: false,
     paused: true,
     gameOver: false,
@@ -46,40 +38,19 @@ const state = {
     unlockedTanks: { basic: true },
     unlockedAbilities: { mine: false, airstrike: false },
     abilityCooldowns: { mine: 0, airstrike: 0 },
-    tanks: [],
-    buildings: [],
-    obstacles: [],
-    zombies: [],
-    projectiles: [],
-    particles: [],
-    floatingTexts: [],
-    roadMines: [],
-    spawnQueue: [],
-    spawnTimer: 0,
-    placingItem: null,
-    hoverPos: null,
-    touchPreviewPos: null,
-    hoverTower: null,
-    selectedTower: null,
-    selectedBuilding: null,
-    selectedObstacle: null,
-    weather: {
-        active: false,
-        type: 'none',
-        wavesLeft: 0,
-        cooldownWaves: 0,
-        intensity: 0,
-        particles: []
-    }
+    tanks: [], buildings: [], obstacles: [], zombies: [], projectiles: [], particles: [], floatingTexts: [], roadMines: [],
+    spawnQueue: [], spawnTimer: 0,
+    placingItem: null, hoverPos: null, touchPreviewPos: null, hoverTower: null,
+    selectedTower: null, selectedBuilding: null, selectedObstacle: null,
+    mazePathBlocked: false,
+    weather: { active: false, type: 'none', wavesLeft: 0, cooldownWaves: 0, intensity: 0, particles: [] }
 };
 
-// Expose globally and on window.Game namespace
 window.loadMeta = loadMeta;
 window.saveMeta = saveMeta;
 window.getTechLevel = getTechLevel;
 window.meta = meta;
 window.state = state;
-
 window.Game = window.Game || {};
 window.Game.Models = window.Game.Models || {};
 window.Game.Models.State = state;
