@@ -1,114 +1,233 @@
-/* Maze game mode: shared tech tree and towers, dynamic path around placed units. */
+/* ==========================================
+ * Tanks Vs. Zombie - Maze Game Mode
+ * ========================================== */
 (function () {
     const MAZE_ID = 'maze';
-    const MAZE_ROAD_WIDTH = 184; // Seven roughly 26px units across the buildable road.
-    const MAZE_GRID = 16;
+    const ROAD_WIDTH = 184; // 7 towers across at roughly 26px spacing
+    const GRID = 16;
 
     function ensureMazeMap() {
-        if (MAPS[MAZE_ID]) return;
-        MAPS[MAZE_ID] = {
-            id: MAZE_ID,
-            maxWaves: 42,
-            bg: '#365314',
-            bgAlt: '#3f6212',
-            roadOuter: '#713f12',
-            roadInner: '#d6a64f',
-            roadWidth: MAZE_ROAD_WIDTH,
-            waypoints: [{ x: -12, y: CANVAS_H / 2 }, { x: CANVAS_W + 12, y: CANVAS_H / 2 }],
-            pond: null,
-            streamX: null,
-            bridgeY: null,
-            decorations: [],
-            gameMode: 'maze'
-        };
+        if (!MAPS[MAZE_ID]) {
+            MAPS[MAZE_ID] = {
+                id: MAZE_ID,
+                maxWaves: 42,
+                bg: '#365314',
+                bgAlt: '#3f6212',
+                roadOuter: '#713f12',
+                roadInner: '#d6a64f',
+                roadWidth: ROAD_WIDTH,
+                waypoints: [{ x: -12, y: CANVAS_H / 2 }, { x: CANVAS_W + 12, y: CANVAS_H / 2 }],
+                pond: null,
+                streamX: null,
+                bridgeY: null,
+                decorations: [],
+                gameMode: 'maze'
+            };
+        }
+        return MAPS[MAZE_ID];
     }
 
-    function isMaze() { return state.gameMode === 'maze' || state.selectedMap === MAZE_ID; }
-    function unitRadius(entity) { return entity && entity.type === 'boss' ? 30 : 23; }
+    function isMaze() {
+        return state.gameMode === 'maze' || state.selectedMap === MAZE_ID;
+    }
 
     function mazeCanPlaceAt(x, y) {
-        if (!isMaze()) return window.__tvzOriginalCanPlaceAt ? window.__tvzOriginalCanPlaceAt(x, y) : true;
-        const map = MAPS[MAZE_ID];
+        if (!isMaze()) {
+            return window.__originalCanPlaceAt ? window.__originalCanPlaceAt(x, y) : true;
+        }
+
         if (x < 30 || x > CANVAS_W - 30 || y < 30 || y > CANVAS_H - 30) return false;
-        if (Math.abs(y - CANVAS_H / 2) > map.roadWidth / 2 - 22) return false;
-        if (state.tanks.some(t => Math.hypot(x - t.x, y - t.y) < 42)) return false;
-        if (state.buildings.some(b => Math.hypot(x - b.x, y - b.y) < 44)) return false;
+
+        const roadHalf = ROAD_WIDTH / 2;
+        if (Math.abs(y - CANVAS_H / 2) > roadHalf - 22) return false;
+
+        for (const tank of state.tanks) {
+            if (Math.hypot(x - tank.x, y - tank.y) < 42) return false;
+        }
+        for (const building of state.buildings) {
+            if (Math.hypot(x - building.x, y - building.y) < 44) return false;
+        }
         return true;
     }
 
-    function blocked(x, y) {
-        const half = MAZE_ROAD_WIDTH / 2 - 25;
-        if (y < CANVAS_H / 2 - half || y > CANVAS_H / 2 + half) return true;
-        return state.tanks.some(t => Math.hypot(x - t.x, y - t.y) < 27) ||
-            state.buildings.some(b => Math.hypot(x - b.x, y - b.y) < 27);
+    function isRoadBlockedCell(px, py) {
+        const roadHalf = ROAD_WIDTH / 2 - 20;
+        if (py < CANVAS_H / 2 - roadHalf || py > CANVAS_H / 2 + roadHalf) return true;
+
+        for (const tank of state.tanks) {
+            if (Math.hypot(px - tank.x, py - tank.y) < 30) return true;
+        }
+        for (const building of state.buildings) {
+            if (Math.hypot(px - building.x, py - building.y) < 30) return true;
+        }
+        return false;
     }
 
     function buildMazePath() {
-        const start = { x: -12, y: CANVAS_H / 2 };
-        const end = { x: CANVAS_W + 12, y: CANVAS_H / 2 };
-        const step = MAZE_GRID;
-        const cols = Math.ceil((CANVAS_W + 24) / step) + 1;
-        const rows = Math.ceil(CANVAS_H / step);
-        const sx = 0, sy = Math.floor(CANVAS_H / 2 / step);
-        const ex = cols - 1, ey = sy;
+        const cols = Math.ceil(CANVAS_W / GRID) + 2;
+        const rows = Math.ceil(CANVAS_H / GRID);
+        const start = { x: 0, y: Math.round((CANVAS_H / 2) / GRID) };
+        const end = { x: cols - 1, y: start.y };
         const key = (x, y) => `${x},${y}`;
-        const queue = [{ x: sx, y: sy }];
-        const previous = new Map([[key(sx, sy), null]]);
-        while (queue.length) {
-            const cur = queue.shift();
-            if (cur.x === ex) break;
-            for (const [dx, dy] of [[1, 0], [0, -1], [0, 1], [-1, 0]]) {
-                const nx = cur.x + dx, ny = cur.y + dy;
-                if (nx < 0 || nx >= cols || ny < 0 || ny >= rows || previous.has(key(nx, ny))) continue;
-                const px = nx * step - 12, py = ny * step;
-                if (blocked(px, py) && nx !== ex) continue;
-                previous.set(key(nx, ny), cur);
+        const queue = [start];
+        let cursor = 0;
+        const previous = new Map([[key(start.x, start.y), null]]);
+
+        while (cursor < queue.length) {
+            const current = queue[cursor++];
+            if (current.x === end.x && current.y === end.y) break;
+
+            const neighbors = [[1, 0], [0, -1], [0, 1], [-1, 0]];
+            for (const [dx, dy] of neighbors) {
+                const nx = current.x + dx;
+                const ny = current.y + dy;
+                const k = key(nx, ny);
+
+                if (nx < 0 || nx >= cols || ny < 0 || ny >= rows || previous.has(k)) continue;
+
+                const px = nx * GRID - GRID;
+                const py = ny * GRID;
+                if (nx !== end.x && isRoadBlockedCell(px, py)) continue;
+
+                previous.set(k, current);
                 queue.push({ x: nx, y: ny });
             }
         }
-        if (!previous.has(key(ex, ey))) return null;
+
+        const endKey = key(end.x, end.y);
+        if (!previous.has(endKey)) return null;
+
         const cells = [];
-        let cur = { x: ex, y: ey };
-        while (cur) { cells.push(cur); cur = previous.get(key(cur.x, cur.y)); }
+        let cell = end;
+        while (cell) {
+            cells.push(cell);
+            cell = previous.get(key(cell.x, cell.y));
+        }
         cells.reverse();
-        return [start, ...cells.map(c => ({ x: c.x * step - 12, y: c.y * step })), end];
+
+        return [
+            { x: -12, y: CANVAS_H / 2 },
+            ...cells.map(c => ({ x: c.x * GRID - GRID, y: c.y * GRID })),
+            { x: CANVAS_W + 12, y: CANVAS_H / 2 }
+        ];
+    }
+
+    function findBlockingTower() {
+        if (!state.tanks.length) return null;
+        let nearestToExit = state.tanks[0];
+        let greatestProgress = -Infinity;
+
+        for (const tank of state.tanks) {
+            const progress = tank.x + tank.y * 0.01;
+            if (progress > greatestProgress) {
+                greatestProgress = progress;
+                nearestToExit = tank;
+            }
+        }
+        return nearestToExit;
+    }
+
+    function attackBlockingTower(dt) {
+        const tower = findBlockingTower();
+        if (!tower) return;
+
+        if (!tower.mazeWallHp) {
+            tower.mazeMaxWallHp = 700 + tower.level * 260;
+            tower.mazeWallHp = tower.mazeMaxWallHp;
+        }
+
+        const attackers = state.zombies.filter(z => z.hp > 0);
+        const damage = attackers.reduce((sum, z) => {
+            if (z.type === 'boss') return sum + 95;
+            if (z.type === 'giant') return sum + 38;
+            return sum + 22;
+        }, 0) * dt;
+
+        tower.mazeWallHp -= damage;
+        tower.upgradeFlash = Math.max(tower.upgradeFlash || 0, 0.08);
+
+        if (tower.mazeWallHp <= 0) {
+            spawnParticles(tower.x, tower.y, '#f97316', 28, 170);
+            state.tanks = state.tanks.filter(t => t !== tower);
+            showToast(window.currentLang === 'en'
+                ? 'The zombies destroyed a blocking tower!'
+                : 'Zombierna förstörde ett blockerande torn!');
+        }
     }
 
     function updateMazePath() {
+        const map = ensureMazeMap();
         const path = buildMazePath();
-        if (path) MAPS[MAZE_ID].waypoints = path;
-        return path;
-    }
-
-    function damageBlockingTower(dt) {
-        const last = state.tanks[state.tanks.length - 1];
-        if (!last) return false;
-        last.mazeHp = (last.mazeHp == null ? 420 : last.mazeHp) - 70 * dt;
-        if (last.mazeHp <= 0) {
-            spawnParticles(last.x, last.y, '#f97316', 25, 150);
-            state.tanks.pop();
-            showToast(currentLang === 'en' ? 'A zombie destroyed your last tank!' : 'En zombie förstörde ditt sista torn!');
+        if (path) {
+            map.waypoints = path;
+            state.mazePathBlocked = false;
+        } else {
+            map.waypoints = [{ x: -12, y: CANVAS_H / 2 }, { x: CANVAS_W + 12, y: CANVAS_H / 2 }];
+            state.mazePathBlocked = true;
         }
-        return true;
+        return path;
     }
 
     function install() {
         ensureMazeMap();
-        window.__tvzOriginalCanPlaceAt = window.canPlaceAt;
+        state.gameMode = state.gameMode || 'original';
+
+        if (!window.__originalCanPlaceAt) window.__originalCanPlaceAt = window.canPlaceAt;
         window.canPlaceAt = mazeCanPlaceAt;
+
         const originalUpdate = window.updateGame;
         const originalRender = window.renderGame;
-        window.updateGame = function (dt) {
-            if (!isMaze()) return originalUpdate(dt);
+
+        window.updateGame = function (rawDt) {
+            if (!isMaze()) return originalUpdate(rawDt);
+
             const path = updateMazePath();
-            if (!path) { damageBlockingTower(dt); return; }
-            return originalUpdate(dt);
+            if (!path) {
+                attackBlockingTower(rawDt * (state.speedMult || 1));
+                for (const zombie of state.zombies) {
+                    zombie.angle = 0;
+                    if (zombie.x < CANVAS_W) zombie.x += zombie.speed * rawDt * 0.08;
+                }
+                return;
+            }
+            return originalUpdate(rawDt);
         };
-        window.renderGame = function (time) {
+
+        window.renderGame = function (timeSec) {
             if (isMaze()) updateMazePath();
-            return originalRender(time);
+
+            const result = originalRender(timeSec);
+
+            if (isMaze() && state.tanks.length) {
+                ctx.save();
+                ctx.fillStyle = '#111827';
+                ctx.strokeStyle = '#facc15';
+                ctx.lineWidth = 2;
+                for (const tank of state.tanks) {
+                    if (!tank.mazeWallHp) continue;
+                    const maxHp = tank.mazeMaxWallHp || tank.mazeWallHp;
+                    const width = 48;
+                    ctx.fillRect(tank.x - width / 2, tank.y - 34, width, 6);
+                    ctx.fillStyle = '#ef4444';
+                    ctx.fillRect(tank.x - width / 2, tank.y - 34, width * Math.max(0, tank.mazeWallHp / maxHp), 6);
+                    ctx.strokeRect(tank.x - width / 2, tank.y - 34, width, 6);
+                    ctx.fillStyle = '#111827';
+                }
+                ctx.restore();
+            }
+
+            return result;
+        };
+
+        window.Game = window.Game || {};
+        window.Game.Maze = {
+            ensureMazeMap,
+            isMaze,
+            mazeCanPlaceAt,
+            buildMazePath,
+            updateMazePath
         };
     }
 
-    window.TvZMaze = { ensureMazeMap, install, isMaze, mazeCanPlaceAt };
+    window.TvZMaze = { ensureMazeMap, install, isMaze, mazeCanPlaceAt, buildMazePath, updateMazePath };
 })();
