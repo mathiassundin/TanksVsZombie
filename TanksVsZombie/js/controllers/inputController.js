@@ -307,7 +307,9 @@ function setupInputEventListeners() {
         btn.addEventListener('click', () => {
             if (state.matchStarted) return;
             state.selectedMap = btn.dataset.map;
+            state.gameMode = state.selectedMap === 'maze' ? 'maze' : 'original';
             renderStartMenu();
+            updateHUD();
         });
     });
     

@@ -77,6 +77,27 @@ const MAPS = {
             { x: 895, y: 345, type: 'desertRock', r: 20 }
         ]
     },
+    maze: {
+        id: 'maze',
+        maxWaves: 42,
+        bg: '#365314',
+        bgAlt: '#3f6212',
+        roadOuter: '#713f12',
+        roadInner: '#d6a64f',
+        roadWidth: 350,
+        roadWaypoints: [
+            { x: -20, y: CANVAS_H / 2 },
+            { x: CANVAS_W + 20, y: CANVAS_H / 2 }
+        ],
+        waypoints: [
+            { x: -20, y: CANVAS_H / 2 },
+            { x: CANVAS_W + 20, y: CANVAS_H / 2 }
+        ],
+        pond: null,
+        streamX: null,
+        bridgeY: null,
+        decorations: []
+    },
     winter: {
         id: 'winter',
         maxWaves: 100,

@@ -232,7 +232,7 @@ function drawMapBackground(map, timeSec) {
     }
 
     // Road Outer Border & Inner Path
-    const wps = map.waypoints;
+    const wps = map.roadWaypoints || map.waypoints;
     ctx.save();
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';

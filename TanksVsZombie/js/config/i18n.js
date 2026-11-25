@@ -96,7 +96,8 @@ const I18N = {
         maps: {
             meadow: { name: 'Gröna Ängen', waves: '42 Vågor', desc: 'Slingrande väg, träbro över bäck & damm.' },
             desert: { name: 'Ökenfortet', waves: '70 Vågor', desc: 'Kaktusar, oas & många kurvor för korseld.' },
-            winter: { name: 'Vinterpasset', waves: '100 Vågor', desc: 'Snöigt pass, isbro & frusen alpsjö.' }
+            winter: { name: 'Vinterpasset', waves: '100 Vågor', desc: 'Snöigt pass, isbro & frusen alpsjö.' },
+            maze: { name: 'Labyrintbanan', waves: '42 Vågor', desc: 'Bred rak väg. Bygg en labyrint av torn som tvingar zombierna att gå omvägar!' }
         },
         diffs: {
             easy: { name: '😊 Lätt', desc: '25 ❤️ • 340 🪙<br>Svagare zombies' },
@@ -276,7 +277,8 @@ const I18N = {
         maps: {
             meadow: { name: 'Green Meadow', waves: '42 Waves', desc: 'Winding road, wooden bridge & pond.' },
             desert: { name: 'Desert Fort', waves: '70 Waves', desc: 'Cacti, oasis & sharp turns for crossfire.' },
-            winter: { name: 'Winter Pass', waves: '100 Waves', desc: 'Snowy pass, ice bridge & frozen alpine lake.' }
+            winter: { name: 'Winter Pass', waves: '100 Waves', desc: 'Snowy pass, ice bridge & frozen alpine lake.' },
+            maze: { name: 'Maze Arena', waves: '42 Waves', desc: 'Wide straight road. Build a maze of towers to force zombies into long detours!' }
         },
         diffs: {
             easy: { name: '😊 Easy', desc: '25 ❤️ • 340 🪙<br>Weaker zombies' },

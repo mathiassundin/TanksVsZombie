@@ -31,8 +31,8 @@ function clientToGameCoords(clientX, clientY) {
 }
 
 function startNewMatch() {
-    const diff = DIFFICULTIES[state.selectedDiff];
-    const map = MAPS[state.selectedMap];
+    const diff = DIFFICULTIES[state.selectedDiff] || DIFFICULTIES.normal;
+    const map = MAPS[state.selectedMap] || MAPS.meadow;
     const warchestBonus = getTechLevel('tech_warchest') * 75;
 
     state.matchStarted = true;
@@ -59,6 +59,7 @@ function startNewMatch() {
     state.spawnQueue = [];
     state.spawnTimer = 0;
     state.weather = { active: false, type: 'none', wavesLeft: 0, cooldownWaves: 0, intensity: 0, particles: [] };
+    if (window.TvZMaze && state.selectedMap === 'maze') window.TvZMaze.updateMazePath(true);
 
     exitPlacementMode();
     deselectAll();
@@ -166,6 +167,23 @@ function updateGame(rawDt) {
         if (z.hp <= 0) {
             state.zombies.splice(i, 1);
             continue;
+        }
+
+        if (state.selectedMap === 'maze' && state.mazePathBlocked && window.TvZMaze) {
+            const blk = window.TvZMaze.findBlockingTower();
+            if (blk) {
+                const bx = blk.x - 28;
+                const by = blk.y;
+                const bDist = Math.hypot(bx - z.x, by - z.y);
+                const effSpd = z.speed * (z.slowTimer > 0 ? 0.55 : 1);
+                if (bDist > 8) {
+                    z.walkPhase += dt * (effSpd * 0.16);
+                    z.angle = Math.atan2(by - z.y, bx - z.x);
+                    z.x += ((bx - z.x) / bDist) * Math.min(bDist, effSpd * dt);
+                    z.y += ((by - z.y) / bDist) * Math.min(bDist, effSpd * dt);
+                }
+                continue;
+            }
         }
 
         const targetWp = wps[z.wpIndex];
@@ -540,8 +558,17 @@ function mainLoop(now) {
     const rawDt = Math.min(0.05, Math.max(0, (now - lastTimestamp) / 1000));
     lastTimestamp = now;
 
-    updateGame(rawDt);
-    renderGame(now / 1000);
+    try {
+        updateGame(rawDt);
+    } catch (err) {
+        console.error('Error in updateGame:', err);
+    }
+
+    try {
+        renderGame(now / 1000);
+    } catch (err) {
+        console.error('Error in renderGame:', err);
+    }
 
     requestAnimationFrame(mainLoop);
 }

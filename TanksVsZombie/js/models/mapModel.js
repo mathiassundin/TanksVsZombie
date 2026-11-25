@@ -12,7 +12,8 @@ function distToSegment(px, py, x1, y1, x2, y2) {
 }
 
 function distanceToRoad(x, y) {
-    const wps = MAPS[state.selectedMap].waypoints;
+    const map = MAPS[state.selectedMap] || MAPS.meadow;
+    const wps = map.roadWaypoints || map.waypoints;
     let minD = Infinity;
     for (let i = 0; i < wps.length - 1; i++) {
         const d = distToSegment(x, y, wps[i].x, wps[i].y, wps[i + 1].x, wps[i + 1].y);
@@ -22,7 +23,7 @@ function distanceToRoad(x, y) {
 }
 
 function isInsidePondOrStream(x, y) {
-    const map = MAPS[state.selectedMap];
+    const map = MAPS[state.selectedMap] || MAPS.meadow;
     if (map.pond) {
         const dx = (x - map.pond.x) / (map.pond.rx + 18);
         const dy = (y - map.pond.y) / (map.pond.ry + 18);
@@ -36,9 +37,16 @@ function isInsidePondOrStream(x, y) {
 
 function canPlaceAt(x, y) {
     if (x < 28 || x > CANVAS_W - 28 || y < 28 || y > CANVAS_H - 28) return false;
-    const map = MAPS[state.selectedMap];
-    if (distanceToRoad(x, y) < map.roadWidth * 0.5 + 22) return false;
-    if (isInsidePondOrStream(x, y)) return false;
+    const map = MAPS[state.selectedMap] || MAPS.meadow;
+
+    if (state.selectedMap === 'maze') {
+        // In maze mode, towers must be placed within the wide road corridor
+        if (Math.abs(y - CANVAS_H / 2) > map.roadWidth * 0.5 - 20) return false;
+    } else {
+        // Normal maps: cannot place on the road or in water
+        if (distanceToRoad(x, y) < map.roadWidth * 0.5 + 22) return false;
+        if (isInsidePondOrStream(x, y)) return false;
+    }
 
     for (const obs of state.obstacles) {
         if (Math.hypot(x - obs.x, y - obs.y) < obs.r + 22) return false;

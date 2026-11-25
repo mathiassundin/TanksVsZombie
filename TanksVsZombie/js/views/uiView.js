@@ -77,11 +77,15 @@ function applyStaticTranslations() {
     document.getElementById('lbl-resume-btn').textContent = tr.resumeBtn;
     document.getElementById('btn-start-match-label').textContent = tr.startNewMatch;
 
-    ['meadow', 'desert', 'winter'].forEach(m => {
-        document.getElementById(`map-name-${m}`).textContent = tr.maps[m].name;
-        document.getElementById(`map-waves-${m}`).textContent = tr.maps[m].waves;
-        document.getElementById(`map-desc-${m}`).textContent = tr.maps[m].desc;
+    ['meadow', 'desert', 'winter', 'maze'].forEach(m => {
+        const nameEl = document.getElementById(`map-name-${m}`);
+        const wavesEl = document.getElementById(`map-waves-${m}`);
+        const descEl = document.getElementById(`map-desc-${m}`);
+        if (nameEl && tr.maps[m]) nameEl.textContent = tr.maps[m].name;
+        if (wavesEl && tr.maps[m]) wavesEl.textContent = tr.maps[m].waves;
+        if (descEl && tr.maps[m]) descEl.textContent = tr.maps[m].desc;
     });
+
     ['easy', 'normal', 'hard'].forEach(d => {
         document.getElementById(`diff-name-${d}`).textContent = tr.diffs[d].name;
         document.getElementById(`diff-desc-${d}`).innerHTML = tr.diffs[d].desc;
@@ -273,7 +277,21 @@ function renderStartMenu() {
     btnEn.classList.toggle('border-stone-900', currentLang === 'en');
     btnEn.setAttribute('aria-pressed', currentLang === 'en' ? 'true' : 'false');
 
+    const isMazeMode = state.selectedMap === 'maze';
+    state.gameMode = isMazeMode ? 'maze' : 'original';
+    const modePicker = document.getElementById('tvz-mode-picker');
+    if (modePicker) {
+        modePicker.querySelectorAll('[data-mode]').forEach(btn => {
+            const isTarget = (btn.dataset.mode === 'maze') === isMazeMode;
+            btn.classList.toggle('bg-lime-300', isTarget);
+            btn.classList.toggle('bg-white', !isTarget);
+            btn.disabled = state.matchStarted;
+        });
+    }
+
     document.querySelectorAll('.map-option').forEach(btn => {
+        const isMazeCard = btn.dataset.map === 'maze';
+        btn.classList.toggle('hidden', isMazeMode ? !isMazeCard : isMazeCard);
         const isAct = btn.dataset.map === state.selectedMap;
         btn.classList.toggle('active', isAct);
         btn.setAttribute('aria-checked', isAct ? 'true' : 'false');
