@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧟</text></svg>">
+    <title>Tanks Vs. Zombie</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="min-h-screen flex flex-col bg-emerald-950 text-stone-900">
+
+    <!-- Skip Link -->
+    <a href="#main-game-area" id="skip-to-game-link" class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:bg-amber-300 focus:text-stone-950 focus:font-extrabold focus:px-4 focus:py-2 focus:rounded-xl focus:border-3 focus:border-stone-950">
+        Hoppa till spelplan
+    </a>
+
+    <!-- Top HUD Bar -->
+    <header class="w-full bg-amber-100 border-b-4 border-stone-900 px-3 py-2 shadow-md z-20 shrink-0">
+        <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
+            <div class="flex items-center gap-2">
+                <button id="btn-open-menu" aria-haspopup="dialog" aria-controls="start-menu-modal" class="cartoon-btn bg-amber-300 hover:bg-amber-200 text-stone-900 font-extrabold text-xs sm:text-sm px-2.5 py-2 rounded-xl cursor-pointer flex items-center gap-1 min-h-[40px]" title="Öppna Huvudmeny & Tech Tree">
+                    <span aria-hidden="true">🏠</span> <span class="hidden md:inline" id="lbl-menu-tech">Meny & Tech</span>
+                </button>
+                <div>
+                    <h1 class="cartoon-font text-base sm:text-xl font-bold text-stone-900 leading-none tracking-wide">
+                        TANK <span class="text-red-700">VS.</span> ZOMBIE
+                    </h1>
+                    <p class="text-[11px] font-bold text-stone-700 hidden sm:block" id="hud-map-label">Gröna Ängen • Normal</p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-1.5 sm:gap-2.5 flex-wrap" role="status" aria-live="polite" aria-atomic="true">
+                <div id="pill-lives" class="bg-red-100 border-2 border-stone-900 rounded-xl px-2.5 py-1 flex items-center gap-1 shadow-sm" title="Basens Liv">
+                    <span class="text-sm sm:text-base" aria-hidden="true">❤️</span>
+                    <span class="sr-only" id="sr-lives-label">Basens Liv:</span>
+                    <span class="font-extrabold text-xs sm:text-sm text-red-800" id="ui-lives">20</span>
+                </div>
+
+                <div id="pill-money" class="bg-yellow-200 border-2 border-stone-900 rounded-xl px-2.5 py-1 flex items-center gap-1 shadow-sm" title="Guld">
+                    <span class="text-sm sm:text-base" aria-hidden="true">🪙</span>
+                    <span class="sr-only" id="sr-money-label">Guld:</span>
+                    <span class="font-extrabold text-xs sm:text-sm text-amber-950" id="ui-money">275</span>
+                </div>
+
+                <div id="pill-stars" class="bg-purple-200 border-2 border-stone-900 rounded-xl px-2.5 py-1 flex items-center gap-1 shadow-sm" title="Tech-Stjärnor (tjänas från bossar)">
+                    <svg class="w-4 h-4 sm:w-5 sm:h-5 shrink-0" viewBox="0 0 24 24" aria-hidden="true">
+                        <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="#38bdf8" stroke="#1c1917" stroke-width="2.2" stroke-linejoin="round"/>
+                        <polygon points="12,4.6 13.9,8.5 18.2,9.1 15.1,12.1 15.8,16.4 12,14.4" fill="#7dd3fc" opacity="0.7"/>
+                    </svg>
+                    <span class="sr-only" id="sr-stars-label">Tech-Stjärnor:</span>
+                    <span class="font-extrabold text-xs sm:text-sm text-purple-950" id="ui-stars">0</span>
+                </div>
+
+                <div id="ui-wave-pill" class="bg-sky-100 border-2 border-stone-900 rounded-xl px-2.5 py-1 flex items-center gap-1 shadow-sm">
+                    <span class="text-sm sm:text-base" id="ui-wave-icon" aria-hidden="true">🌊</span>
+                    <span class="font-extrabold text-xs sm:text-sm text-sky-950"><span id="lbl-wave-prefix">Våg</span> <span id="ui-wave">0</span> <span id="lbl-wave-middle">av</span> <span id="ui-max-wave">42</span></span>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-1.5 sm:gap-2">
+                <button id="btn-speed" class="cartoon-btn bg-amber-300 hover:bg-amber-200 text-stone-950 font-extrabold text-xs sm:text-sm px-2.5 py-2 rounded-xl cursor-pointer min-h-[40px]" title="Spelhastighet (1x / 2x / 3x)" aria-label="Spelhastighet 1x">
+                    <span aria-hidden="true">⏩</span> <span id="ui-speed">1x</span>
+                </button>
+                <button id="btn-sound" aria-pressed="true" class="cartoon-btn bg-stone-200 hover:bg-stone-100 text-stone-950 font-extrabold text-xs sm:text-sm px-2.5 py-2 rounded-xl cursor-pointer min-h-[40px]" title="Ljud på/av" aria-label="Ljud på">
+                    <span aria-hidden="true">🔊</span>
+                </button>
+                <button id="btn-auto-wave" aria-pressed="false" class="cartoon-btn bg-stone-200 hover:bg-stone-100 text-stone-950 font-extrabold text-xs sm:text-sm px-2.5 py-2 rounded-xl cursor-pointer min-h-[40px]" title="Starta nästa våg automatiskt">
+                    <span aria-hidden="true">🔁</span> <span id="lbl-auto-prefix">Auto</span>: <span id="ui-auto-wave">OFF</span>
+                </button>
+                <button id="btn-start-wave" class="cartoon-btn bg-lime-400 hover:bg-lime-300 text-stone-950 font-extrabold text-xs sm:text-sm px-3 sm:px-4 py-2 rounded-xl cursor-pointer flex items-center gap-1 min-h-[40px]">
+                    <span aria-hidden="true">▶️</span> <span id="btn-wave-text">Starta Våg 1</span>
+                </button>
+            </div>
+        </div>
+        <!-- Next Wave Bar in control panel (underst) -->
+        <div id="wave-preview-bar" class="max-w-7xl mx-auto mt-1 pt-1.5 border-t-2 border-stone-800/15 flex items-center justify-between text-xs font-bold text-stone-800 px-1">
+            <div class="flex items-center gap-1.5 min-w-0">
+                <span class="text-stone-900 font-extrabold text-xs shrink-0 flex items-center gap-1">
+                    <span aria-hidden="true">🌊</span> <span id="lbl-next-wave-bar">Nästa våg:</span>
+                </span>
+                <span id="wave-preview-text-bar" class="font-extrabold text-sky-950 bg-sky-200/90 border border-stone-800 px-2 py-0.5 rounded-lg text-xs truncate">
+                    Vanliga Zombier
+                </span>
+            </div>
+            <div class="text-[11px] font-bold text-stone-600 hidden sm:block">
+                Förbered dina torn
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Game Container -->
+    <main id="main-game-area" tabindex="-1" class="flex-1 max-w-7xl w-full mx-auto p-2 sm:p-3 flex flex-col lg:flex-row gap-3 items-center lg:items-start justify-center">
+
+        <!-- Left / Top: Game Map Canvas + Upgrade Panel Below Map -->
+        <div class="w-full lg:flex-1 flex flex-col items-center gap-2.5 min-w-0">
+            <div class="relative w-full bg-emerald-900 rounded-2xl cartoon-panel overflow-hidden flex items-center justify-center" id="canvas-container">
+                <canvas id="gameCanvas" role="img" aria-label="Spelkarta för Tank Vs. Zombie" class="w-full h-full block cursor-crosshair"></canvas>
+
+                <!-- Top Boss Health Bar Overlay -->
+                <div id="boss-hud" role="region" aria-live="polite" class="hidden absolute top-3 left-1/2 -translate-x-1/2 w-[90%] max-w-md bg-stone-900/95 border-3 border-red-500 rounded-2xl px-4 py-2 shadow-xl z-20 pointer-events-none">
+                    <div class="flex items-center justify-between text-xs sm:text-sm font-extrabold text-red-300 mb-1">
+                        <span id="lbl-boss-hud" class="flex items-center gap-1.5">👑 MEGA ZOMBIE-BOSS</span>
+                        <span id="boss-hp-text" class="text-white">5230 / 5230</span>
+                    </div>
+                    <div class="w-full h-3.5 bg-stone-800 rounded-full overflow-hidden border border-stone-600">
+                        <div id="boss-hp-fill" class="h-full bg-gradient-to-r from-red-600 via-orange-500 to-yellow-400 transition-all duration-100" style="width: 100%;"></div>
+                    </div>
+                </div>
+
+                <!-- Next Wave Preview Pill -->
+                <div id="wave-preview-pill" class="absolute top-3 right-3 bg-stone-900/95 text-amber-100 border-2 border-amber-400 rounded-xl px-3 py-1.5 text-[11px] font-bold shadow-lg z-20 pointer-events-none hidden sm:block">
+                    <span class="text-amber-300 font-extrabold" id="lbl-next-wave">Nästa våg:</span> <span id="wave-preview-text">Vanliga Zombier</span>
+                </div>
+
+                <!-- Boss Wave Warning Banner -->
+                <div id="boss-banner" role="alert" class="hidden absolute top-14 left-1/2 -translate-x-1/2 bg-red-950/95 text-amber-200 border-3 border-red-500 rounded-2xl px-5 py-2.5 text-center shadow-2xl z-30 pointer-events-none">
+                    <div class="cartoon-font text-base sm:text-lg font-bold text-red-300" id="boss-banner-title">⚠️ BOSS-NIVÅ! VÅG 7 ⚠️</div>
+                    <div class="text-xs sm:text-sm font-extrabold text-white mt-0.5" id="boss-banner-sub">
+                        Endast den gigantiska Zombie-Bossen anfaller!
+                    </div>
+                </div>
+
+                <!-- Toast Notification -->
+                <div id="toast-msg" role="status" aria-live="polite" aria-atomic="true" class="hidden absolute top-16 left-1/2 -translate-x-1/2 bg-stone-900/95 text-amber-200 border-2 border-amber-400 font-bold text-xs sm:text-sm px-4 py-2 rounded-full shadow-lg z-30 pointer-events-none whitespace-nowrap">
+                </div>
+
+                
+
+                
+            </div>
+
+            <!-- Touch Placement Confirm Bar (Mobile placement bar, docked cleanly below the map in the same position as upgrade-panel) -->
+            <div id="touch-confirm-bar" role="region" aria-label="Bekräfta placering" class="hidden w-full rounded-2xl border-3 bg-stone-900 border-amber-400 p-2.5 sm:p-3 cartoon-panel z-10 flex items-center justify-between gap-2">
+                <div class="text-left pl-1 sm:pl-2 min-w-0">
+                    <div class="text-xs sm:text-sm font-extrabold text-amber-300 truncate" id="touch-confirm-title">Standardvagn</div>
+                    <div class="text-[11px] sm:text-xs font-bold text-stone-300 truncate" id="touch-confirm-sub">Dra på kartan för att placera</div>
+                </div>
+                <div class="flex items-center gap-2 shrink-0">
+                    <button id="btn-touch-cancel" type="button" class="cartoon-btn bg-rose-700 hover:bg-rose-600 text-white font-extrabold text-xs sm:text-sm px-3.5 py-2.5 rounded-xl cursor-pointer min-h-[44px]">
+                        ✖ <span id="lbl-touch-cancel">Avbryt</span>
+                    </button>
+                    <button id="btn-touch-confirm" type="button" class="cartoon-btn bg-lime-400 hover:bg-lime-300 text-stone-950 font-extrabold text-xs sm:text-sm px-4 py-2.5 rounded-xl cursor-pointer min-h-[44px]">
+                        ✅ <span id="lbl-touch-confirm">Placera</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Upgrade / Sell / Clear Obstacle Panel (Always docked cleanly below the map) -->
+            <div id="upgrade-panel" role="region" aria-label="Tornuppgradering" class="hidden w-full rounded-2xl border-3 bg-amber-50 border-stone-900 p-3 cartoon-panel z-10">
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-2.5">
+                    <!-- Left: Identity + Stats -->
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center justify-between gap-2 pb-2 border-b-2 border-stone-300">
+                            <div class="flex items-center gap-2 min-w-0">
+                                <canvas id="selected-tank-preview" aria-hidden="true" width="44" height="44" class="bg-emerald-100 rounded-xl border-2 border-stone-800 shrink-0"></canvas>
+                                <div class="min-w-0">
+                                    <div class="font-extrabold text-sm sm:text-base text-stone-950 leading-tight truncate" id="sel-name">Standardvagn</div>
+                                    <div class="text-xs font-bold text-amber-900" id="sel-level">Nivå 1 / 5</div>
+                                </div>
+                            </div>
+                            <button id="btn-close-upgrade" type="button" aria-label="Avmarkera och stäng panel" class="px-3.5 sm:px-2.5 h-11 sm:h-9 rounded-xl bg-rose-100 sm:bg-stone-200 hover:bg-rose-200 sm:hover:bg-stone-300 active:bg-rose-300 sm:active:bg-stone-400 border-2 border-stone-900 sm:border-stone-800 text-rose-950 sm:text-stone-950 font-extrabold text-sm sm:text-xs flex items-center justify-center gap-1.5 cursor-pointer shrink-0 shadow-sm">
+                                <span aria-hidden="true">✖</span> <span id="lbl-deselect-btn">Avmarkera</span>
+                            </button>
+                        </div>
+
+                        <div id="sel-stats-grid" class="grid grid-cols-3 gap-1.5 my-2 text-center">
+                            <div class="bg-white border-2 border-stone-400 rounded-xl p-1.5">
+                                <div class="text-[10px] font-bold text-stone-700 uppercase" id="lbl-stat-1">Skada</div>
+                                <div class="text-xs font-extrabold text-stone-950 leading-tight" id="sel-dmg">25</div>
+                                <div class="text-[9px] font-bold text-sky-800 leading-tight" id="sel-dmg-bonus"></div>
+                                <div class="text-[10px] font-black text-emerald-800 leading-tight mt-0.5" id="sel-dmg-next">+9</div>
+                            </div>
+                            <div class="bg-white border-2 border-stone-400 rounded-xl p-1.5">
+                                <div class="text-[10px] font-bold text-stone-700 uppercase" id="lbl-stat-2">Räckvidd</div>
+                                <div class="text-xs font-extrabold text-stone-950 leading-tight" id="sel-rng">140</div>
+                                <div class="text-[9px] font-bold text-sky-800 leading-tight" id="sel-rng-bonus"></div>
+                                <div class="text-[10px] font-black text-emerald-800 leading-tight mt-0.5" id="sel-rng-next">+11</div>
+                            </div>
+                            <div class="bg-white border-2 border-stone-400 rounded-xl p-1.5">
+                                <div class="text-[10px] font-bold text-stone-700 uppercase" id="lbl-stat-3">Eldhastighet</div>
+                                <div class="text-xs font-extrabold text-stone-950 leading-tight" id="sel-spd">1.2/s</div>
+                                <div class="text-[9px] font-bold text-emerald-800 leading-tight" id="sel-spd-bonus"></div>
+                                <div class="text-[10px] font-black text-emerald-800 leading-tight mt-0.5" id="sel-spd-next">+0.15/s</div>
+                            </div>
+                        </div>
+
+                        <p class="text-[11px] font-semibold text-stone-800 bg-amber-100 rounded-lg px-2 py-1 border border-amber-400" id="sel-special">
+                            Balanserad kanon med bra räckvidd.
+                        </p>
+                    </div>
+
+                    <!-- Right: Target Priority + Upgrade/Sell Actions -->
+                    <div class="md:w-64 shrink-0 flex flex-col justify-between gap-2">
+                        <div id="priority-row" class="flex items-center justify-between gap-1.5 bg-stone-100 border border-stone-400 rounded-xl px-2 py-1.5">
+                            <span class="text-[11px] font-extrabold text-stone-800" id="lbl-goal">🎯 Mål:</span>
+                            <button id="btn-cycle-priority" class="bg-amber-200 hover:bg-amber-300 border border-stone-800 rounded-lg px-2.5 py-1 text-xs font-extrabold text-stone-950 cursor-pointer">
+                                Först på vägen
+                            </button>
+                        </div>
+
+                        <div id="tower-actions-row" class="grid grid-cols-2 gap-2">
+                            <button id="btn-upgrade" class="cartoon-btn bg-emerald-400 hover:bg-emerald-300 text-stone-950 font-extrabold text-xs py-2 px-2 rounded-xl flex flex-col items-center justify-center cursor-pointer min-h-[46px]">
+                                <span id="lbl-upgrade-btn">⬆️ Uppgradera</span>
+                                <span class="text-[11px] font-black" id="sel-upgrade-cost">🪙 65 (U)</span>
+                            </button>
+                            <button id="btn-sell" class="cartoon-btn bg-rose-700 hover:bg-rose-600 text-white font-extrabold text-xs py-2 px-2 rounded-xl flex flex-col items-center justify-center cursor-pointer min-h-[46px]">
+                                <span id="lbl-sell-btn">💰 Sälj (70%)</span>
+                                <span class="text-[11px] font-black" id="sel-sell-value">+🪙 56</span>
+                            </button>
+                            <button id="btn-clear-obstacle" class="hidden col-span-2 cartoon-btn bg-amber-400 hover:bg-amber-300 text-stone-950 font-extrabold text-xs sm:text-sm py-2.5 px-3 rounded-xl flex items-center justify-center gap-2 cursor-pointer min-h-[46px]">
+                                <span id="lbl-clear-obstacle-btn">🪓 Riv & rensa ytan (🪙 15)</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right / Bottom: Shop, Tactical Abilities & Quick Guide -->
+        <aside id="shop-aside" aria-label="Butik och Taktiska Förmågor" class="w-full lg:w-96 lg:max-h-[calc(100dvh-84px)] lg:overflow-y-auto bg-amber-100 rounded-2xl cartoon-panel p-3 flex flex-col gap-3 shrink-0">
+            <!-- Tactical Abilities -->
+            <div>
+                <div class="flex items-center justify-between mb-1.5">
+                    <h2 class="cartoon-font text-sm sm:text-base font-bold text-stone-950" id="lbl-tactical-title">⚡ Taktiska Förmågor</h2>
+                    <span class="text-[11px] font-bold text-stone-700" id="lbl-tactical-sub">Lås upp i matchen</span>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <button id="btn-ability-mine" class="cartoon-btn bg-rose-200 hover:bg-rose-100 text-stone-950 p-2 rounded-xl flex items-center gap-2 text-left cursor-pointer min-h-[52px]">
+                        <span id="icon-mine" class="text-xl shrink-0" aria-hidden="true">🔒</span>
+                        <div class="min-w-0">
+                            <div class="font-extrabold text-xs truncate" id="title-mine">Vägmina</div>
+                            <div class="text-[10px] font-bold text-stone-800 truncate" id="cd-mine">Forskning krävs</div>
+                        </div>
+                    </button>
+                    <button id="btn-ability-airstrike" class="cartoon-btn bg-orange-200 hover:bg-orange-100 text-stone-950 p-2 rounded-xl flex items-center gap-2 text-left cursor-pointer min-h-[52px]">
+                        <span id="icon-airstrike" class="text-xl shrink-0" aria-hidden="true">🔒</span>
+                        <div class="min-w-0">
+                            <div class="font-extrabold text-xs truncate" id="title-airstrike">Flyganfall</div>
+                            <div class="text-[10px] font-bold text-stone-800 truncate" id="cd-airstrike">Forskning krävs</div>
+                        </div>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tank Factory -->
+            <div>
+                <div class="flex items-center justify-between mb-1.5">
+                    <h2 class="cartoon-font text-sm sm:text-base font-bold text-stone-950" id="lbl-tank-factory">🏭 Stridsvagns-fabrik</h2>
+                    <span class="text-[11px] font-extrabold bg-amber-300 border border-stone-800 px-2 py-0.5 rounded-full text-stone-950" id="unlocked-tanks-badge">Upplåsta: 1/8</span>
+                </div>
+                <div id="tank-shop-list" class="grid grid-cols-2 gap-2"></div>
+            </div>
+
+            <!-- Economy & Support Buildings -->
+            <div>
+                <div class="flex items-center justify-between mb-1.5 flex-wrap gap-1">
+                    <h2 class="cartoon-font text-sm sm:text-base font-bold text-stone-950" id="lbl-buildings-title">🏗️ Byggnader & Ekonomi</h2>
+                    <div class="flex items-center gap-1 text-[10px] font-extrabold">
+                        <span id="mine-count-badge" class="bg-yellow-200 border border-stone-700 px-1.5 py-0.5 rounded-md">Gruva: 0/1</span>
+                        <span id="radar-count-badge" class="bg-sky-200 border border-stone-700 px-1.5 py-0.5 rounded-md">Radar: 0/2</span>
+                        <span id="depot-count-badge" class="bg-emerald-200 border border-stone-700 px-1.5 py-0.5 rounded-md">Depå: 0/2</span>
+                    </div>
+                </div>
+                <div id="building-shop-list" class="grid grid-cols-3 gap-1.5"></div>
+            </div>
+
+            <!-- Quick Guide -->
+            <div class="bg-amber-50 border-2 border-stone-800 rounded-xl p-2.5 text-[11px] font-semibold text-stone-800 space-y-1">
+                <div class="font-extrabold text-stone-950" id="lbl-guide-title">💡 Snabbguide:</div>
+                <p id="lbl-guide-1">• Hovra eller klicka på ett torn för att se dess <b>räckviddscirkel</b>!</p>
+                <p id="lbl-guide-2">• Besegra <b>Bossar var 7:e våg</b> för att samla Tech-Stjärnor (<svg class="inline-block w-3.5 h-3.5 -mt-0.5 shrink-0" viewBox="0 0 24 24" aria-hidden="true"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="#38bdf8" stroke="#1c1917" stroke-width="2.2" stroke-linejoin="round"/></svg>) till Forskningsträdet.</p>
+                <p id="lbl-guide-3">• Kortkommandon: <b>U</b> (Uppgradera), <b>S</b> (Sälj), <b>ESC</b> (Avbryt).</p>
+                <p id="lbl-guide-save" class="pt-1 border-t border-amber-300 text-[10px] text-stone-700">💾 <b>Sparinfo:</b> Allt sparas i webbläsarens <i>localStorage</i> – tömmer du webbplatsdata rensas dina framsteg.</p>
+            </div>
+        </aside>
+    </main>
+
+    <!-- Start Menu & Tech Tree Modal -->
+    <div id="start-menu-modal" role="dialog" aria-modal="true" aria-labelledby="menu-main-title" class="fixed inset-0 bg-stone-950/85 backdrop-blur-sm z-50 flex items-center justify-center p-2 sm:p-4 overflow-y-auto">
+        <div class="bg-amber-100 border-4 border-stone-950 rounded-3xl max-w-5xl w-full max-h-[94vh] overflow-y-auto p-4 sm:p-6 shadow-2xl my-auto">
+            <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b-3 border-stone-800">
+                <div>
+                    <h2 id="menu-main-title" class="cartoon-font text-2xl sm:text-3xl font-bold text-stone-950">
+                        TANK <span class="text-red-700">VS.</span> ZOMBIE
+                    </h2>
+                    <p class="text-xs sm:text-sm font-bold text-stone-700" id="lbl-menu-subtitle">Välj karta, svårighetsgrad & exklusiv permanent forskning</p>
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <!-- Language Switcher (Flags only) -->
+                    <div class="flex items-center gap-1.5 bg-stone-200 p-1 rounded-xl border-2 border-stone-900">
+                        <button id="btn-lang-sv" type="button" aria-label="Svenska" title="Svenska" aria-pressed="true" class="p-1.5 rounded-lg cursor-pointer transition flex items-center justify-center">
+                            <svg class="w-6 h-4 rounded-sm border border-stone-800 block" viewBox="0 0 16 10" aria-hidden="true">
+                                <rect width="16" height="10" fill="#006AA7"/>
+                                <rect x="5" width="2" height="10" fill="#FECC02"/>
+                                <rect y="4" width="16" height="2" fill="#FECC02"/>
+                            </svg>
+                        </button>
+                        <button id="btn-lang-en" type="button" aria-label="English" title="English" aria-pressed="false" class="p-1.5 rounded-lg cursor-pointer transition flex items-center justify-center">
+                            <svg class="w-6 h-4 rounded-sm border border-stone-800 block" viewBox="0 0 60 30" aria-hidden="true">
+                                <rect width="60" height="30" fill="#012169"/>
+                                <path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6"/>
+                                <path d="M0,0 L60,30 M60,0 L0,30" stroke="#C8102E" stroke-width="2"/>
+                                <path d="M30,0 v30 M0,15 h60" stroke="#fff" stroke-width="10"/>
+                                <path d="M30,0 v30 M0,15 h60" stroke="#C8102E" stroke-width="6"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <!-- Tech Stars Counter -->
+                    <div class="bg-purple-200 border-3 border-stone-950 rounded-2xl px-3.5 py-1.5 flex items-center gap-1.5 shadow-sm">
+                        <svg class="w-5 h-5 sm:w-6 sm:h-6 shrink-0" viewBox="0 0 24 24" aria-hidden="true">
+                            <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="#38bdf8" stroke="#1c1917" stroke-width="2.2" stroke-linejoin="round"/>
+                            <polygon points="12,4.6 13.9,8.5 18.2,9.1 15.1,12.1 15.8,16.4 12,14.4" fill="#7dd3fc" opacity="0.7"/>
+                        </svg>
+                        <div>
+                            <div class="text-[10px] font-extrabold uppercase text-purple-900 leading-none" id="lbl-tech-stars-header">Tech-Stjärnor</div>
+                            <div class="text-base sm:text-lg font-black text-purple-950 leading-tight" id="menu-stars">0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="menu-match-locked-notice" class="hidden mt-3 bg-amber-300 border-2 border-stone-950 rounded-xl px-3 py-2 text-xs font-extrabold text-stone-950">
+                ⏸️ Match pausad: Karta, svårighetsgrad och forskningsträdet är låsta medan en match pågår.
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 mt-4">
+                <!-- Left Column: Map & Difficulty -->
+                <div class="lg:col-span-5 flex flex-col gap-3">
+                    <div>
+                        <h3 class="cartoon-font text-base sm:text-lg font-bold text-stone-950 mb-1.5" id="heading-step-1">🗺️ 1. Välj Karta</h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-1 gap-2" role="radiogroup">
+                            <button type="button" role="radio" aria-checked="true" data-map="meadow" class="map-option cartoon-btn bg-white p-2.5 rounded-2xl text-left cursor-pointer">
+                                <div class="flex items-center justify-between gap-1">
+                                    <span class="font-extrabold text-sm text-stone-950 flex items-center gap-1.5"><span class="text-lg" aria-hidden="true">🌿</span> <span id="map-name-meadow">Gröna Ängen</span></span>
+                                    <span class="text-[11px] font-black bg-lime-200 border border-stone-800 px-2 py-0.5 rounded-full shrink-0" id="map-waves-meadow">42 Vågor</span>
+                                </div>
+                                <p class="text-xs font-semibold text-stone-700 mt-0.5" id="map-desc-meadow">Slingrande väg, träbro över bäck & damm.</p>
+                            </button>
+                            <button type="button" role="radio" aria-checked="false" data-map="desert" class="map-option cartoon-btn bg-white p-2.5 rounded-2xl text-left cursor-pointer">
+                                <div class="flex items-center justify-between gap-1">
+                                    <span class="font-extrabold text-sm text-stone-950 flex items-center gap-1.5"><span class="text-lg" aria-hidden="true">🏜️</span> <span id="map-name-desert">Ökenfortet</span></span>
+                                    <span class="text-[11px] font-black bg-amber-200 border border-stone-800 px-2 py-0.5 rounded-full shrink-0" id="map-waves-desert">70 Vågor</span>
+                                </div>
+                                <p class="text-xs font-semibold text-stone-700 mt-0.5" id="map-desc-desert">Kaktusar, oas & många kurvor för korseld.</p>
+                            </button>
+                            <button type="button" role="radio" aria-checked="false" data-map="winter" class="map-option cartoon-btn bg-white p-2.5 rounded-2xl text-left cursor-pointer">
+                                <div class="flex items-center justify-between gap-1">
+                                    <span class="font-extrabold text-sm text-stone-950 flex items-center gap-1.5"><span class="text-lg" aria-hidden="true">❄️</span> <span id="map-name-winter">Vinterpasset</span></span>
+                                    <span class="text-[11px] font-black bg-sky-200 border border-stone-800 px-2 py-0.5 rounded-full shrink-0" id="map-waves-winter">100 Vågor</span>
+                                </div>
+                                <p class="text-xs font-semibold text-stone-700 mt-0.5" id="map-desc-winter">Snöigt pass, isbro & frusen alpsjö.</p>
+                            </button>
+                            <button type="button" role="radio" aria-checked="false" data-map="maze" class="map-option cartoon-btn bg-white p-2.5 rounded-2xl text-left cursor-pointer hidden">
+                                <div class="flex items-center justify-between gap-1">
+                                    <span class="font-extrabold text-sm text-stone-950 flex items-center gap-1.5"><span class="text-lg" aria-hidden="true">🧩</span> <span id="map-name-maze">Labyrintbanan</span></span>
+                                    <span class="text-[11px] font-black bg-purple-200 border border-stone-800 px-2 py-0.5 rounded-full shrink-0" id="map-waves-maze">42 Vågor</span>
+                                </div>
+                                <p class="text-xs font-semibold text-stone-700 mt-0.5" id="map-desc-maze">Bred rak väg. Bygg en labyrint av torn som tvingar zombierna att gå omvägar!</p>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="cartoon-font text-base sm:text-lg font-bold text-stone-950 mb-1.5" id="heading-step-2">⚔️ 2. Välj Svårighetsgrad</h3>
+                        <div class="grid grid-cols-3 gap-2" role="radiogroup">
+                            <button type="button" role="radio" aria-checked="false" data-diff="easy" class="diff-option cartoon-btn bg-white p-2 rounded-2xl text-center cursor-pointer">
+                                <div class="font-extrabold text-xs sm:text-sm text-stone-950" id="diff-name-easy">😊 Lätt</div>
+                                <div class="text-[11px] font-semibold text-stone-700 mt-0.5 leading-tight" id="diff-desc-easy">25 ❤️ • 340 🪙<br>Svagare zombies</div>
+                            </button>
+                            <button type="button" role="radio" aria-checked="true" data-diff="normal" class="diff-option cartoon-btn bg-white p-2 rounded-2xl text-center cursor-pointer">
+                                <div class="font-extrabold text-xs sm:text-sm text-stone-950" id="diff-name-normal">😎 Normal</div>
+                                <div class="text-[11px] font-semibold text-stone-700 mt-0.5 leading-tight" id="diff-desc-normal">20 ❤️ • 275 🪙<br>Balanserad utmaning</div>
+                            </button>
+                            <button type="button" role="radio" aria-checked="false" data-diff="hard" class="diff-option cartoon-btn bg-white p-2 rounded-2xl text-center cursor-pointer">
+                                <div class="font-extrabold text-xs sm:text-sm text-stone-950" id="diff-name-hard">💀 Svår</div>
+                                <div class="text-[11px] font-semibold text-stone-700 mt-0.5 leading-tight" id="diff-desc-hard">15 ❤️ • 300 🪙<br>Starkare zombies</div>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="bg-purple-100 border-2 border-purple-800 rounded-2xl p-2.5 text-xs text-purple-950">
+                        <div class="font-extrabold mb-0.5" id="lbl-exclusive-title">🎖️ Exklusiv Forskning:</div>
+                        <p class="font-semibold leading-snug" id="lbl-exclusive-box">Besegra bossarna var 7:e våg för att tjäna Tech-Stjärnor (<svg class="inline-block w-3.5 h-3.5 -mt-0.5 shrink-0" viewBox="0 0 24 24" aria-hidden="true"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="#38bdf8" stroke="#1c1917" stroke-width="2.2" stroke-linejoin="round"/></svg>)!</p>
+                    </div>
+
+                    <div class="bg-amber-50 border-2 border-stone-700 rounded-2xl p-2.5 text-[11px] text-stone-800">
+                        <div class="font-extrabold text-stone-950 mb-0.5" id="lbl-save-notice-title">💾 Viktigt om sparfiler:</div>
+                        <p class="font-semibold leading-snug" id="lbl-save-notice-body">Alla dina Tech-stjärnor sparas lokalt i webbläsarens <b>localStorage</b>.</p>
+                    </div>
+                </div>
+
+                <!-- Right Column: Tech Tree -->
+                <div class="lg:col-span-7 flex flex-col">
+                    <div class="flex items-center justify-between mb-1.5">
+                        <h3 class="cartoon-font text-base sm:text-lg font-bold text-stone-950" id="lbl-tech-tree-title">🔬 Exklusivt Forskningsträd</h3>
+                        <span class="text-[11px] font-bold text-stone-700" id="lbl-saved-local">Sparas i localStorage</span>
+                    </div>
+                    <div id="tech-tree-grid" class="flex flex-col gap-3 max-h-[360px] overflow-y-auto pr-1"></div>
+                </div>
+            </div>
+
+            <!-- Modal Footer Actions -->
+            <div class="mt-4 pt-3 border-t-3 border-stone-800 flex flex-wrap items-center justify-end gap-2">
+                <button id="btn-abort-match" type="button" class="hidden cartoon-btn bg-rose-700 hover:bg-rose-600 text-white font-extrabold text-xs sm:text-sm px-4 py-2.5 rounded-2xl cursor-pointer">
+                    <span id="lbl-abort-btn">🛑 Avsluta match</span>
+                </button>
+                <button id="btn-resume-game" type="button" class="hidden cartoon-btn bg-sky-300 hover:bg-sky-200 text-stone-950 font-extrabold text-xs sm:text-sm px-4 py-2.5 rounded-2xl cursor-pointer">
+                    <span id="lbl-resume-btn">↩️ Återgå till pågående match</span>
+                </button>
+                <button id="btn-start-match" type="button" class="cartoon-btn bg-lime-400 hover:bg-lime-300 text-stone-950 cartoon-font text-base sm:text-lg font-bold px-6 py-2.5 rounded-2xl cursor-pointer">
+                    ▶️ <span id="btn-start-match-label">STARTA NY MATCH!</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Game Over Modal -->
+    <div id="gameover-modal" role="dialog" aria-modal="true" class="hidden fixed inset-0 bg-stone-950/85 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-amber-100 border-4 border-stone-950 rounded-3xl max-w-md w-full p-6 text-center shadow-2xl">
+            <div class="text-5xl mb-2" aria-hidden="true">💀</div>
+            <h2 id="gameover-title" class="cartoon-font text-3xl font-bold text-red-700">SPELET SLUT!</h2>
+            <p id="gameover-sub" class="text-sm font-bold text-stone-800 mt-1">Zombierna bröt igenom ditt försvar!</p>
+            <div class="bg-white border-2 border-stone-800 rounded-2xl p-3 my-4 space-y-1.5 text-sm font-extrabold">
+                <div class="flex justify-between"><span id="lbl-go-waves">Klarade vågor:</span><span id="go-waves">0</span></div>
+                <div class="flex justify-between"><span id="lbl-go-kills">Besegrade zombies:</span><span id="go-kills">0</span></div>
+                <div class="flex justify-between text-purple-900"><span id="lbl-go-stars">Intjänade Tech-Stjärnor:</span><span id="go-stars" class="inline-flex items-center gap-1">+0</span></div>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+                <button id="btn-go-menu" class="cartoon-btn bg-amber-300 hover:bg-amber-200 text-stone-950 font-extrabold text-sm py-2.5 px-3 rounded-2xl cursor-pointer">
+                    🏠 <span id="lbl-go-menu">Meny & Tech</span>
+                </button>
+                <button id="btn-restart" class="cartoon-btn bg-lime-400 hover:bg-lime-300 text-stone-950 font-extrabold text-sm py-2.5 px-3 rounded-2xl cursor-pointer">
+                    <span id="lbl-go-restart">🔄 Spela Igen</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Victory Modal -->
+    <div id="victory-modal" role="dialog" aria-modal="true" class="hidden fixed inset-0 bg-stone-950/85 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-amber-100 border-4 border-stone-950 rounded-3xl max-w-md w-full p-6 text-center shadow-2xl">
+            <div class="text-5xl mb-2" aria-hidden="true">🏆</div>
+            <h2 id="victory-title" class="cartoon-font text-3xl font-bold text-emerald-700">SEGER!</h2>
+            <p id="victory-sub" class="text-sm font-bold text-stone-800 mt-1">Du klarade alla vågor på kartan!</p>
+            <div class="bg-white border-2 border-stone-800 rounded-2xl p-3 my-4 space-y-1.5 text-sm font-extrabold">
+                <div class="flex justify-between"><span id="lbl-vic-waves">Klarade vågor:</span><span id="vic-waves">42 / 42</span></div>
+                <div class="flex justify-between"><span id="lbl-vic-kills">Besegrade zombies:</span><span id="vic-kills">0</span></div>
+                <div class="flex justify-between text-purple-900"><span id="lbl-vic-stars">Intjänade Tech-Stjärnor:</span><span id="vic-stars" class="inline-flex items-center gap-1">+0</span></div>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+                <button id="btn-vic-menu" class="cartoon-btn bg-amber-300 hover:bg-amber-200 text-stone-950 font-extrabold text-sm py-2.5 px-3 rounded-2xl cursor-pointer">
+                    🏠 <span id="lbl-vic-menu">Meny & Tech</span>
+                </button>
+                <button id="btn-vic-restart" class="cartoon-btn bg-lime-400 hover:bg-lime-300 text-stone-950 font-extrabold text-sm py-2.5 px-3 rounded-2xl cursor-pointer">
+                    <span id="lbl-vic-restart">🔄 Spela Igen</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Game Scripts (MVC Architecture) -->
+    <!-- Config & Data -->
+    <script src="js/config/constants.js"></script>
+    <script src="js/config/i18n.js"></script>
+
+    <!-- Controllers: Audio -->
+    <script src="js/controllers/audioController.js"></script>
+
+    <!-- Models -->
+    <script src="js/models/gameState.js"></script>
+    <script src="js/models/mapModel.js"></script>
+    <script src="js/models/weatherModel.js"></script>
+    <script src="js/models/waveModel.js"></script>
+    <script src="js/models/towerModel.js"></script>
+    <script src="js/models/combatModel.js"></script>
+
+    <!-- Views -->
+    <script src="js/views/mapView.js"></script>
+    <script src="js/views/entityView.js"></script>
+    <script src="js/views/weatherView.js"></script>
+    <script src="js/views/effectsView.js"></script>
+    <script src="js/views/uiView.js"></script>
+
+    <!-- Controllers: Input & Main Game Engine -->
+    <script src="js/controllers/inputController.js"></script>
+    <script src="js/controllers/gameController.js"></script>
+    <script src="js/mazeMode.js"></script>
+
+    <!-- Application Entry Point -->
+    <script src="js/app.js"></script>
+</body>
+</html>
