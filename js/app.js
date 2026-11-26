@@ -9,6 +9,10 @@ function initializeApplication() {
     if (initialized) return;
     initialized = true;
 
+    // Register the core listeners first so that the language buttons update
+    // currentLang before the mode picker below re-renders its texts.
+    if (typeof setupInputEventListeners === 'function') setupInputEventListeners();
+
     const menu = document.getElementById('start-menu-modal');
     if (menu && !document.getElementById('tvz-mode-picker')) {
         const picker = document.createElement('div');
@@ -75,7 +79,6 @@ function initializeApplication() {
         if (enButton) enButton.addEventListener('click', updateModeTexts);
     }
 
-    if (typeof setupInputEventListeners === 'function') setupInputEventListeners();
     if (typeof resizeCanvas === 'function') resizeCanvas();
     if (typeof renderStartMenu === 'function') renderStartMenu();
     if (typeof updateHUD === 'function') updateHUD();

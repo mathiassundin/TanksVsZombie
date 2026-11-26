@@ -11,10 +11,11 @@ function describeWave(waveNum) {
     if (waveNum % 7 === 0) return t().waveTypes.boss(waveNum);
     const parts = [];
     if (waveNum >= 6 && waveNum % 2 === 0) parts.push(t().waveTypes.frostImmune);
+    // Keep in sync with the type rules in buildWaveQueue
     if (waveNum >= 10 && waveNum % 3 === 1) parts.push(t().waveTypes.giant);
-    else if (waveNum >= 5 && waveNum % 2 === 1) parts.push(t().waveTypes.armored);
-    else if (waveNum >= 3 && waveNum % 2 === 0) parts.push(t().waveTypes.fast);
-    else parts.push(t().waveTypes.normal);
+    if (waveNum >= 5) parts.push(t().waveTypes.armored);
+    if (waveNum >= 3) parts.push(t().waveTypes.fast);
+    if (waveNum < 3) parts.push(t().waveTypes.normal);
 
     if (waveNum >= 14) parts.push(t().waveTypes.horde);
     return parts.join(' + ');

@@ -58,6 +58,7 @@ function startNewMatch() {
     state.roadMines = [];
     state.spawnQueue = [];
     state.spawnTimer = 0;
+    state.autoWaveTimer = 0;
     state.weather = { active: false, type: 'none', wavesLeft: 0, cooldownWaves: 0, intensity: 0, particles: [] };
     if (window.TvZMaze && state.selectedMap === 'maze') window.TvZMaze.updateMazePath(true);
 
@@ -99,6 +100,13 @@ function updateGame(rawDt) {
     }
 
     const dt = rawDt * state.speedMult;
+
+    if (state.autoWaveTimer > 0) {
+        state.autoWaveTimer = Math.max(0, state.autoWaveTimer - rawDt);
+        if (state.autoWaveTimer === 0 && state.autoWave && !state.waveActive) {
+            startNextWave();
+        }
+    }
 
     // Update ability cooldowns
     if (state.abilityCooldowns.mine > 0) {
@@ -246,21 +254,35 @@ function updateGame(rawDt) {
         const p = state.projectiles[i];
         const stepX = p.vx * dt;
         const stepY = p.vy * dt;
-        p.x += stepX;
-        p.y += stepY;
-        p.traveled += Math.hypot(stepX, stepY);
+        const stepLen2 = stepX * stepX + stepY * stepY;
+        const startX = p.x;
+        const startY = p.y;
 
-        if (p.traveled >= p.maxDist || p.x < -30 || p.x > CANVAS_W + 30 || p.y < -30 || p.y > CANVAS_H + 30) {
-            state.projectiles.splice(i, 1);
-            continue;
+        // Swept collision: test the whole segment travelled this frame, so fast
+        // bullets at high game speed or low FPS cannot jump over a zombie.
+        let hitZombie = null;
+        let hitT = Infinity;
+        for (const z of state.zombies) {
+            if (z.hp <= 0) continue;
+            const tParam = stepLen2 > 0
+                ? Math.max(0, Math.min(1, ((z.x - startX) * stepX + (z.y - startY) * stepY) / stepLen2))
+                : 0;
+            const cx = startX + stepX * tParam;
+            const cy = startY + stepY * tParam;
+            if (Math.hypot(z.x - cx, z.y - cy) <= z.radius + p.radius && tParam < hitT) {
+                hitT = tParam;
+                hitZombie = z;
+            }
         }
 
-        let hitZombie = null;
-        for (const z of state.zombies) {
-            if (z.hp > 0 && Math.hypot(z.x - p.x, z.y - p.y) <= z.radius + p.radius) {
-                hitZombie = z;
-                break;
-            }
+        const moveT = hitZombie ? hitT : 1;
+        p.x = startX + stepX * moveT;
+        p.y = startY + stepY * moveT;
+        p.traveled += Math.sqrt(stepLen2) * moveT;
+
+        if (!hitZombie && (p.traveled >= p.maxDist || p.x < -30 || p.x > CANVAS_W + 30 || p.y < -30 || p.y > CANVAS_H + 30)) {
+            state.projectiles.splice(i, 1);
+            continue;
         }
 
         if (hitZombie) {
@@ -328,13 +350,9 @@ function updateGame(rawDt) {
             return;
         }
 
-        if (state.autoWave) {
-            setTimeout(() => {
-                if (state.autoWave && !state.waveActive && !state.paused && !state.gameOver && !state.victory) {
-                    startNextWave();
-                }
-            }, 900);
-        }
+        // Counted down in the game loop (not setTimeout) so it pauses with the
+        // game and cannot leak into a new match.
+        state.autoWaveTimer = 0.9;
     }
 }
 

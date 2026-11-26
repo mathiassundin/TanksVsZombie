@@ -40,6 +40,7 @@ const state = {
     wave: 0,
     waveActive: false,
     autoWave: false,
+    autoWaveTimer: 0,
     speedMult: 1,
     kills: 0,
     sessionStarsEarned: 0,
