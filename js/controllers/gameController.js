@@ -58,6 +58,7 @@ function startNewMatch() {
     state.roadMines = [];
     state.spawnQueue = [];
     state.spawnTimer = 0;
+    state.autoWaveTimer = 0;
     state.weather = { active: false, type: 'none', wavesLeft: 0, cooldownWaves: 0, intensity: 0, particles: [] };
     if (window.TvZMaze && state.selectedMap === 'maze') window.TvZMaze.updateMazePath(true);
 
@@ -99,6 +100,13 @@ function updateGame(rawDt) {
     }
 
     const dt = rawDt * state.speedMult;
+
+    if (state.autoWaveTimer > 0) {
+        state.autoWaveTimer = Math.max(0, state.autoWaveTimer - rawDt);
+        if (state.autoWaveTimer === 0 && state.autoWave && !state.waveActive) {
+            startNextWave();
+        }
+    }
 
     // Update ability cooldowns
     if (state.abilityCooldowns.mine > 0) {
@@ -328,13 +336,9 @@ function updateGame(rawDt) {
             return;
         }
 
-        if (state.autoWave) {
-            setTimeout(() => {
-                if (state.autoWave && !state.waveActive && !state.paused && !state.gameOver && !state.victory) {
-                    startNextWave();
-                }
-            }, 900);
-        }
+        // Counted down in the game loop (not setTimeout) so it pauses with the
+        // game and cannot leak into a new match.
+        state.autoWaveTimer = 0.9;
     }
 }
 
