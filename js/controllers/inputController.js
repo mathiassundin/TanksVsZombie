@@ -183,6 +183,9 @@ function handleMapTapOrClick(x, y) {
 }
 
 function upgradeSelected() {
+    // The panel buttons can still be reached with Tab behind a menu or
+    // game-over dialog, so guard here like the keyboard shortcuts do.
+    if (state.paused || !state.matchStarted) return;
     if (state.selectedTower) {
         const tk = state.selectedTower;
         if (tk.level >= 5) return;
@@ -223,6 +226,7 @@ function upgradeSelected() {
 }
 
 function sellSelected() {
+    if (state.paused || !state.matchStarted) return;
     if (state.selectedTower) {
         const tk = state.selectedTower;
         const refund = Math.round(tk.totalInvested * 0.7);

@@ -107,6 +107,19 @@
         return best;
     }
 
+    // Wall HP follows the tower's level. Upgrading a damaged tower raises both
+    // its max and current wall HP by the same amount.
+    function syncWallHp(tower) {
+        const maxHp = 700 + (tower.level || 1) * 260;
+        if (tower.mazeWallHp === undefined) {
+            tower.mazeMaxWallHp = maxHp;
+            tower.mazeWallHp = maxHp;
+        } else if (tower.mazeMaxWallHp !== maxHp) {
+            tower.mazeWallHp += maxHp - tower.mazeMaxWallHp;
+            tower.mazeMaxWallHp = maxHp;
+        }
+    }
+
     function attackBlockingTower(dt) {
         const tower = findBlockingTower();
         if (!tower) return;
@@ -118,10 +131,7 @@
         }, 0) * dt;
         if (damage <= 0) return;
 
-        if (tower.mazeWallHp === undefined) {
-            tower.mazeMaxWallHp = 700 + tower.level * 260;
-            tower.mazeWallHp = tower.mazeMaxWallHp;
-        }
+        syncWallHp(tower);
         tower.mazeWallHp -= damage;
         tower.upgradeFlash = Math.max(tower.upgradeFlash || 0, 0.08);
         if (tower.mazeWallHp <= 0) {
@@ -136,6 +146,48 @@
             renderShopLists();
             showToast(window.currentLang === 'en' ? 'The zombies destroyed a blocking tower!' : 'Zombierna förstörde ett blockerande torn!');
         }
+    }
+
+    // True if a zombie can walk in a straight line from (x0, y0) to (x1, y1)
+    // without crossing a tower. The first few pixels are ignored, so a zombie
+    // standing where a tower was just placed can still walk out.
+    function hasClearLine(x0, y0, x1, y1) {
+        const dist = Math.hypot(x1 - x0, y1 - y0);
+        const steps = Math.ceil(dist / 6);
+        for (let s = 1; s <= steps; s++) {
+            const k = s / steps;
+            if (k * dist < GRID) continue;
+            if (isRoadBlockedCell(x0 + (x1 - x0) * k, y0 + (y1 - y0) * k)) return false;
+        }
+        return true;
+    }
+
+    // Choose where a zombie rejoins a newly computed path. The path can bend
+    // backwards (left), so do not assume it only moves right: take the nearest
+    // waypoint the zombie can reach in a straight line, then prefer the
+    // furthest-along waypoint that is about as close, so it does not step back.
+    function pickRejoinIndex(path, z) {
+        const candidates = [];
+        for (let i = 1; i < path.length; i++) {
+            candidates.push({ i, d: Math.hypot(path[i].x - z.x, path[i].y - z.y) });
+        }
+        candidates.sort((a, b) => a.d - b.d);
+
+        let nearest = null;
+        for (const c of candidates) {
+            if (hasClearLine(z.x, z.y, path[c.i].x, path[c.i].y)) {
+                nearest = c;
+                break;
+            }
+        }
+        if (!nearest) return candidates.length ? candidates[0].i : 1;
+
+        let best = nearest.i;
+        for (const c of candidates) {
+            if (c.d > nearest.d + GRID * 1.5) break;
+            if (c.i > best && hasClearLine(z.x, z.y, path[c.i].x, path[c.i].y)) best = c.i;
+        }
+        return best;
     }
 
     function updateMazePath(force = false) {
@@ -154,20 +206,8 @@
             map.waypoints = path;
             state.mazePathBlocked = false;
 
-            // Smoothly align zombie waypoints to the new path
             for (const z of state.zombies) {
-                let bestIdx = 1;
-                let minD = Infinity;
-                for (let i = 1; i < path.length; i++) {
-                    if (path[i].x >= z.x - 16) {
-                        const d = Math.hypot(path[i].x - z.x, path[i].y - z.y);
-                        if (d < minD) {
-                            minD = d;
-                            bestIdx = i;
-                        }
-                    }
-                }
-                z.wpIndex = bestIdx;
+                z.wpIndex = pickRejoinIndex(path, z);
             }
         } else {
             state.mazePathBlocked = true;
@@ -196,6 +236,7 @@
                 ctx.save();
                 for (const tank of getBlockers()) {
                     if (tank.mazeWallHp === undefined) continue;
+                    syncWallHp(tank);
                     const maxHp = tank.mazeMaxWallHp || tank.mazeWallHp;
                     ctx.fillStyle = '#111827';
                     ctx.fillRect(tank.x - 24, tank.y - 34, 48, 6);
@@ -214,6 +255,7 @@
             isMaze,
             buildMazePath,
             updateMazePath,
+            pickRejoinIndex,
             attackBlockingTower,
             findBlockingTower
         };
