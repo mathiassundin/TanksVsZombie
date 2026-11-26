@@ -180,7 +180,7 @@ function updateGame(rawDt) {
         if (state.selectedMap === 'maze' && state.mazePathBlocked && window.TvZMaze) {
             const blk = window.TvZMaze.findBlockingTower();
             if (blk) {
-                const bx = blk.x - 28;
+                const bx = blk.x - (TOWER_FOOTPRINT / 2 + 8);
                 const by = blk.y;
                 const bDist = Math.hypot(bx - z.x, by - z.y);
                 const effSpd = z.speed * (z.slowTimer > 0 ? 0.55 : 1);
@@ -390,6 +390,16 @@ function renderGame(timeSec) {
         }
     }
 
+    // Footprints: in maze they are physical plates that are always visible;
+    // elsewhere they are shown faintly while placing a tank or building.
+    const placingStructure = !!(state.placingItem && (state.placingItem.kind === 'tank' || state.placingItem.kind === 'building'));
+    const structures = [...state.buildings, ...state.tanks];
+    if (state.selectedMap === 'maze') {
+        for (const e of structures) drawFootprint(pc, e.x, e.y, 'plate');
+    } else if (placingStructure) {
+        for (const e of structures) drawFootprint(pc, e.x, e.y, 'faint');
+    }
+
     for (const b of state.buildings) {
         drawBuildingWorld(pc, b, timeSec, false);
     }
@@ -397,6 +407,9 @@ function renderGame(timeSec) {
     for (const tk of state.tanks) {
         drawTankWorld(pc, tk, false);
     }
+
+    const selectedStructure = state.selectedTower || state.selectedBuilding;
+    if (selectedStructure) drawFootprint(pc, selectedStructure.x, selectedStructure.y, 'selected', timeSec);
 
     // Zombies sorted by Y for natural depth
     const sortedZombies = [...state.zombies].sort((a, b) => a.y - b.y);
@@ -415,8 +428,8 @@ function renderGame(timeSec) {
     // Placement ghost preview
     const previewPos = state.touchPreviewPos || state.hoverPos;
     if (state.placingItem && previewPos) {
-        const { x, y } = previewPos;
         const pItem = state.placingItem;
+        const { x, y } = placingStructure ? snapPlacement(previewPos.x, previewPos.y) : previewPos;
         let valid = false;
         let previewRange = 0;
 
@@ -445,6 +458,13 @@ function renderGame(timeSec) {
                 valid ? '#22c55e' : '#ef4444',
                 timeSec
             );
+        }
+
+        if (placingStructure) {
+            if (!valid) {
+                for (const e of findFootprintCollisions(x, y)) drawFootprint(pc, e.x, e.y, 'bad');
+            }
+            drawFootprint(pc, x, y, valid ? 'ok' : 'bad', timeSec);
         }
 
         if (pItem.kind === 'tank') {

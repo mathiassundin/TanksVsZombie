@@ -8,6 +8,12 @@ const BLUE_STAR_INLINE = `<svg class="inline-block w-3.5 h-3.5 -mt-0.5 shrink-0"
 const CANVAS_W = 960;
 const CANVAS_H = 560;
 const OBSTACLE_CLEAR_COST = 15;
+// Every tank and building occupies a square of this size (game units). It is
+// shown as a frame when placing or selecting, it decides where things may be
+// built, and in maze mode it is the physical obstacle zombies walk around.
+// 48 = 3 x 3 cells of the maze grid.
+const TOWER_FOOTPRINT = 48;
+const MAZE_GRID = 16;
 const SAVE_KEY = 'tank_vs_zombie_meta_v2';
 
 const MAPS = {
@@ -181,6 +187,8 @@ window.BLUE_STAR_INLINE = BLUE_STAR_INLINE;
 window.CANVAS_W = CANVAS_W;
 window.CANVAS_H = CANVAS_H;
 window.OBSTACLE_CLEAR_COST = OBSTACLE_CLEAR_COST;
+window.TOWER_FOOTPRINT = TOWER_FOOTPRINT;
+window.MAZE_GRID = MAZE_GRID;
 window.SAVE_KEY = SAVE_KEY;
 window.MAPS = MAPS;
 window.DIFFICULTIES = DIFFICULTIES;
@@ -195,6 +203,8 @@ Object.assign(window.Game.Config, {
     CANVAS_W,
     CANVAS_H,
     OBSTACLE_CLEAR_COST,
+    TOWER_FOOTPRINT,
+    MAZE_GRID,
     SAVE_KEY,
     MAPS,
     DIFFICULTIES,

@@ -135,6 +135,90 @@ function drawCrosshairWorld(c, x, y, timeSec) {
     c.fillRect(cx, cy, 1, 1);
 }
 
+// ---------- Tower footprints ----------
+
+function footprintOutline(c, left, top, size, color, dash = 0, phase = 0) {
+    c.fillStyle = color;
+    for (let i = 0; i < size; i++) {
+        if (dash && (Math.floor(i / dash + phase) & 1)) continue;
+        c.fillRect(left + i, top, 1, 1);
+        c.fillRect(left + size - 1 - i, top + size - 1, 1, 1);
+        c.fillRect(left, top + size - 1 - i, 1, 1);
+        c.fillRect(left + size - 1, top + i, 1, 1);
+    }
+}
+
+// Concrete plate with a hazard-striped edge: the physical obstacle in maze
+function footprintPlateSprite() {
+    const P = PixelArt;
+    return P.cached('footprint-plate', () => {
+        const s = Math.round(TOWER_FOOTPRINT / P.PX);
+        const canvas = document.createElement('canvas');
+        canvas.width = s + 2;
+        canvas.height = s + 2;
+        const g = canvas.getContext('2d');
+        g.fillStyle = P.OUTLINE;
+        g.fillRect(0, 0, s + 2, s + 2);
+        const tones = ['#4b5563', '#57606d', '#6b7280', '#7c8592'];
+        for (let y = 0; y < s; y++) {
+            for (let x = 0; x < s; x++) {
+                let col;
+                if (x < 2 || y < 2 || x >= s - 2 || y >= s - 2) {
+                    col = (Math.floor((x + y) / 3) & 1) ? '#facc15' : '#1c1917';
+                } else {
+                    const h = P.hash(x, y, 41);
+                    col = P.ramp(tones, 0.45 + (h - 0.5) * 0.5 + (P.noise(x / 4, y / 4, 42) - 0.5) * 0.5, x, y);
+                    if (h < 0.03) col = '#374151';
+                }
+                g.fillStyle = col;
+                g.fillRect(x + 1, y + 1, 1, 1);
+            }
+        }
+        return { canvas, half: (s + 2) / 2 };
+    });
+}
+
+// style: 'plate' (maze), 'faint' (others while placing), 'ok' / 'bad' (placement),
+// 'selected' (tapped tank or building)
+function drawFootprint(c, wx, wy, style, timeSec = 0) {
+    const P = PixelArt;
+    const size = Math.round(TOWER_FOOTPRINT / P.PX);
+    const left = P.ax(wx) - size / 2;
+    const top = P.ax(wy) - size / 2;
+
+    if (style === 'plate') {
+        const plate = footprintPlateSprite();
+        c.fillStyle = 'rgba(0, 0, 0, 0.3)';
+        c.fillRect(left + 1, top + size + 1, size, 1);
+        c.fillRect(left + size + 1, top + 1, 1, size);
+        c.drawImage(plate.canvas, left - 1, top - 1);
+    } else if (style === 'faint') {
+        footprintOutline(c, left, top, size, 'rgba(255, 255, 255, 0.55)', 1);
+    } else if (style === 'ok') {
+        c.fillStyle = 'rgba(250, 204, 21, 0.16)';
+        c.fillRect(left, top, size, size);
+        footprintOutline(c, left, top, size, '#facc15', 2, timeSec * 4);
+    } else if (style === 'bad') {
+        c.fillStyle = 'rgba(239, 68, 68, 0.28)';
+        c.fillRect(left, top, size, size);
+        footprintOutline(c, left, top, size, '#ef4444');
+    } else if (style === 'selected') {
+        footprintOutline(c, left, top, size, '#facc15');
+        c.fillStyle = '#facc15';
+        const r = left + size - 1;
+        const b = top + size - 1;
+        // Thick corner brackets
+        c.fillRect(left - 1, top - 1, 6, 2);
+        c.fillRect(left - 1, top - 1, 2, 6);
+        c.fillRect(r - 4, top - 1, 6, 2);
+        c.fillRect(r, top - 1, 2, 6);
+        c.fillRect(left - 1, b, 6, 2);
+        c.fillRect(left - 1, b - 4, 2, 6);
+        c.fillRect(r - 4, b, 6, 2);
+        c.fillRect(r, b - 4, 2, 6);
+    }
+}
+
 // Expose globally and on window.Game namespace
 window.spawnParticles = spawnParticles;
 window.spawnFloatingText = spawnFloatingText;
@@ -143,6 +227,7 @@ window.drawParticleWorld = drawParticleWorld;
 window.drawRoadMineWorld = drawRoadMineWorld;
 window.drawRangeArea = drawRangeArea;
 window.drawCrosshairWorld = drawCrosshairWorld;
+window.drawFootprint = drawFootprint;
 
 window.Game = window.Game || {};
 window.Game.Views = window.Game.Views || {};
@@ -153,5 +238,6 @@ window.Game.Views.Effects = {
     drawParticleWorld,
     drawRoadMineWorld,
     drawRangeArea,
-    drawCrosshairWorld
+    drawCrosshairWorld,
+    drawFootprint
 };
