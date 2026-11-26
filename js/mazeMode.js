@@ -5,7 +5,12 @@
     const MAZE_ID = 'maze';
     const DEFAULT_ROAD_WIDTH = 350;
     const GRID = 16;
+    const BLOCK_RADIUS = 32;
+    const ATTACK_REACH = 40;
     let cachedTanksKey = null;
+    // Cells (in pixels) the zombies can still reach while the road is blocked
+    let reachableCells = null;
+    let cachedBlocker = null;
 
     function isMaze() {
         return state.selectedMap === MAZE_ID;
@@ -18,13 +23,15 @@
     function isRoadBlockedCell(px, py) {
         const roadHalf = getMazeRoadWidth() / 2 - 20;
         if (py < CANVAS_H / 2 - roadHalf || py > CANVAS_H / 2 + roadHalf) return true;
-        for (const tank of state.tanks) {
-            if (Math.hypot(px - tank.x, py - tank.y) < 32) return true;
-        }
-        for (const building of state.buildings) {
-            if (Math.hypot(px - building.x, py - building.y) < 32) return true;
+        for (const entity of getBlockers()) {
+            if (Math.hypot(px - entity.x, py - entity.y) < BLOCK_RADIUS) return true;
         }
         return false;
+    }
+
+    // Both tanks and buildings block the road, so both can be attacked.
+    function getBlockers() {
+        return [...state.tanks, ...state.buildings];
     }
 
     function buildMazePath() {
@@ -54,7 +61,14 @@
         }
 
         const endKey = key(end.x, end.y);
-        if (!previous.has(endKey)) return null;
+        if (!previous.has(endKey)) {
+            reachableCells = [...previous.keys()].map(k => {
+                const [cx, cy] = k.split(',').map(Number);
+                return { x: cx * GRID - GRID, y: cy * GRID };
+            });
+            return null;
+        }
+        reachableCells = null;
 
         const cells = [];
         let cell = end;
@@ -71,35 +85,55 @@
         ];
     }
 
+    // The blocking wall is made of the towers/buildings that touch the area the
+    // zombies can still reach. Of those, attack the one furthest along the road
+    // (closest to the exit), as described in the mode help text.
     function findBlockingTower() {
-        if (!state.tanks.length) return null;
-        let nearest = state.tanks[0];
-        let greatestProgress = -Infinity;
-        for (const tank of state.tanks) {
-            const progress = tank.x + tank.y * 0.01;
-            if (progress > greatestProgress) {
-                greatestProgress = progress;
-                nearest = tank;
+        if (cachedBlocker && (state.tanks.includes(cachedBlocker) || state.buildings.includes(cachedBlocker))) {
+            return cachedBlocker;
+        }
+        cachedBlocker = null;
+        if (!reachableCells) return null;
+
+        const touchDist = BLOCK_RADIUS + GRID * 1.5;
+        let best = null;
+        for (const entity of getBlockers()) {
+            if (best && entity.x <= best.x) continue;
+            if (reachableCells.some(c => Math.hypot(c.x - entity.x, c.y - entity.y) < touchDist)) {
+                best = entity;
             }
         }
-        return nearest;
+        cachedBlocker = best;
+        return best;
     }
 
     function attackBlockingTower(dt) {
         const tower = findBlockingTower();
         if (!tower) return;
-        if (!tower.mazeWallHp) {
+
+        // Only zombies that have actually reached the tower can damage it.
+        const damage = state.zombies.reduce((sum, z) => {
+            if (z.hp <= 0 || Math.hypot(z.x - tower.x, z.y - tower.y) > ATTACK_REACH + z.radius) return sum;
+            return sum + (z.type === 'boss' ? 95 : z.type === 'giant' ? 38 : 22);
+        }, 0) * dt;
+        if (damage <= 0) return;
+
+        if (tower.mazeWallHp === undefined) {
             tower.mazeMaxWallHp = 700 + tower.level * 260;
             tower.mazeWallHp = tower.mazeMaxWallHp;
         }
-        const damage = state.zombies.reduce((sum, z) => sum + (z.type === 'boss' ? 95 : z.type === 'giant' ? 38 : 22), 0) * dt;
         tower.mazeWallHp -= damage;
         tower.upgradeFlash = Math.max(tower.upgradeFlash || 0, 0.08);
         if (tower.mazeWallHp <= 0) {
             spawnParticles(tower.x, tower.y, '#f97316', 28, 170);
             state.tanks = state.tanks.filter(t => t !== tower);
+            state.buildings = state.buildings.filter(b => b !== tower);
+            if (state.selectedTower === tower || state.selectedBuilding === tower) deselectAll();
+            if (state.hoverTower === tower) state.hoverTower = null;
             cachedTanksKey = null;
+            cachedBlocker = null;
             updateMazePath(true);
+            renderShopLists();
             showToast(window.currentLang === 'en' ? 'The zombies destroyed a blocking tower!' : 'Zombierna förstörde ett blockerande torn!');
         }
     }
@@ -113,6 +147,7 @@
             return map.waypoints;
         }
         cachedTanksKey = tanksKey;
+        cachedBlocker = null;
 
         const path = buildMazePath();
         if (path) {
@@ -147,7 +182,8 @@
         window.updateGame = function (rawDt) {
             if (isMaze()) {
                 const path = updateMazePath();
-                if (!path || state.mazePathBlocked) {
+                const running = state.matchStarted && !state.paused && !state.gameOver && !state.victory;
+                if (running && (!path || state.mazePathBlocked)) {
                     attackBlockingTower(rawDt * (state.speedMult || 1));
                 }
             }
@@ -158,8 +194,8 @@
             const result = originalRender(timeSec);
             if (isMaze()) {
                 ctx.save();
-                for (const tank of state.tanks) {
-                    if (!tank.mazeWallHp) continue;
+                for (const tank of getBlockers()) {
+                    if (tank.mazeWallHp === undefined) continue;
                     const maxHp = tank.mazeMaxWallHp || tank.mazeWallHp;
                     ctx.fillStyle = '#111827';
                     ctx.fillRect(tank.x - 24, tank.y - 34, 48, 6);
