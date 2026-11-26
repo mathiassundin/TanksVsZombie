@@ -21,6 +21,22 @@ function describeWave(waveNum) {
     return parts.join(' + ');
 }
 
+// Boss HP. The first bosses keep the tuned 2.05x-per-boss curve. After that
+// HP grows polynomially instead, because the player's damage only grows
+// roughly linearly with gold: 2.05x per boss forever made the last bosses
+// unbeatable (wave 42: 85k, wave 70: 1.5M, wave 98: 26M HP).
+const BOSS_BASE_HP = 2350;
+const BOSS_DOUBLING_BOSSES = 4;
+const BOSS_LATE_GROWTH = 1.4;
+
+function getBossBaseHp(bossIdx) {
+    if (bossIdx <= BOSS_DOUBLING_BOSSES) {
+        return BOSS_BASE_HP * Math.pow(2.05, bossIdx - 1);
+    }
+    const anchor = BOSS_BASE_HP * Math.pow(2.05, BOSS_DOUBLING_BOSSES - 1);
+    return anchor * Math.pow(bossIdx / BOSS_DOUBLING_BOSSES, BOSS_LATE_GROWTH);
+}
+
 function buildWaveQueue(waveNum) {
     const diff = DIFFICULTIES[state.selectedDiff];
     const queue = [];
@@ -29,7 +45,7 @@ function buildWaveQueue(waveNum) {
     if (waveNum % 7 === 0) {
         const bossIdx = waveNum / 7;
         // Rebalanced wave 7 boss HP from 5230 down to 2350 for fair early-game balance
-        const bossHp = Math.round(2350 * Math.pow(2.05, bossIdx - 1) * diff.hpMult);
+        const bossHp = Math.round(getBossBaseHp(bossIdx) * diff.hpMult);
         const starReward = bossIdx === 1 ? 1 : Math.min(4, 1 + Math.floor(bossIdx / 2));
         queue.push({
             type: 'boss',
