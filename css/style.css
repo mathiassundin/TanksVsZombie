@@ -99,6 +99,7 @@ button:focus-visible, [role="button"]:focus-visible, [tabindex="0"]:focus-visibl
 }
 
 #gameCanvas {
+    image-rendering: pixelated;
     touch-action: none;
     -webkit-tap-highlight-color: transparent;
 }
@@ -121,4 +122,10 @@ button:focus-visible, [role="button"]:focus-visible, [tabindex="0"]:focus-visibl
     #touch-confirm-bar {
         display: none !important;
     }
+}
+
+/* Pixel art sprites in the shop and upgrade panel */
+.tank-card canvas,
+#selected-tank-preview {
+    image-rendering: pixelated;
 }

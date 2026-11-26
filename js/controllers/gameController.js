@@ -339,57 +339,28 @@ function updateGame(rawDt) {
 }
 
 function renderGame(timeSec) {
-    ctx.clearRect(0, 0, CANVAS_W, CANVAS_H);
-
+    // The world is drawn into a low-resolution pixel art canvas, then scaled up
+    // without smoothing. Text is queued and drawn crisp at full resolution.
+    const pc = PixelArt.beginFrame();
     const map = MAPS[state.selectedMap];
-    drawMapBackground(map, timeSec);
+    drawMapBackground(pc, map, timeSec);
 
-    // Draw remaining natural obstacles
+    // Natural obstacles
     for (const obs of state.obstacles) {
-        drawSingleObstacle(ctx, obs);
-        if (state.selectedObstacle && state.selectedObstacle.id === obs.id) {
-            ctx.save();
-            ctx.strokeStyle = '#facc15';
-            ctx.lineWidth = 3;
-            ctx.setLineDash([5, 4]);
-            ctx.beginPath();
-            ctx.arc(obs.x, obs.y, obs.r + 7, 0, Math.PI * 2);
-            ctx.stroke();
-            ctx.restore();
-        }
+        const selected = !!(state.selectedObstacle && state.selectedObstacle.id === obs.id);
+        drawObstacleWorld(pc, obs, selected, timeSec);
     }
 
-    // Draw road mines
+    // Road mines
     for (const mine of state.roadMines) {
-        ctx.save();
-        ctx.translate(mine.x, mine.y);
-        ctx.fillStyle = '#334155';
-        ctx.strokeStyle = '#1c1917';
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.arc(0, 0, 10, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.stroke();
-        ctx.fillStyle = Math.sin(timeSec * 8) > 0 ? '#ef4444' : '#fca5a5';
-        ctx.beginPath();
-        ctx.arc(0, 0, 4, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.restore();
+        drawRoadMineWorld(pc, mine, timeSec);
     }
 
-    // Draw range / aura circle for hovered or selected tower/building
+    // Range / aura area for hovered or selected tower/building
     const activeTank = state.selectedTower || state.hoverTower;
     if (activeTank) {
         const stats = getTankStats(activeTank);
-        ctx.save();
-        ctx.fillStyle = 'rgba(250, 204, 21, 0.14)';
-        ctx.strokeStyle = 'rgba(250, 204, 21, 0.85)';
-        ctx.lineWidth = 2.5;
-        ctx.beginPath();
-        ctx.arc(activeTank.x, activeTank.y, stats.range, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.stroke();
-        ctx.restore();
+        drawRangeArea(pc, activeTank.x, activeTank.y, stats.range, 'rgba(250, 204, 21, 0.14)', 'rgba(250, 204, 21, 0.9)', timeSec);
     }
 
     if (state.selectedBuilding) {
@@ -397,89 +368,33 @@ function renderGame(timeSec) {
         const bDef = BUILDING_DEFS.find(d => d.id === b.id);
         if (bDef.range > 0) {
             const auraR = bDef.range + (b.level - 1) * 14;
-            ctx.save();
-            ctx.fillStyle = 'rgba(56, 189, 248, 0.14)';
-            ctx.strokeStyle = 'rgba(56, 189, 248, 0.85)';
-            ctx.lineWidth = 2.5;
-            ctx.beginPath();
-            ctx.arc(b.x, b.y, auraR, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.stroke();
-            ctx.restore();
+            drawRangeArea(pc, b.x, b.y, auraR, 'rgba(56, 189, 248, 0.14)', 'rgba(56, 189, 248, 0.9)', timeSec);
         }
     }
 
-    // Draw buildings
     for (const b of state.buildings) {
-        ctx.save();
-        ctx.translate(b.x, b.y);
-        drawBuildingEntity(ctx, b, 1, false);
-        ctx.restore();
+        drawBuildingWorld(pc, b, timeSec, false);
     }
 
-    // Draw tanks
     for (const tk of state.tanks) {
-        ctx.save();
-        ctx.translate(tk.x, tk.y);
-        drawTankEntity(ctx, tk, 1, false);
-        ctx.restore();
+        drawTankWorld(pc, tk, false);
     }
 
-    // Draw zombies sorted by Y for natural depth
+    // Zombies sorted by Y for natural depth
     const sortedZombies = [...state.zombies].sort((a, b) => a.y - b.y);
     for (const z of sortedZombies) {
-        drawZombieEntity(ctx, z);
+        drawZombieWorld(pc, z, timeSec);
     }
 
-    // Draw projectiles
     for (const p of state.projectiles) {
-        ctx.save();
-        ctx.fillStyle = p.color;
-        ctx.strokeStyle = '#1c1917';
-        ctx.lineWidth = 1.8;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.stroke();
-        ctx.restore();
+        drawProjectileWorld(pc, p);
     }
 
-    // Draw particles, lightning & shockwaves
     for (const pt of state.particles) {
-        const alpha = Math.max(0, pt.life / pt.maxLife);
-        ctx.save();
-        if (pt.isLightning && pt.points.length > 1) {
-            ctx.strokeStyle = `rgba(250, 204, 21, ${alpha})`;
-            ctx.lineWidth = 3.5;
-            ctx.beginPath();
-            ctx.moveTo(pt.points[0].x, pt.points[0].y);
-            for (let k = 1; k < pt.points.length; k++) {
-                const prev = pt.points[k - 1];
-                const curr = pt.points[k];
-                const midX = (prev.x + curr.x) / 2 + (Math.random() - 0.5) * 16;
-                const midY = (prev.y + curr.y) / 2 + (Math.random() - 0.5) * 16;
-                ctx.lineTo(midX, midY);
-                ctx.lineTo(curr.x, curr.y);
-            }
-            ctx.stroke();
-        } else if (pt.isShockwave) {
-            const prog = 1 - alpha;
-            ctx.strokeStyle = `rgba(249, 115, 22, ${alpha})`;
-            ctx.lineWidth = 5;
-            ctx.beginPath();
-            ctx.arc(pt.x, pt.y, pt.maxR * prog, 0, Math.PI * 2);
-            ctx.stroke();
-        } else {
-            ctx.globalAlpha = alpha;
-            ctx.fillStyle = pt.color;
-            ctx.beginPath();
-            ctx.arc(pt.x, pt.y, pt.r, 0, Math.PI * 2);
-            ctx.fill();
-        }
-        ctx.restore();
+        drawParticleWorld(pc, pt);
     }
 
-    // Draw placement ghost preview
+    // Placement ghost preview
     const previewPos = state.touchPreviewPos || state.hoverPos;
     if (state.placingItem && previewPos) {
         const { x, y } = previewPos;
@@ -506,50 +421,34 @@ function renderGame(timeSec) {
         }
 
         if (previewRange > 0) {
-            ctx.save();
-            ctx.fillStyle = valid ? 'rgba(34, 197, 94, 0.18)' : 'rgba(239, 68, 68, 0.22)';
-            ctx.strokeStyle = valid ? '#22c55e' : '#ef4444';
-            ctx.lineWidth = 2.5;
-            ctx.setLineDash([6, 4]);
-            ctx.beginPath();
-            ctx.arc(x, y, previewRange, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.stroke();
-            ctx.restore();
+            drawRangeArea(
+                pc, x, y, previewRange,
+                valid ? 'rgba(34, 197, 94, 0.18)' : 'rgba(239, 68, 68, 0.22)',
+                valid ? '#22c55e' : '#ef4444',
+                timeSec
+            );
         }
 
-        ctx.save();
-        ctx.translate(x, y);
         if (pItem.kind === 'tank') {
-            drawTankEntity(ctx, { id: pItem.id, level: 1, angle: 0 }, 1, true);
+            drawTankWorld(pc, { id: pItem.id, level: 1, angle: 0, x, y }, true);
         } else if (pItem.kind === 'building') {
-            drawBuildingEntity(ctx, { id: pItem.id, level: 1 }, 1, true);
+            drawBuildingWorld(pc, { id: pItem.id, level: 1, x, y }, timeSec, true);
+        } else if (pItem.id === 'mine') {
+            drawRoadMineWorld(pc, { x, y }, timeSec);
         } else {
-            ctx.font = '26px sans-serif';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText(pItem.id === 'mine' ? '🧨' : '🎯', 0, 0);
+            drawCrosshairWorld(pc, x, y, timeSec);
         }
-        ctx.restore();
     }
 
-    // Draw weather overlay
-    drawWeatherOverlay(ctx);
+    drawWeatherOverlay(pc);
 
-    // Draw floating damage / gold texts
+    // Floating damage / gold texts, drawn crisp at full resolution
     for (const ft of state.floatingTexts) {
         const alpha = Math.max(0, ft.life / ft.maxLife);
-        ctx.save();
-        ctx.globalAlpha = alpha;
-        ctx.font = '800 13px Nunito, sans-serif';
-        ctx.textAlign = 'center';
-        ctx.strokeStyle = '#1c1917';
-        ctx.lineWidth = 3.5;
-        ctx.strokeText(ft.text, ft.x, ft.y);
-        ctx.fillStyle = ft.color;
-        ctx.fillText(ft.text, ft.x, ft.y);
-        ctx.restore();
+        PixelArt.queueLabel(ft.text, ft.x, ft.y, { color: ft.color, alpha, size: 13 });
     }
+
+    PixelArt.present(ctx);
 }
 
 let lastTimestamp = performance.now();
