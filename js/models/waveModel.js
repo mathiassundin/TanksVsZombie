@@ -25,9 +25,11 @@ function describeWave(waveNum) {
 // HP grows polynomially instead, because the player's damage only grows
 // roughly linearly with gold: 2.05x per boss forever made the last bosses
 // unbeatable (wave 42: 85k, wave 70: 1.5M, wave 98: 26M HP).
+// The growth is still steeper than the player's damage, so each late boss
+// is a little harder than the one before.
 const BOSS_BASE_HP = 2350;
 const BOSS_DOUBLING_BOSSES = 4;
-const BOSS_LATE_GROWTH = 1.4;
+const BOSS_LATE_GROWTH = 1.8;
 
 function getBossBaseHp(bossIdx) {
     if (bossIdx <= BOSS_DOUBLING_BOSSES) {
