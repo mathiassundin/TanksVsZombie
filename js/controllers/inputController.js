@@ -47,6 +47,7 @@ function tryCommitPlacement(x, y) {
     const pItem = state.placingItem;
     if (!pItem) return false;
     const tr = t();
+    if (pItem.kind === 'tank' || pItem.kind === 'building') ({ x, y } = snapPlacement(x, y));
 
     if (pItem.kind === 'tank') {
         if (state.money < pItem.cost) {
@@ -148,7 +149,7 @@ function handleMapTapOrClick(x, y) {
 
     // 1. Check tanks
     for (const tk of state.tanks) {
-        if (Math.hypot(x - tk.x, y - tk.y) <= 24) {
+        if (isInsideFootprint(x, y, tk.x, tk.y)) {
             state.selectedTower = tk;
             state.selectedBuilding = null;
             state.selectedObstacle = null;
@@ -159,7 +160,7 @@ function handleMapTapOrClick(x, y) {
 
     // 2. Check buildings
     for (const b of state.buildings) {
-        if (Math.hypot(x - b.x, y - b.y) <= 24) {
+        if (isInsideFootprint(x, y, b.x, b.y)) {
             state.selectedBuilding = b;
             state.selectedTower = null;
             state.selectedObstacle = null;
@@ -474,7 +475,7 @@ function setupInputEventListeners() {
     canvas.addEventListener('mousemove', (e) => {
         const pos = clientToGameCoords(e.clientX, e.clientY);
         state.hoverPos = pos;
-        state.hoverTower = state.tanks.find(tk => Math.hypot(pos.x - tk.x, pos.y - tk.y) <= 24) || null;
+        state.hoverTower = state.tanks.find(tk => isInsideFootprint(pos.x, pos.y, tk.x, tk.y)) || null;
     });
     
     canvas.addEventListener('mouseleave', () => {

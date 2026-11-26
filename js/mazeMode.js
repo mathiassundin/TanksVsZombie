@@ -4,8 +4,9 @@
 (function () {
     const MAZE_ID = 'maze';
     const DEFAULT_ROAD_WIDTH = 350;
-    const GRID = 16;
-    const BLOCK_RADIUS = 32;
+    const GRID = MAZE_GRID;
+    // A cell is blocked when it lies inside a footprint (3 x 3 cells)
+    const BLOCK_HALF = TOWER_FOOTPRINT / 2 + GRID / 2;
     const ATTACK_REACH = 40;
     let cachedTanksKey = null;
     // Cells (in pixels) the zombies can still reach while the road is blocked
@@ -24,7 +25,7 @@
         const roadHalf = getMazeRoadWidth() / 2 - 20;
         if (py < CANVAS_H / 2 - roadHalf || py > CANVAS_H / 2 + roadHalf) return true;
         for (const entity of getBlockers()) {
-            if (Math.hypot(px - entity.x, py - entity.y) < BLOCK_RADIUS) return true;
+            if (Math.abs(px - entity.x) < BLOCK_HALF && Math.abs(py - entity.y) < BLOCK_HALF) return true;
         }
         return false;
     }
@@ -95,11 +96,11 @@
         cachedBlocker = null;
         if (!reachableCells) return null;
 
-        const touchDist = BLOCK_RADIUS + GRID * 1.5;
+        const touchDist = BLOCK_HALF + GRID * 1.5;
         let best = null;
         for (const entity of getBlockers()) {
             if (best && entity.x <= best.x) continue;
-            if (reachableCells.some(c => Math.hypot(c.x - entity.x, c.y - entity.y) < touchDist)) {
+            if (reachableCells.some(c => Math.abs(c.x - entity.x) < touchDist && Math.abs(c.y - entity.y) < touchDist)) {
                 best = entity;
             }
         }

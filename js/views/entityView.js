@@ -79,12 +79,23 @@ const EntitySprites = (function () {
         return S;
     }
 
-    function tankSprite(id, level, angle) {
+    // Scale a shape around the sprite centre (used to fit tanks in their footprint)
+    function scaled(shape, k) {
+        if (k === 1) return shape;
+        return {
+            ...shape,
+            test: (u, v) => shape.test(u / k, v / k),
+            color: typeof shape.color === 'function' ? (u, v) => shape.color(u / k, v / k) : shape.color
+        };
+    }
+
+    function tankSprite(id, level, angle, scale = 1) {
         const L = Math.min(level || 1, 5);
         const idx = P.angleIndex(angle);
-        return P.cached(`tank|${id}|${L}|${idx}`, () => {
+        return P.cached(`tank|${id}|${L}|${idx}|${scale}`, () => {
             const def = TANK_DEFS.find(d => d.id === id) || TANK_DEFS[0];
-            return P.rasterize(tankShapes(def, L), 44, P.angleFromIndex(idx));
+            const size = 2 * Math.ceil(22 * scale);
+            return P.rasterize(tankShapes(def, L).map(sh => scaled(sh, scale)), size, P.angleFromIndex(idx));
         });
     }
 
@@ -233,10 +244,14 @@ const EntitySprites = (function () {
         });
     }
 
-    return { tankSprite, buildingSprite, zombieSprite };
+    return { tankSprite, buildingSprite, zombieSprite, tankShapes };
 })();
 
 // ---------- Drawing in the game world (art space) ----------
+
+// Tanks are drawn smaller than in the shop so they always fit inside their
+// footprint, even when rotated with the barrel pointing at a corner.
+const TANK_WORLD_SCALE = 0.72;
 
 function drawTankWorld(c, tk, isGhost = false) {
     const P = PixelArt;
@@ -247,13 +262,9 @@ function drawTankWorld(c, tk, isGhost = false) {
     if (tk.upgradeFlash > 0) {
         P.ring(c, x, y, 12 + (1 - tk.upgradeFlash) * 8, `rgba(250, 204, 21, ${tk.upgradeFlash})`);
     }
-    if (lvl >= 3 && !isGhost) {
-        P.ring(c, x, y, 12, lvl >= 5 ? '#facc15' : '#94a3b8');
-    }
+    P.blit(c, EntitySprites.tankSprite(tk.id, lvl, tk.angle || 0, TANK_WORLD_SCALE), x, y, { alpha: isGhost ? 0.65 : 1 });
 
-    P.blit(c, EntitySprites.tankSprite(tk.id, lvl, tk.angle || 0), x, y, { alpha: isGhost ? 0.65 : 1 });
-
-    if (!isGhost && lvl > 1) P.stars(c, x, y + 12, lvl);
+    if (!isGhost && lvl > 1) P.stars(c, x, y + 9, lvl);
 }
 
 function drawBuildingWorld(c, b, timeSec, isGhost = false) {
@@ -262,9 +273,8 @@ function drawBuildingWorld(c, b, timeSec, isGhost = false) {
     const y = P.ax(b.y);
     const frame = Math.floor((timeSec || 0) * 6);
     const lvl = b.level || 1;
-    if (lvl >= 4 && !isGhost) P.ring(c, x, y, 13, '#facc15', 2, (timeSec || 0) * 3);
     P.blit(c, EntitySprites.buildingSprite(b.id, frame), x, y, { alpha: isGhost ? 0.65 : 1 });
-    if (!isGhost && lvl > 1) P.stars(c, x, y + 12, lvl);
+    if (!isGhost && lvl > 1) P.stars(c, x, y + 9, lvl);
 }
 
 function drawZombieWorld(c, z, timeSec) {
